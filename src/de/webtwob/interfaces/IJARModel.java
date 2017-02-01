@@ -8,7 +8,7 @@ package de.webtwob.interfaces;
  * in normal operation or is a out of bound value
  * e.g. getSelectedEntry might return -1 if called in game mode
  */
-public interface IJARModel {
+public interface IJARModel extends Runnable {
 
 	enum Mode{
 		MENU,GAME
