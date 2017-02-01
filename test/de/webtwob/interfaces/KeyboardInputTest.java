@@ -161,4 +161,23 @@ class KeyboardInputTest {
 			Assertions.fail("Did not stop to sneak!");
 		}
 	}
+
+	@Test
+	public void testJumpWhileSneaking() {
+		robot.keyPress(KeyEvent.VK_SHIFT);
+		robot.keyPress(KeyEvent.VK_SPACE);
+		if(!jump) {
+			robot.keyRelease(KeyEvent.VK_SHIFT);
+			robot.keyRelease(KeyEvent.VK_SPACE);
+			Assertions.fail("Did not jump!");
+		}
+		jump = false;
+		robot.keyRelease(KeyEvent.VK_SPACE);
+		if(jump) {
+			robot.keyRelease(KeyEvent.VK_SHIFT);
+			Assertions.fail("Did jump!");
+		}
+		robot.keyRelease(KeyEvent.VK_SHIFT);
+
+	}
 }
