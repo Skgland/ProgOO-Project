@@ -9,10 +9,24 @@ import de.webtwob.interfaces.IJARModel;
 
 import javax.swing.*;
 
+import static de.webtwob.input.KeyboardInput.InputActions.*;
+
+
 /**
  * Created by BB20101997 on 31. Jan. 2017.
  */
-public class KeyboardInput implements IJARInput {
+public class KeyboardInput implements IJARInput{
+
+	enum InputActions {
+		JUMP,
+		SNEAK,
+		UN_SNEAK,
+		SELECT,
+		PAUSE,
+		UP,
+		DOWN
+	}
+
 
 	private IJARModel model;
 	private final LinkableAction JUMP_ACTION  = new JumpAction();
@@ -22,22 +36,21 @@ public class KeyboardInput implements IJARInput {
 	public KeyboardInput(JComponent jc) {
 		InputMap inputMap = jc.getInputMap();
 
-		inputMap.put(KeyStroke.getKeyStroke(InputToken.JUMP), InputToken.JUMP);
-		inputMap.put(KeyStroke.getKeyStroke(InputToken.SNEAK), InputToken.SNEAK);
-		inputMap.put(KeyStroke.getKeyStroke(InputToken.UN_SNEAK), InputToken.UN_SNEAK);
-		inputMap.put(KeyStroke.getKeyStroke(InputToken.PAUSE), InputToken.PAUSE);
+		inputMap.put(KeyStroke.getKeyStroke("SPACE"), JUMP);
+		inputMap.put(KeyStroke.getKeyStroke("shift SPACE"), JUMP);
+		inputMap.put(KeyStroke.getKeyStroke("shift pressed SHIFT"), SNEAK);
+		inputMap.put(KeyStroke.getKeyStroke("released SHIFT"), UN_SNEAK);
+		inputMap.put(KeyStroke.getKeyStroke("P"), PAUSE);
 
-		inputMap.put(KeyStroke.getKeyStroke(InputToken.UP), InputToken.UP);
-		inputMap.put(KeyStroke.getKeyStroke(InputToken.DOWN), InputToken.DOWN);
-		inputMap.put(KeyStroke.getKeyStroke(InputToken.SELECT), InputToken.SELECT);
+		inputMap.put(KeyStroke.getKeyStroke("UP"), UP);
+		inputMap.put(KeyStroke.getKeyStroke("DOWN"), DOWN);
+		inputMap.put(KeyStroke.getKeyStroke("ENTER"), SELECT);
 
 		ActionMap actionMap = jc.getActionMap();
-		actionMap.put(InputToken.JUMP, JUMP_ACTION);
-		actionMap.put(InputToken.SNEAK, SNEAK_ACTION);
-		actionMap.put(InputToken.UN_SNEAK, SNEAK_ACTION);
-		actionMap.put(InputToken.PAUSE, PAUSE_ACTION);
-
-		linkModel(null);//To disable the actions
+		actionMap.put(JUMP, JUMP_ACTION);
+		actionMap.put(SNEAK, SNEAK_ACTION);
+		actionMap.put(UN_SNEAK, SNEAK_ACTION);
+		actionMap.put(PAUSE, PAUSE_ACTION);
 	}
 
 	@Override
@@ -46,5 +59,10 @@ public class KeyboardInput implements IJARInput {
 		JUMP_ACTION.linkModel(ijarm);
 		SNEAK_ACTION.linkModel(ijarm);
 		PAUSE_ACTION.linkModel(ijarm);
+	}
+
+	@Override
+	public void run() {
+		//does not actually have to do anything
 	}
 }
