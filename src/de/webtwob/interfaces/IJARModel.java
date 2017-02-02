@@ -8,13 +8,19 @@ package de.webtwob.interfaces;
  * in normal operation or is a out of bound value
  * e.g. getSelectedEntry might return -1 if called in game mode
  */
-public interface IJARModel extends Runnable {
+public interface IJARModel extends IJARRunable {
 
 	enum Mode{
 		MENU,GAME
 	}
 
-	void addView(IJARView ijarv);
+	default void addView(IJARView ijarv){
+		ijarv.linkModel(this);
+	}
+
+	default void addInput(IJARInput ijari){
+		ijari.linkModel(this);
+	}
 
 	/**
 	 * @return the current mode of operation

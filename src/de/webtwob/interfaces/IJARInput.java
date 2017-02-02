@@ -3,12 +3,10 @@ package de.webtwob.interfaces;
 /**
  * Created by BB20101997 on 31. Jan. 2017.
  */
-public interface IJARInput extends IJARLinkable,Runnable{
+public interface IJARInput extends IJARLinkable,IJARRunable{
 
-	/**
-	 * an input may be passive therefor run by default does nothing
-	 * */
-	default void run() {}
-
+	//inputs are not activly polling by default
+	default void start() {}
+	default void stop() {}
 
 }

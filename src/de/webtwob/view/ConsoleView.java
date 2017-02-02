@@ -15,4 +15,13 @@ public class ConsoleView implements IJARView {
 		model = ijarm;
 	}
 
+	@Override
+	public void start() {
+
+	}
+
+	@Override
+	public void stop() {
+
+	}
 }

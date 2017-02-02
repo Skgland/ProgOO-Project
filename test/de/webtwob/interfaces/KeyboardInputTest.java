@@ -14,69 +14,6 @@ import java.awt.event.KeyEvent;
  */
 class KeyboardInputTest {
 
-	static class TestModel implements IJARModel {
-
-		@Override
-		public void addView(IJARView ijarv) {
-
-		}
-
-		@Override
-		public Mode getMode() {
-			return null;
-		}
-
-		@Override
-		public void jump() {
-			jump = true;
-		}
-
-		@Override
-		public void setSneaking(boolean bool) {
-			sneak = bool;
-		}
-
-		@Override
-		public boolean isSneaking() {
-			return sneak;
-		}
-
-		@Override
-		public void pause() {
-
-		}
-
-		@Override
-		public void doSelect() {
-
-		}
-
-		@Override
-		public void select(int i) {
-
-		}
-
-		@Override
-		public void up() {
-
-		}
-
-		@Override
-		public void down() {
-
-		}
-
-		@Override
-		public String[] getMenuEntries() {
-			return new String[0];
-		}
-
-		@Override
-		public int getSelectedEntry() {
-			return 0;
-		}
-	}
-
 	static class TestView extends JPanel implements IJARView {
 
 		public TestView() {
@@ -88,10 +25,19 @@ class KeyboardInputTest {
 		public void linkModel(IJARModel ijarm) {
 			//not needed here
 		}
+
+		@Override
+		public void start() {
+
+		}
+
+		@Override
+		public void stop() {
+
+		}
 	}
 
-	private static boolean jump, sneak, unsneak;
-	private static IJARModel model;
+	private static TestModel model;
 	private static TestView  view;
 	private static IJARInput input;
 	private static JFrame    frame;
@@ -138,13 +84,13 @@ class KeyboardInputTest {
 	@Test
 	public void testJump() {
 		robot.keyPress(KeyEvent.VK_SPACE);
-		if(!jump) {
+		if(!model.jump) {
 			robot.keyRelease(KeyEvent.VK_SPACE);
 			Assertions.fail("Did not jump!");
 		}
-		jump = false;
+		model.jump = false;
 		robot.keyRelease(KeyEvent.VK_SPACE);
-		if(jump) {
+		if(model.jump) {
 			Assertions.fail("Did jump!");
 		}
 	}
@@ -152,12 +98,12 @@ class KeyboardInputTest {
 	@Test
 	public void testSneak() {
 		robot.keyPress(KeyEvent.VK_SHIFT);
-		if(!sneak) {
+		if(!model.sneak) {
 			robot.keyRelease(KeyEvent.VK_SHIFT);
 			Assertions.fail("Did not start to sneak!");
 		}
 		robot.keyRelease(KeyEvent.VK_SHIFT);
-		if(sneak) {
+		if(model.sneak) {
 			Assertions.fail("Did not stop to sneak!");
 		}
 	}
@@ -166,14 +112,14 @@ class KeyboardInputTest {
 	public void testJumpWhileSneaking() {
 		robot.keyPress(KeyEvent.VK_SHIFT);
 		robot.keyPress(KeyEvent.VK_SPACE);
-		if(!jump) {
+		if(!model.jump) {
 			robot.keyRelease(KeyEvent.VK_SHIFT);
 			robot.keyRelease(KeyEvent.VK_SPACE);
 			Assertions.fail("Did not jump!");
 		}
-		jump = false;
+		model.jump = false;
 		robot.keyRelease(KeyEvent.VK_SPACE);
-		if(jump) {
+		if(model.jump) {
 			robot.keyRelease(KeyEvent.VK_SHIFT);
 			Assertions.fail("Did jump!");
 		}
