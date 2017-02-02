@@ -1,6 +1,7 @@
-package de.webtwob.interfaces;
+package de.webtwob;
 
-import de.webtwob.input.KeyboardInput;
+import de.webtwob.input.keyboard.KeyboardInput;
+import de.webtwob.interfaces.IJARInput;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
@@ -12,30 +13,7 @@ import java.awt.event.KeyEvent;
 /**
  * Created by BB20101997 on 31. Jan. 2017.
  */
-class KeyboardInputTest {
-
-	static class TestView extends JPanel implements IJARView {
-
-		public TestView() {
-			add(new JLabel("Running Test!"));
-			setVisible(true);
-		}
-
-		@Override
-		public void linkModel(IJARModel ijarm) {
-			//not needed here
-		}
-
-		@Override
-		public void start() {
-
-		}
-
-		@Override
-		public void stop() {
-
-		}
-	}
+public class KeyboardInputTest {
 
 	private static TestModel model;
 	private static TestView  view;
@@ -54,11 +32,15 @@ class KeyboardInputTest {
 
 		view.linkModel(model);
 		input.linkModel(model);
+
 		model.addView(view);
 
 		frame = new JFrame("Unit Test: KeyboardInput");
 		frame.add(view);
 		frame.pack();
+		frame.setAutoRequestFocus(true);
+		frame.setVisible(true);
+
 		try {
 			robot = new Robot();
 			robot.setAutoWaitForIdle(true);
@@ -67,8 +49,6 @@ class KeyboardInputTest {
 		catch(AWTException e) {
 			e.printStackTrace();
 		}
-		frame.setAutoRequestFocus(true);
-		frame.setVisible(true);
 		while(!view.hasFocus()) {
 			try {
 				synchronized(waiter) {
@@ -79,6 +59,8 @@ class KeyboardInputTest {
 				e.printStackTrace();
 			}
 		}
+
+		model.start();
 	}
 
 	@Test

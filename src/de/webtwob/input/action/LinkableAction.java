@@ -10,7 +10,7 @@ import javax.swing.*;
  */
 public abstract class LinkableAction extends AbstractAction implements IJARLinkable {
 
-	protected IJARModel model;
+	protected volatile IJARModel model;
 
 	public LinkableAction(){
 		setEnabled(false);

@@ -5,8 +5,7 @@ package de.webtwob.interfaces;
  *
  * All methods not supported in the current mode should if not specified
  * not throw an exception but rather return a value that would not occur
- * in normal operation or is a out of bound value
- * e.g. getSelectedEntry might return -1 if called in game mode
+ * in normal operation or is a out of bound value or a default value
  */
 public interface IJARModel extends IJARRunable {
 
@@ -83,10 +82,10 @@ public interface IJARModel extends IJARRunable {
 	/**+
 	 * @return returns menu entries when in menu mode else an empty array
 	 * */
-	String[] getMenuEntries();
+	IMenuEntry[] getMenuEntries();
 
 	/**
-	 * @returns the selected Menu Entry, -1 if none is selected
+	 * @return the selected Menu Entry, default is 0
 	 * */
-	int getSelectedEntry();
+	int getSelectedIndex();
 }

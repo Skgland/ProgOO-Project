@@ -1,4 +1,4 @@
-package de.webtwob.input.action.controller;
+package de.webtwob.input.controller;
 
 import net.java.games.input.ControllerEvent;
 import net.java.games.input.ControllerListener;

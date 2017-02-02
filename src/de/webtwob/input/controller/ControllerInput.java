@@ -1,4 +1,4 @@
-package de.webtwob.input.action.controller;
+package de.webtwob.input.controller;
 
 import de.webtwob.interfaces.IJARInput;
 import de.webtwob.interfaces.IJARModel;
@@ -18,7 +18,8 @@ public class ControllerInput implements IJARInput {
 
 	public ControllerInput() {
 		findController();
-		ControllerEnvironment.getDefaultEnvironment().addControllerListener(new ControllerInputControllerListener(this));
+		//does not work :(
+		//ControllerEnvironment.getDefaultEnvironment().addControllerListener(new ControllerInputControllerListener(this));
 	}
 
 	@Override
@@ -30,22 +31,17 @@ public class ControllerInput implements IJARInput {
 	public void start() {
 		if(exec == null) {
 			exec = new Thread(poller = new Poller());
+			exec.setName("Controller Poller");
 			exec.start();
 		}
-	}
-
-	public void join() throws InterruptedException {
-		exec.join();
-	}
-
-	public void join(long l) throws InterruptedException {
-		exec.join(l);
+		System.out.println("Started ControllerInput");
 	}
 
 	@Override
 	public void stop() {
 		poller.run = false;
 		exec = null;
+		System.out.println("Stopped ControllerInput");
 	}
 
 	public void setController(Controller c) {
@@ -57,8 +53,18 @@ public class ControllerInput implements IJARInput {
 	}
 
 	public void findController() {
-		for(Controller cont : ControllerEnvironment.getDefaultEnvironment().getControllers()) {
-			System.out.println(cont.getType() + ":" + cont.getName());
+		ControllerEnvironment controllerEnvironment = ControllerEnvironment.getDefaultEnvironment();
+		try {
+			//horrible hack to update the list of connected controllers
+			Class                         clazz = controllerEnvironment.getClass();
+			java.lang.reflect.Constructor field = clazz.getConstructors()[0];
+			field.setAccessible(true);
+			controllerEnvironment = (ControllerEnvironment) field.newInstance();
+		}
+		catch(  IllegalAccessException | InvocationTargetException | InstantiationException e) {
+			e.printStackTrace();
+		}
+		for(Controller cont : controllerEnvironment.getControllers()) {
 			if(cont.getType() == Controller.Type.GAMEPAD) {
 				controller = cont;
 				break;
@@ -76,15 +82,18 @@ public class ControllerInput implements IJARInput {
 			EventQueue eventQueue;
 			while(run) {
 				if(controller != null && model != null) {
-					if(!controller.poll()){
+					if(!controller.poll()) {
 						controller = null;
+						if(model.getMode()== IJARModel.Mode.GAME){
+							model.pause();
+						}
 						continue;
 					}
 					eventQueue = controller.getEventQueue();
 					while(eventQueue.getNextEvent(event)) {
 						handleEvent(event);
 					}
-				}else if(controller==null){
+				} else if(controller == null) {
 					findController();
 				}
 
@@ -104,9 +113,9 @@ public class ControllerInput implements IJARInput {
 			if(identifier == Component.Identifier.Button._0) {
 				if(event.getValue() == 1.0) {
 					if(model.getMode() == IJARModel.Mode.GAME) {
-						java.awt.EventQueue.invokeLater(model::jump);
+						model.jump();
 					} else {
-						java.awt.EventQueue.invokeLater(model::doSelect);
+						model.doSelect();
 					}
 				}
 			} else if(identifier == Component.Identifier.Button._7) {
@@ -114,7 +123,8 @@ public class ControllerInput implements IJARInput {
 					java.awt.EventQueue.invokeLater(model::pause);
 				}
 			} else if(identifier == Component.Identifier.Button._5) {
-				java.awt.EventQueue.invokeLater(() -> model.setSneaking(Math.abs(event.getValue()) > 0.1));
+				//sometimes a bit unreliable, sometimes even analogue?
+				model.setSneaking(event.getComponent().getPollData() == 1.0);
 			} else if(identifier == Component.Identifier.Axis.POV) {
 				if(event.getValue() == Component.POV.UP) {
 					java.awt.EventQueue.invokeLater(model::up);
