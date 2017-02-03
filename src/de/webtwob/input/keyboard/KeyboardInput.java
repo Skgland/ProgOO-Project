@@ -30,6 +30,7 @@ public class KeyboardInput implements IJARInput{
 
 
 	private IJARModel model;
+	private boolean enabled = true;
 	private final LinkableAction JUMP_ACTION  = new JumpAction();
 	private final LinkableAction SNEAK_ACTION = new SneakAction();
 	private final LinkableAction PAUSE_ACTION = new PauseAction();
@@ -81,12 +82,40 @@ public class KeyboardInput implements IJARInput{
 	@Override
 	public void linkModel(IJARModel ijarm) {
   		model = ijarm;
-		JUMP_ACTION.linkModel(ijarm);
-		SNEAK_ACTION.linkModel(ijarm);
-		PAUSE_ACTION.linkModel(ijarm);
-		SELECT_ACTION.linkModel(ijarm);
-		UP_ACTION.linkModel(ijarm);
-		DOWN_ACTION.linkModel(ijarm);
+  		if(enabled){
+  			linkActions();
+	    }
+	}
+
+	private void linkActions(){
+		JUMP_ACTION.linkModel(model);
+		SNEAK_ACTION.linkModel(model);
+		PAUSE_ACTION.linkModel(model);
+		SELECT_ACTION.linkModel(model);
+		UP_ACTION.linkModel(model);
+		DOWN_ACTION.linkModel(model);
+	}
+
+	private void unlinkActions(){
+		JUMP_ACTION.linkModel(null);
+		SNEAK_ACTION.linkModel(null);
+		PAUSE_ACTION.linkModel(null);
+		SELECT_ACTION.linkModel(null);
+		UP_ACTION.linkModel(null);
+		DOWN_ACTION.linkModel(null);
+	}
+
+	@Override
+	public void setEnabled(boolean b) {
+		enabled = b;
+		if(b){
+			linkActions();
+		}
+	}
+
+	@Override
+	public boolean isEnabled() {
+		return enabled;
 	}
 
 	@Override
@@ -97,5 +126,10 @@ public class KeyboardInput implements IJARInput{
 	@Override
 	public void stop() {
 		System.out.println("Stopped KeyboardInput");
+	}
+
+	@Override
+	public String toString() {
+		return "[KeyboardInput]";
 	}
 }

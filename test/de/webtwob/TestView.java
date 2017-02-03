@@ -12,28 +12,34 @@ import java.awt.*;
 public class TestView extends JPanel implements IJARView {
 
 	private Thread userThread;
-	private volatile boolean running = true;
-	private JTextArea label = new JTextArea("Running Test!");
+	private volatile boolean   running = true;
+	private          JTextArea label   = new JTextArea("Running Test!");
 	private IJARModel model;
 
 	private void keepRunning() {
-		while(running) {
-			if(model!=null) {
-				label.setText("Running Test!:\n" + model.toString());
-				label.setMinimumSize(label.getPreferredSize());
-			}
-			synchronized(this) {
-				try {
-					wait(10);
-				}
-				catch(InterruptedException e) {
 
+		while (running) {
+			try {
+				if (model != null) {
+					label.setText("Running Test!:\n" + model.toString());
+					label.setMinimumSize(label.getPreferredSize());
 				}
+				synchronized (this) {
+					try {
+						wait(10);
+					} catch (InterruptedException e) {
+
+					}
+				}
+			} catch (Exception e) {
+				e.printStackTrace();
+				label.setText("Error!");
 			}
 		}
 	}
 
 	public TestView() {
+
 		add(label);
 		label.setEditable(false);
 		label.setFocusable(false);
@@ -43,13 +49,15 @@ public class TestView extends JPanel implements IJARView {
 
 	@Override
 	public void linkModel(IJARModel ijarm) {
+
 		model = ijarm;
 	}
 
 	@Override
 	public void start() {
+
 		running = true;
-		if(userThread == null) {
+		if (userThread == null) {
 			userThread = new Thread(this::keepRunning);
 			userThread.setName("TestView Thread");
 			userThread.start();
@@ -58,8 +66,9 @@ public class TestView extends JPanel implements IJARView {
 
 	@Override
 	public void stop() {
+
 		running = false;
-		synchronized(this) {
+		synchronized (this) {
 			notifyAll();
 		}
 		userThread = null;

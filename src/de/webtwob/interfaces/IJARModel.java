@@ -21,6 +21,8 @@ public interface IJARModel extends IJARRunable {
 		ijari.linkModel(this);
 	}
 
+	void removeInput(IJARInput ijari);
+
 	/**
 	 * @return the current mode of operation
 	 * */

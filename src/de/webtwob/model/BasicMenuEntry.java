@@ -11,6 +11,10 @@ public class BasicMenuEntry implements IMenuEntry{
 	String name;
 	boolean active;
 
+	public BasicMenuEntry(Runnable r, String n) {
+		this(r,n,true);
+	}
+
 	public BasicMenuEntry(Runnable r, String n, boolean a) {
 		run = r;
 		name = n;
@@ -30,5 +34,10 @@ public class BasicMenuEntry implements IMenuEntry{
 	@Override
 	public void executeAction() {
 		run.run();
+	}
+
+	@Override
+	public String toString() {
+		return "[Entry]: "+getText()+(getValue()!=null?" : "+getValue():"");
 	}
 }

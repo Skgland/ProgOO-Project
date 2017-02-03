@@ -32,6 +32,14 @@ public class TestModel implements IJARModel {
 	}
 
 	@Override
+	public void removeInput(IJARInput ijari) {
+		if(inputs.remove(ijari)){
+			ijari.stop();
+		}
+
+	}
+
+	@Override
 	public IJARModel.Mode getMode() {
 		return mode;
 	}

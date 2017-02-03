@@ -11,10 +11,11 @@ import java.lang.reflect.InvocationTargetException;
  */
 public class ControllerInput implements IJARInput {
 
-	private           Thread     exec;
-	private           Poller     poller;
+	private Thread exec;
+	private final Poller poller = new Poller();
 	private transient IJARModel  model;
 	private transient Controller controller;
+	private boolean enabled = true;
 
 	public ControllerInput() {
 		findController();
@@ -28,9 +29,22 @@ public class ControllerInput implements IJARInput {
 	}
 
 	@Override
+	public void setEnabled(boolean b) {
+		synchronized (poller) {
+			enabled = b;
+			poller.notifyAll();
+		}
+	}
+
+	@Override
+	public boolean isEnabled() {
+		return enabled;
+	}
+
+	@Override
 	public void start() {
-		if(exec == null) {
-			exec = new Thread(poller = new Poller());
+		if (exec == null) {
+			exec = new Thread(poller);
 			exec.setName("Controller Poller");
 			exec.start();
 		}
@@ -60,12 +74,11 @@ public class ControllerInput implements IJARInput {
 			java.lang.reflect.Constructor field = clazz.getConstructors()[0];
 			field.setAccessible(true);
 			controllerEnvironment = (ControllerEnvironment) field.newInstance();
-		}
-		catch(  IllegalAccessException | InvocationTargetException | InstantiationException e) {
+		} catch (IllegalAccessException | InvocationTargetException | InstantiationException e) {
 			e.printStackTrace();
 		}
-		for(Controller cont : controllerEnvironment.getControllers()) {
-			if(cont.getType() == Controller.Type.GAMEPAD) {
+		for (Controller cont : controllerEnvironment.getControllers()) {
+			if (cont.getType() == Controller.Type.GAMEPAD) {
 				controller = cont;
 				break;
 			}
@@ -80,36 +93,48 @@ public class ControllerInput implements IJARInput {
 		public void run() {
 			Event      event = new Event();
 			EventQueue eventQueue;
-			while(run) {
-				if(controller != null && model != null) {
-					if(!controller.poll()) {
-						controller = null;
-						if(model.getMode()== IJARModel.Mode.GAME){
-							model.pause();
+			while (run) {
+				if (enabled) {
+					if (controller != null && model != null) {
+						if (!controller.poll()) {
+							controller = null;
+							if (model.getMode() == IJARModel.Mode.GAME) {
+								model.pause();
+							}
+							continue;
 						}
-						continue;
-					}
-					eventQueue = controller.getEventQueue();
-					while(eventQueue.getNextEvent(event)) {
-						handleEvent(event);
-					}
-				} else if(controller == null) {
-					findController();
-					if(controller==null){
-						try {
-							Thread.sleep(1000);
-						} catch (InterruptedException e) {
-							e.printStackTrace();
+						eventQueue = controller.getEventQueue();
+						while (eventQueue.getNextEvent(event)) {
+							handleEvent(event);
+						}
+					} else if (controller == null) {
+						findController();
+						if (controller == null) {
+							try {
+								Thread.sleep(1000);
+							} catch (InterruptedException e) {
+								e.printStackTrace();
+							}
 						}
 					}
-				}
 
-				try {
-					java.awt.EventQueue.invokeAndWait(() -> {});
-					Thread.sleep(10);
-				}
-				catch(InterruptedException | InvocationTargetException e) {
-					e.printStackTrace();
+					try {
+						java.awt.EventQueue.invokeAndWait(() -> {
+						});
+						Thread.sleep(10);
+					} catch (InterruptedException | InvocationTargetException e) {
+						e.printStackTrace();
+					}
+				} else {
+					synchronized (poller) {
+						if (!enabled) {
+							try {
+								poller.wait();
+							} catch (InterruptedException e) {
+								e.printStackTrace();
+							}
+						}
+					}
 				}
 			}
 		}
@@ -117,25 +142,25 @@ public class ControllerInput implements IJARInput {
 		public void handleEvent(Event event) {
 			Component.Identifier identifier;
 			identifier = event.getComponent().getIdentifier();
-			if(identifier == Component.Identifier.Button._0) {
-				if(event.getValue() == 1.0) {
-					if(model.getMode() == IJARModel.Mode.GAME) {
+			if (identifier == Component.Identifier.Button._0) {
+				if (event.getValue() == 1.0) {
+					if (model.getMode() == IJARModel.Mode.GAME) {
 						model.jump();
 					} else {
 						model.doSelect();
 					}
 				}
-			} else if(identifier == Component.Identifier.Button._7) {
-				if(event.getValue() == 1.0) {
+			} else if (identifier == Component.Identifier.Button._7) {
+				if (event.getValue() == 1.0) {
 					java.awt.EventQueue.invokeLater(model::pause);
 				}
-			} else if(identifier == Component.Identifier.Button._5) {
+			} else if (identifier == Component.Identifier.Button._5) {
 				//sometimes a bit unreliable, sometimes even analogue?
 				model.setSneaking(event.getComponent().getPollData() == 1.0);
-			} else if(identifier == Component.Identifier.Axis.POV) {
-				if(event.getValue() == Component.POV.UP) {
+			} else if (identifier == Component.Identifier.Axis.POV) {
+				if (event.getValue() == Component.POV.UP) {
 					java.awt.EventQueue.invokeLater(model::up);
-				} else if(event.getValue() == Component.POV.DOWN) {
+				} else if (event.getValue() == Component.POV.DOWN) {
 					java.awt.EventQueue.invokeLater(model::down);
 				}
 			} else {
@@ -143,5 +168,9 @@ public class ControllerInput implements IJARInput {
 			}
 		}
 
+		@Override
+		public String toString() {
+			return "[ControllerInput]" + ((controller != null) ? "[Port]:" + controller.getPortNumber() : "");
+		}
 	}
 }

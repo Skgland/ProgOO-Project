@@ -22,7 +22,7 @@ public class Test {
 	public static void main(String[] tArgs) {
 		IJARInput in2;
 
-		JFrame jFrame = new JFrame();;
+		JFrame jFrame = new JFrame();
 		jFrame.setMinimumSize(new Dimension(400,200));
 		jFrame.pack();
 		jFrame.setAutoRequestFocus(true);
