@@ -95,6 +95,13 @@ public class ControllerInput implements IJARInput {
 					}
 				} else if(controller == null) {
 					findController();
+					if(controller==null){
+						try {
+							Thread.sleep(1000);
+						} catch (InterruptedException e) {
+							e.printStackTrace();
+						}
+					}
 				}
 
 				try {
