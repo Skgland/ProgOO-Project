@@ -6,6 +6,7 @@ import de.webtwob.interfaces.IJARInput;
 import de.webtwob.interfaces.IJARModel;
 import de.webtwob.interfaces.IJARView;
 import de.webtwob.model.BasicJARModel;
+import de.webtwob.view.BasicView;
 
 import javax.swing.*;
 import java.awt.*;
@@ -30,7 +31,7 @@ public class Test {
 		jFrame.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
 
 		model = new BasicJARModel();
-		view = new TestView();
+		view = new BasicView();
 		jFrame.add((Component) view);
 		input = new KeyboardInput(jFrame.getRootPane());
 
