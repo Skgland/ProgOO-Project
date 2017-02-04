@@ -73,4 +73,8 @@ public class TestView extends JPanel implements IJARView {
 		}
 		userThread = null;
 	}
+	@Override
+	public void forceUpdate() {
+
+	}
 }
