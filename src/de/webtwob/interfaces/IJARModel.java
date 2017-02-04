@@ -1,5 +1,7 @@
 package de.webtwob.interfaces;
 
+import java.util.List;
+
 /**
  * Created by BB20101997 on 31. Jan. 2017.
  *
@@ -84,10 +86,12 @@ public interface IJARModel extends IJARRunable {
 	/**+
 	 * @return returns menu entries when in menu mode else an empty array
 	 * */
-	IMenuEntry[] getMenuEntries();
+	List<IMenuEntry> getMenuEntries();
 
 	/**
 	 * @return the selected Menu Entry, default is 0
 	 * */
 	int getSelectedIndex();
+
+	void updateViews();
 }
