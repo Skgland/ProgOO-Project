@@ -4,6 +4,7 @@ import de.webtwob.interfaces.*;
 
 import java.util.ArrayList;
 import java.util.LinkedList;
+import java.util.List;
 
 /**
  * Created by BB20101997 on 02. Feb. 2017.
@@ -34,10 +35,10 @@ public class BasicJARModel implements IJARModel {
 	private final ArrayList<IJARInput> inputs        = new ArrayList<>();
 	private final ArrayList<IJARView>  views         = new ArrayList<>();
 
-	private final IMenu INPUTS_MENU = new InputMenu(inputs);
+	private final InputMenu INPUTS_MENU = new InputMenu(this);
 
 	private final IMenuEntry START = new BasicMenuEntry(
-			() -> {//
+			() -> {
 				//TODO reset game;
 				gameTime = 0;
 				mode = Mode.GAME;
@@ -46,13 +47,19 @@ public class BasicJARModel implements IJARModel {
 				}
 			}, "Start");
 
-	private final IMenuEntry QUIT = new BasicMenuEntry(() -> {
-		stop();
-		System.exit(0);
-	}, "Quit");
+	private final IMenuEntry QUIT = new BasicMenuEntry(
+			() -> {
+				stop();
+				System.exit(0);
+			}, "Quit"
+	);
 
 	private final IMenuEntry BACK = new BasicMenuEntry(
-			() -> menu = back.pop(),
+			() -> {
+				menu = back.pop();
+				selection = 0;
+				updateViews();
+			},
 			"Back"
 	);
 
@@ -69,6 +76,7 @@ public class BasicJARModel implements IJARModel {
 			() -> {
 				menu = MAIN_MENU;
 				selection = 0;
+				updateViews();
 			}, "Main Menu"
 	);
 
@@ -89,6 +97,7 @@ public class BasicJARModel implements IJARModel {
 				() -> {
 					back.addFirst(menu);
 					selection = 0;
+					updateViews();
 					menu = INPUTS_MENU;
 				}
 		);
@@ -97,6 +106,7 @@ public class BasicJARModel implements IJARModel {
 				() -> {
 					back.addFirst(menu);
 					selection = 0;
+					updateViews();
 					menu = SETTINGS_MENU;
 				}
 		);
@@ -156,6 +166,7 @@ public class BasicJARModel implements IJARModel {
 		if (running) {
 			ijari.start();
 		}
+		INPUTS_MENU.updateInputs(inputs);
 	}
 
 	public void removeInput(IJARInput ijari) {
@@ -163,6 +174,7 @@ public class BasicJARModel implements IJARModel {
 		if (inputs.remove(ijari)) {
 			ijari.stop();
 		}
+		INPUTS_MENU.updateInputs(inputs);
 	}
 
 	@Override
@@ -203,7 +215,7 @@ public class BasicJARModel implements IJARModel {
 	@Override
 	public void doSelect() {
 
-		if (mode == Mode.MENU) {
+		if (mode == Mode.MENU && selection >= 0 && selection < menu.size()) {
 			menu.get(selection).executeAction();
 		}
 	}
@@ -231,16 +243,24 @@ public class BasicJARModel implements IJARModel {
 
 	}
 
-	@Override
-	public IMenuEntry[] getMenuEntries() {
 
-		return menu.getEntries().toArray(new IMenuEntry[menu.size()]);
+	@Override
+	public List<IMenuEntry> getMenuEntries() {
+
+		return new ArrayList<>(menu.getEntries());
 	}
 
 	@Override
 	public int getSelectedIndex() {
 
 		return selection;
+	}
+	@Override
+	public void updateViews() {
+
+		for (IJARView view : views) {
+			view.forceUpdate();
+		}
 	}
 
 	@Override
