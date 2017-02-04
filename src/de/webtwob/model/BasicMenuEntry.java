@@ -30,6 +30,10 @@ public class BasicMenuEntry implements IMenuEntry{
 	public boolean isActive() {
 		return active;
 	}
+	@Override
+	public void setActive(boolean b) {
+		active = b;
+	}
 
 	@Override
 	public void executeAction() {

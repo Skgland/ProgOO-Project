@@ -15,6 +15,7 @@ public class BasicMenu implements IMenu {
 	private List<IMenuEntry> entries = new ArrayList<>();
 	private final String name;
 	private Runnable     runner;
+	private boolean active = true;
 
 	BasicMenu(String name){
 		this.name = name;
@@ -51,7 +52,11 @@ public class BasicMenu implements IMenu {
 	}
 	@Override
 	public boolean isActive() {
-		return true;
+		return active;
+	}
+	@Override
+	public void setActive(boolean b) {
+		active = true;
 	}
 	@Override
 	public void executeAction() {
