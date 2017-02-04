@@ -16,7 +16,7 @@ import static de.webtwob.input.keyboard.KeyboardInput.InputActions.*;
 /**
  * Created by BB20101997 on 31. Jan. 2017.
  */
-public class KeyboardInput implements IJARInput{
+public class KeyboardInput implements IJARInput {
 
 	enum InputActions {
 		JUMP,
@@ -30,39 +30,44 @@ public class KeyboardInput implements IJARInput{
 
 
 	private IJARModel model;
-	private boolean enabled = true;
-	private final LinkableAction JUMP_ACTION  = new JumpAction();
-	private final LinkableAction SNEAK_ACTION = new SneakAction();
-	private final LinkableAction PAUSE_ACTION = new PauseAction();
+	private       boolean        enabled       = true;
+	private final LinkableAction JUMP_ACTION   = new JumpAction();
+	private final LinkableAction SNEAK_ACTION  = new SneakAction();
+	private final LinkableAction PAUSE_ACTION  = new PauseAction();
 	private final LinkableAction SELECT_ACTION = new SelectAction();
-	private final LinkableAction UP_ACTION = new UpAction();
-	private final LinkableAction DOWN_ACTION = new DownAction();
+	private final LinkableAction UP_ACTION     = new UpAction();
+	private final LinkableAction DOWN_ACTION   = new DownAction();
 
 	public KeyboardInput(JComponent jc) {
+
 		linkToMaps(jc.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW), jc.getActionMap());
 		jc.addKeyListener(new KeyListener() {
 			@Override
 			public void keyTyped(KeyEvent e) {
+
 				System.out.println(e);
 			}
 
 			@Override
 			public void keyPressed(KeyEvent e) {
+
 				System.out.println(e);
 			}
 
 			@Override
 			public void keyReleased(KeyEvent e) {
+
 				System.out.println(e);
 			}
 		});
 	}
 
-	private void linkToMaps(@NotNull InputMap imap,@NotNull ActionMap amap){
-		ResourceBundle keys =  ResourceBundle.getBundle("de.webtwob.input.Keys");
+	private void linkToMaps(@NotNull InputMap imap, @NotNull ActionMap amap) {
+
+		ResourceBundle keys = ResourceBundle.getBundle("de.webtwob.input.Keys");
 		imap.put(KeyStroke.getKeyStroke(keys.getString("JUMP")), JUMP);
-		imap.put(KeyStroke.getKeyStroke(keys.getString("SNEAK_MOD")+" "+keys.getString("JUMP")), JUMP);
-		imap.put(KeyStroke.getKeyStroke(keys.getString("SNEAK_MOD") + " " +keys.getString("SNEAK")), SNEAK);
+		imap.put(KeyStroke.getKeyStroke(keys.getString("SNEAK_MOD") + " " + keys.getString("JUMP")), JUMP);
+		imap.put(KeyStroke.getKeyStroke(keys.getString("SNEAK_MOD") + " " + keys.getString("SNEAK")), SNEAK);
 		imap.put(KeyStroke.getKeyStroke("released " + keys.getString("SNEAK")), UN_SNEAK);
 		imap.put(KeyStroke.getKeyStroke(keys.getString("PAUSE")), PAUSE);
 
@@ -74,20 +79,22 @@ public class KeyboardInput implements IJARInput{
 		amap.put(SNEAK, SNEAK_ACTION);
 		amap.put(UN_SNEAK, SNEAK_ACTION);
 		amap.put(PAUSE, PAUSE_ACTION);
-		amap.put(SELECT,SELECT_ACTION);
-		amap.put(UP,UP_ACTION);
-		amap.put(DOWN,DOWN_ACTION);
+		amap.put(SELECT, SELECT_ACTION);
+		amap.put(UP, UP_ACTION);
+		amap.put(DOWN, DOWN_ACTION);
 	}
 
 	@Override
 	public void linkModel(IJARModel ijarm) {
-  		model = ijarm;
-  		if(enabled){
-  			linkActions();
-	    }
+
+		model = ijarm;
+		if (enabled) {
+			linkActions();
+		}
 	}
 
-	private void linkActions(){
+	private void linkActions() {
+
 		JUMP_ACTION.linkModel(model);
 		SNEAK_ACTION.linkModel(model);
 		PAUSE_ACTION.linkModel(model);
@@ -96,7 +103,8 @@ public class KeyboardInput implements IJARInput{
 		DOWN_ACTION.linkModel(model);
 	}
 
-	private void unlinkActions(){
+	private void unlinkActions() {
+
 		JUMP_ACTION.linkModel(null);
 		SNEAK_ACTION.linkModel(null);
 		PAUSE_ACTION.linkModel(null);
@@ -107,29 +115,36 @@ public class KeyboardInput implements IJARInput{
 
 	@Override
 	public void setEnabled(boolean b) {
+
 		enabled = b;
-		if(b){
+		if (b) {
 			linkActions();
+		} else {
+			unlinkActions();
 		}
 	}
 
 	@Override
 	public boolean isEnabled() {
+
 		return enabled;
 	}
 
 	@Override
 	public void start() {
+
 		System.out.println("Started KeyboardInput");
 	}
 
 	@Override
 	public void stop() {
+
 		System.out.println("Stopped KeyboardInput");
 	}
 
 	@Override
 	public String toString() {
+
 		return "[KeyboardInput]";
 	}
 }
