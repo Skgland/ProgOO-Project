@@ -1,6 +1,7 @@
 package de.webtwob.model;
 
 import de.webtwob.interfaces.IJARInput;
+import de.webtwob.interfaces.IJARModel;
 import de.webtwob.interfaces.IMenuEntry;
 
 import java.util.ArrayList;
@@ -12,33 +13,57 @@ import java.util.List;
  */
 public class InputMenu extends BasicMenu {
 
-	List<IJARInput> inputs;
-	volatile int active = 0;
+	private final IJARModel model;
+	List<IJARInput> inputs = new ArrayList<>();
+	List<InputMenuEntry> inputEntries = new ArrayList<>();
 
-	InputMenu(List<IJARInput> inputs) {
+	InputMenu(IJARModel m) {
 
 		super("Inputs");
+		model = m;
+	}
+
+	public void updateInputs(List<IJARInput> inp) {
+		inputs = new ArrayList<>(inp);
+		inputEntries.clear();
+		int active = 0;
 		for (IJARInput in : inputs) {
+			inputEntries.add(new InputMenuEntry(in));
 			if (in.isEnabled()) {
 				active++;
 			}
 		}
-		this.inputs = inputs;
+		for (InputMenuEntry ime : inputEntries) {
+			ime.setActive(active > 1);
+			ime.setModel(model);
+		}
 	}
 
 	@Override
 	public int size() {
-
-		return super.size() + inputs.size();
+		return super.size() + inputEntries.size();
 	}
 
 	@Override
 	public IMenuEntry get(int i) {
-		List<IMenuEntry> list = getInputEntries();
-		if (i < list.size()) {
-			return list.get(i);
+
+		updateActive();
+		if (i < inputEntries.size()) {
+			return inputEntries.get(i);
 		} else {
-			return super.get(i - list.size());
+			return super.get(i - inputEntries.size());
+		}
+	}
+	private void updateActive() {
+
+		int act = 0;
+		for (IJARInput ijarInput : inputs) {
+			if (ijarInput.isEnabled()) {
+				act++;
+			}
+		}
+		for (InputMenuEntry ijarInput : inputEntries) {
+			ijarInput.setActive(act > 1);
 		}
 	}
 
@@ -53,12 +78,8 @@ public class InputMenu extends BasicMenu {
 
 	private List<IMenuEntry> getInputEntries() {
 
-		List<IMenuEntry> entry = new ArrayList<>();
-
-		for (IJARInput in : inputs) {
-			//TODO
-		}
-
+		updateActive();
+		List<IMenuEntry> entry = new ArrayList<>(inputEntries);
 		return entry;
 	}
 

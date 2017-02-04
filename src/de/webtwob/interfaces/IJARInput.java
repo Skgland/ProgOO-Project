@@ -5,33 +5,6 @@ package de.webtwob.interfaces;
  */
 public interface IJARInput extends IJARLinkable, IJARRunable {
 
-	/**
-	 * @return a meue entry that enables/disables
-	 * the current input based on it's current mode
-	 */
-	default IMenuEntry getMenuEntry() {
-
-		return new IMenuEntry() {
-			@Override
-			public String getText() {
-
-				return isEnabled() ? "Enable" : "Disable" + " Input: " + toString();
-			}
-
-			@Override
-			public boolean isActive() {
-
-				return true;
-			}
-
-			@Override
-			public void executeAction() {
-
-				setEnabled(!isEnabled());
-			}
-		};
-	}
-
 	void setEnabled(boolean b);
 
 	boolean isEnabled();
