@@ -5,4 +5,6 @@ package de.webtwob.interfaces;
  */
 public interface IJARView extends IJARLinkable, IJARRunable{
 
+	void forceUpdate();
+
 }
