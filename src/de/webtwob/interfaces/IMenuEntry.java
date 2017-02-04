@@ -7,6 +7,7 @@ public interface IMenuEntry {
 
 	String getText();
 	boolean isActive();
+	void setActive(boolean b);
 	void executeAction();
 	default String getValue(){return null;}
 	default void setValue(String update){}
