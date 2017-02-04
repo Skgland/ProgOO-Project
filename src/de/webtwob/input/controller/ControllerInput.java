@@ -15,21 +15,36 @@ public class ControllerInput implements IJARInput {
 	private final Poller poller = new Poller();
 	private transient IJARModel  model;
 	private transient Controller controller;
-	private boolean enabled = true;
+	private boolean    enabled   = true;
 
 	public ControllerInput() {
+
 		findController();
+		if (controller == null) {
+			enabled = false;
+		}
 		//does not work :(
 		//ControllerEnvironment.getDefaultEnvironment().addControllerListener(new ControllerInputControllerListener(this));
 	}
 
 	@Override
 	public void linkModel(IJARModel ijarm) {
+
 		model = ijarm;
 	}
 
 	@Override
 	public void setEnabled(boolean b) {
+
+		if (enabled == b) {
+			return;
+		}
+		if (!enabled && (controller == null)) {
+			findController();
+			if (controller == null) {
+				return;
+			}
+		}
 		synchronized (poller) {
 			enabled = b;
 			poller.notifyAll();
@@ -38,11 +53,13 @@ public class ControllerInput implements IJARInput {
 
 	@Override
 	public boolean isEnabled() {
+
 		return enabled;
 	}
 
 	@Override
 	public void start() {
+
 		if (exec == null) {
 			exec = new Thread(poller);
 			exec.setName("Controller Poller");
@@ -53,20 +70,24 @@ public class ControllerInput implements IJARInput {
 
 	@Override
 	public void stop() {
+
 		poller.run = false;
 		exec = null;
 		System.out.println("Stopped ControllerInput");
 	}
 
 	public void setController(Controller c) {
+
 		controller = c;
 	}
 
 	public Controller getController() {
+
 		return controller;
 	}
 
 	public void findController() {
+
 		ControllerEnvironment controllerEnvironment = ControllerEnvironment.getDefaultEnvironment();
 		try {
 			//horrible hack to update the list of connected controllers
@@ -74,23 +95,29 @@ public class ControllerInput implements IJARInput {
 			java.lang.reflect.Constructor field = clazz.getConstructors()[0];
 			field.setAccessible(true);
 			controllerEnvironment = (ControllerEnvironment) field.newInstance();
+			for (Controller cont : controllerEnvironment.getControllers()) {
+				if (cont.getType() == Controller.Type.GAMEPAD) {
+					controller = cont;
+					break;
+				}
+			}
 		} catch (IllegalAccessException | InvocationTargetException | InstantiationException e) {
 			e.printStackTrace();
 		}
-		for (Controller cont : controllerEnvironment.getControllers()) {
-			if (cont.getType() == Controller.Type.GAMEPAD) {
-				controller = cont;
-				break;
-			}
-		}
 	}
 
+	@Override
+	public String toString() {
+
+		return "[ControllerInput]";
+	}
 	public class Poller implements Runnable {
 
 		transient boolean run = true;
 
 		@Override
 		public void run() {
+
 			Event      event = new Event();
 			EventQueue eventQueue;
 			while (run) {
@@ -140,6 +167,7 @@ public class ControllerInput implements IJARInput {
 		}
 
 		public void handleEvent(Event event) {
+
 			Component.Identifier identifier;
 			identifier = event.getComponent().getIdentifier();
 			if (identifier == Component.Identifier.Button._0) {
@@ -170,6 +198,7 @@ public class ControllerInput implements IJARInput {
 
 		@Override
 		public String toString() {
+
 			return "[ControllerInput]" + ((controller != null) ? "[Port]:" + controller.getPortNumber() : "");
 		}
 	}
