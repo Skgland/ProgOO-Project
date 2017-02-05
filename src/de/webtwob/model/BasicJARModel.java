@@ -19,6 +19,7 @@ public class BasicJARModel implements IJARModel {
 	private          double   player_y_pos      = 0;
 	private          double   player_height     = NORMAL_HEIGHT;
 	private          long     gameTime          = 0;
+	private long bonus_score = 0;
 	private          double   player_y_velocity = 0;
 	private volatile int      selection         = 0;
 	private volatile Mode     mode              = Mode.MENU;
@@ -28,7 +29,6 @@ public class BasicJARModel implements IJARModel {
 
 	private final LinkedList<IMenu> back = new LinkedList<>();
 
-	//TODO? add continue to main menu
 	private final IMenu                MAIN_MENU     = new BasicMenu("Main Menu");
 	private final IMenu                PAUSE_MENU    = new BasicMenu("Pause Menu");
 	private final IMenu                SETTINGS_MENU = new BasicMenu("Settings");
@@ -41,6 +41,9 @@ public class BasicJARModel implements IJARModel {
 			() -> {
 				//TODO reset game;
 				gameTime = 0;
+				bonus_score = 0;
+				player_y_pos = 0;
+
 				mode = Mode.GAME;
 				synchronized (BasicJARModel.this.gameLoop) {
 					BasicJARModel.this.gameLoop.notifyAll();
@@ -149,6 +152,16 @@ public class BasicJARModel implements IJARModel {
 	}
 
 	@Override
+	public long getTime() {
+
+		return gameTime;
+	}
+	@Override
+	public long getScore() {
+
+		return gameTime/10+bonus_score;
+	}
+	@Override
 	public void addView(IJARView ijarv) {
 
 		ijarv.linkModel(this);
@@ -210,6 +223,15 @@ public class BasicJARModel implements IJARModel {
 			mode = Mode.MENU;
 			menu = PAUSE_MENU;
 		}
+	}
+	@Override
+	public double getPlayerY() {
+
+		return player_y_pos;
+	}
+	@Override
+	public double getPlayerHeight() {
+		return player_height;
 	}
 
 	@Override

@@ -21,6 +21,16 @@ public class TestModel implements IJARModel {
 	private ArrayList<IJARView>  views  = new ArrayList<>();
 
 	@Override
+	public long getTime() {
+
+		return -1;
+	}
+	@Override
+	public long getScore() {
+
+		return -1;
+	}
+	@Override
 	public void addView(IJARView ijarv) {
 
 		ijarv.linkModel(this);
@@ -83,6 +93,16 @@ public class TestModel implements IJARModel {
 			mode = Mode.GAME;
 			System.out.println("Unpause");
 		}
+	}
+	@Override
+	public double getPlayerY() {
+
+		return 0;
+	}
+	@Override
+	public double getPlayerHeight() {
+
+		return 0;
 	}
 
 	@Override

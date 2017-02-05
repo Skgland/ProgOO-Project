@@ -3,9 +3,11 @@ package de.webtwob.view;
 import de.webtwob.interfaces.IJARModel;
 import de.webtwob.interfaces.IJARView;
 import de.webtwob.interfaces.IMenuEntry;
+import de.webtwob.model.GameField;
 
 import javax.swing.*;
 import javax.swing.event.ListSelectionEvent;
+import java.awt.*;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.util.ArrayList;
@@ -24,13 +26,15 @@ public class BasicView extends JPanel implements IJARView {
 	private int                          select      = -1;
 	private List<IMenuEntry>             menuEntries = new ArrayList<>();
 	private DefaultListModel<IMenuEntry> listModel   = new DefaultListModel<>();
+	private GameField            gameField = new GameField();
 
-	private JList<IMenuEntry> list = new JList<>(listModel);
+	private JList<IMenuEntry> list      = new JList<>(listModel);
 
 	public BasicView() {
 
 		list.setCellRenderer(new MenuEntryListCellRendere());
 		setVisible(true);
+		setLayout(new BorderLayout());
 		list.addListSelectionListener(
 				(ListSelectionEvent e) -> {
 					if (select != list.getSelectedIndex()) {
@@ -40,7 +44,6 @@ public class BasicView extends JPanel implements IJARView {
 					}
 				}
 		);
-
 		list.addMouseListener(new MouseListener() {
 			@Override
 			public void mouseClicked(MouseEvent e) {
@@ -65,7 +68,9 @@ public class BasicView extends JPanel implements IJARView {
 
 			}
 		});
+		setMinimumSize(getPreferredSize());
 		updateUI();
+
 	}
 
 	private final Runnable runner = this::keepAlive;
@@ -74,20 +79,23 @@ public class BasicView extends JPanel implements IJARView {
 		boolean changed;
 		while (running) {
 			try {
-				if (model != null) {
+				if (model != null&&model.getMode()!=null) {
 					changed = false;
 					if (model.getMode() == IJARModel.Mode.GAME) {
 						if (mode != IJARModel.Mode.GAME) {
 							removeAll();
-							//ADD game
+							add(gameField,BorderLayout.CENTER);
 							mode = IJARModel.Mode.GAME;
-							changed = true;
+							updateUI();
 						}
-						//TODO update game
+						gameField.run();
+						synchronized (runner) {
+							runner.wait(10);
+						}
 					} else {
 						if (mode != IJARModel.Mode.MENU) {
 							removeAll();
-							add(list);
+							add(list,BorderLayout.CENTER);
 							mode = IJARModel.Mode.MENU;
 							changed = true;
 						}
@@ -109,10 +117,11 @@ public class BasicView extends JPanel implements IJARView {
 							updateUI();
 						}
 						synchronized (runner) {
-							runner.wait(100);
+							runner.wait(10);
 						}
 					}
 				} else {
+					System.out.println(""+model+((model!=null)?model.getMode():""));
 					synchronized (runner) {
 						runner.wait(100);
 					}
@@ -133,8 +142,8 @@ public class BasicView extends JPanel implements IJARView {
 
 	@Override
 	public void linkModel(IJARModel ijarm) {
-
 		model = ijarm;
+		gameField.linkModel(model);
 	}
 
 	@Override
