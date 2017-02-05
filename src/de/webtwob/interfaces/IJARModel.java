@@ -11,6 +11,9 @@ import java.util.List;
  */
 public interface IJARModel extends IJARRunable {
 
+	long getTime();
+	long getScore();
+
 	enum Mode{
 		MENU,GAME
 	}
@@ -54,6 +57,10 @@ public interface IJARModel extends IJARRunable {
 	 * causes to game to go into the pause screen
 	 * */
 	void pause();
+
+	double getPlayerY();
+
+	double getPlayerHeight();
 
 	/*===========================================================*
 	* ===================MENU MODE ONLY==========================*
