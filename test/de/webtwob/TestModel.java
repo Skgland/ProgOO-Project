@@ -5,6 +5,7 @@ import de.webtwob.interfaces.IJARModel;
 import de.webtwob.interfaces.IJARView;
 import de.webtwob.interfaces.IMenuEntry;
 
+import java.awt.*;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -103,6 +104,11 @@ public class TestModel implements IJARModel {
 	public double getPlayerHeight() {
 
 		return 0;
+	}
+	@Override
+	public Rectangle[] getHurdels() {
+
+		return new Rectangle[0];
 	}
 
 	@Override

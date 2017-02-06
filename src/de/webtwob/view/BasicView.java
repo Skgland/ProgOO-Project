@@ -3,7 +3,6 @@ package de.webtwob.view;
 import de.webtwob.interfaces.IJARModel;
 import de.webtwob.interfaces.IJARView;
 import de.webtwob.interfaces.IMenuEntry;
-import de.webtwob.model.GameField;
 
 import javax.swing.*;
 import javax.swing.event.ListSelectionEvent;

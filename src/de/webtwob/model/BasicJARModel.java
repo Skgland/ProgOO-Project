@@ -2,8 +2,8 @@ package de.webtwob.model;
 
 import de.webtwob.interfaces.*;
 
-import java.util.ArrayList;
-import java.util.LinkedList;
+import java.awt.*;
+import java.util.*;
 import java.util.List;
 
 /**
@@ -26,14 +26,18 @@ public class BasicJARModel implements IJARModel {
 	private volatile boolean  running           = false;
 	private final    GameLoop gameLoop          = new GameLoop();
 	private Thread loop;
+	int wait = 0;
 
 	private final LinkedList<IMenu> back = new LinkedList<>();
 
 	private final IMenu                MAIN_MENU     = new BasicMenu("Main Menu");
 	private final IMenu                PAUSE_MENU    = new BasicMenu("Pause Menu");
 	private final IMenu                SETTINGS_MENU = new BasicMenu("Settings");
+	private final IMenu                GAME_OVER_MENU = new BasicMenu("Game Over");
 	private final ArrayList<IJARInput> inputs        = new ArrayList<>();
 	private final ArrayList<IJARView>  views         = new ArrayList<>();
+	private Rectangle[] rects = new Rectangle[30];
+	Random r = new Random();
 
 	private final InputMenu INPUTS_MENU = new InputMenu(this);
 
@@ -43,6 +47,7 @@ public class BasicJARModel implements IJARModel {
 				gameTime = 0;
 				bonus_score = 0;
 				player_y_pos = 0;
+				rects = new Rectangle[rects.length];
 
 				mode = Mode.GAME;
 				synchronized (BasicJARModel.this.gameLoop) {
@@ -113,6 +118,16 @@ public class BasicJARModel implements IJARModel {
 					menu = SETTINGS_MENU;
 				}
 		);
+
+		GAME_OVER_MENU.add(new BasicMenuEntry(()->{},"Score"){
+			@Override
+			public String getValue() {
+
+				return getScore()+"";
+			}
+		});
+		GAME_OVER_MENU.add(START);
+		GAME_OVER_MENU.add(GOTO_MAIN);
 
 		menu = MAIN_MENU;
 	}
@@ -233,6 +248,11 @@ public class BasicJARModel implements IJARModel {
 	public double getPlayerHeight() {
 		return player_height;
 	}
+	@Override
+	public Rectangle[] getHurdels() {
+
+		return Arrays.copyOf(rects,rects.length);
+	}
 
 	@Override
 	public void doSelect() {
@@ -315,8 +335,36 @@ public class BasicJARModel implements IJARModel {
 						player_y_pos = 0;
 					}
 
-					//TODO splayer should be stable and all hurdles should move towards the player
+					System.arraycopy(rects, 1, rects, 0, rects.length-1);
 
+					//if there was enought space since last hurdle generate new one
+					if(wait<=0&&r.nextDouble()<0.7){
+						if(r.nextDouble()<0.7){
+							rects[rects.length-1] = new Rectangle(0,0,1,r.nextInt(3)+1);
+						}else{
+							int y = r.nextInt(2)+2;
+							rects[rects.length-1] = new Rectangle(0,y,1,6-y);
+						}
+						wait = 8+r.nextInt(5);
+					}else{
+						rects[rects.length-1] = null;
+						wait--;
+					}
+
+					if(rects[1]!=null) {
+						if (player_y_pos >= rects[1].getY() && rects[1].getY() + rects[1].getHeight() > player_y_pos) {
+							//players hurt his feet at a hurdle
+							menu = GAME_OVER_MENU;
+							select(0);
+							mode = Mode.MENU;
+						}
+						if(player_y_pos+player_height>rects[1].getY()&&rects[1].getY()+rects[1].getHeight()>player_y_pos+player_height){
+							//player hurt his head at a hurdle
+							menu = GAME_OVER_MENU;
+							select(0);
+							mode = Mode.MENU;
+						}
+					}
 					try {
 						synchronized (this) {
 							this.wait(50);

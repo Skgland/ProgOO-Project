@@ -1,5 +1,6 @@
 package de.webtwob.interfaces;
 
+import java.awt.*;
 import java.util.List;
 
 /**
@@ -61,6 +62,8 @@ public interface IJARModel extends IJARRunable {
 	double getPlayerY();
 
 	double getPlayerHeight();
+
+	Rectangle[] getHurdels();
 
 	/*===========================================================*
 	* ===================MENU MODE ONLY==========================*

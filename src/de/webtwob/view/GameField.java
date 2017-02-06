@@ -1,4 +1,4 @@
-package de.webtwob.model;
+package de.webtwob.view;
 
 import de.webtwob.interfaces.IJARLinkable;
 import de.webtwob.interfaces.IJARModel;
@@ -22,10 +22,9 @@ public class GameField extends Canvas implements Runnable, IJARLinkable {
 		model = ijarm;
 	}
 
-	private Color[][] windows = new Color[29][15];
-	private double   player_y,win_player_y;
+	private double player_y, win_player_y;
 	private int[][] playerBlocks;
-	private double   player_height,win_player_height;
+	private double  player_height, win_player_height;
 	private Graphics graphics;
 	double win_height;
 	double win_width;
@@ -50,47 +49,52 @@ public class GameField extends Canvas implements Runnable, IJARLinkable {
 
 		if (model != null && bs != null) {
 			//Prepwork
-			win_width  = getWidth() / 28;
+			win_width = getWidth() / 28;
 			win_height = getHeight() / 14;
 			player_y = model.getPlayerY();
 			player_height = model.getPlayerHeight();
 
-			win_player_height = win_height*player_height;
-			win_player_y = win_height* player_y;
+			win_player_height = win_height * player_height;
+			win_player_y = win_height * player_y;
 
-			for (int x = 0; x < 29; x++) {
-				for (int y = 0; y < 15; y++) {
-					if ((x == 1) && (y >= (int)player_y+2) && (y <= (int)(player_y + player_height+2))) {
-						windows[x][y] = Color.YELLOW;
-					} else if(y==1) {
-						windows[x][y] = Color.GRAY;
-					}else {
-						windows[x][y] = Color.BLUE;
-					}
-				}
-			}
+			Rectangle[] hurdels = model.getHurdels();
 
 			//get Graphics every cycle to ensure validity
 			graphics = bs.getDrawGraphics();
 
 			//drawBackground
 			graphics.setColor(Color.BLUE);
-			graphics.fillRect(0,0,getWidth(),getHeight());
+			graphics.fillRect(0, 0, getWidth(), getHeight());
 
 			//drawFlor
 			graphics.setColor(Color.GRAY);
-			graphics.fillRect(0,getHeight()-(int)(2*win_height),getWidth(),(int)win_height);
+			graphics.fillRect(0, getHeight() - (int) (2 * win_height), getWidth(), (int) win_height);
+
+			graphics.setColor(Color.CYAN);
+			Rectangle rect;
+			for (int i = 0; i < hurdels.length; i++) {
+				if ((rect = hurdels[i]) != null) {
+					graphics.fillRect(
+							(int) ((i - 1) * win_width),
+							(int) (getHeight()-((rect.getY()+rect.getHeight()+2)*win_height)),
+							(int) (rect.getWidth() * win_width),
+							(int) (rect.getHeight() * win_height)
+					);
+				}
+			}
 
 			//drawPlayer
 			graphics.setColor(Color.YELLOW);
-			graphics.fillRect((int)win_width,getHeight()-((int)(2*win_height)+(int)(win_player_height)+(int)(win_player_y)),(int)win_width,(int)(win_player_height));
+			graphics.fillRect((int) win_width,
+			                  getHeight() - ((int) (2 * win_height) + (int) (win_player_height) + (int) (win_player_y)),
+			                  (int) win_width,
+			                  (int) (win_player_height));
 
 			graphics.setColor(Color.RED);
-			graphics.drawString("Time: "+model.getTime(),20,20);
-			graphics.drawString("Score: "+model.getScore(),20,40);
+			graphics.drawString("Time: " + model.getTime(), 20, 20);
+			graphics.drawString("Score: " + model.getScore(), 20, 40);
 
-			if (!bs.contentsLost())
-			{
+			if (!bs.contentsLost()) {
 				//display buffer
 				bs.show();
 			}
