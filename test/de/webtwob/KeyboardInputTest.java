@@ -11,31 +11,28 @@ import java.awt.*;
 import java.awt.event.KeyEvent;
 
 /**
- * Created by BB20101997 on 31. Jan. 2017.
+ * @author Bennet Blessmann
+ * Created on 31. Jan. 2017.
  */
 public class KeyboardInputTest {
 
 	private static TestModel model;
-	private static TestView  view;
-	private static IJARInput input;
-	private static JFrame    frame;
 	private static Robot     robot;
-	private static Object    waiter;
+	private static final Object WAITER = new Object();
 
 	@BeforeAll
 	public static void init() {
-		waiter = new Object();
 
 		model = new TestModel();
-		view = new TestView();
-		input = new KeyboardInput(view);
+		final TestView  view  = new TestView();
+		final IJARInput input = new KeyboardInput(view);
 
 		view.linkModel(model);
 		input.linkModel(model);
 
 		model.addView(view);
 
-		frame = new JFrame("Unit Test: KeyboardInput");
+		final JFrame frame = new JFrame("Unit Test: KeyboardInput");
 		frame.add(view);
 		frame.pack();
 		frame.setAutoRequestFocus(true);
@@ -46,16 +43,16 @@ public class KeyboardInputTest {
 			robot.setAutoWaitForIdle(true);
 			robot.setAutoDelay(10);
 		}
-		catch(AWTException e) {
+		catch(final AWTException e) {
 			e.printStackTrace();
 		}
 		while(!view.hasFocus()) {
 			try {
-				synchronized(waiter) {
-					waiter.wait(10);
+				synchronized(WAITER) {
+					WAITER.wait(10);
 				}
 			}
-			catch(InterruptedException e) {
+			catch(final InterruptedException e) {
 				e.printStackTrace();
 			}
 		}

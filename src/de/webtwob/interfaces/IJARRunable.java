@@ -1,7 +1,8 @@
 package de.webtwob.interfaces;
 
 /**
- * Created by BB20101997 on 01. Feb. 2017.
+ * @author Bennet Blessmann
+ * Created on 01. Feb. 2017.
  */
 public interface IJARRunable {
 

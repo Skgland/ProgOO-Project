@@ -10,16 +10,17 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Created by BB20101997 on 02. Feb. 2017.
+ * @author Bennet Blessmann
+ * Created on 02. Feb. 2017.
  */
 public class TestModel implements IJARModel {
 
 	public boolean jump;
 	public boolean sneak;
-	public Mode mode = Mode.GAME;
+	private Mode mode = Mode.GAME;
 
-	private ArrayList<IJARInput> inputs = new ArrayList<>();
-	private ArrayList<IJARView>  views  = new ArrayList<>();
+	private final ArrayList<IJARInput> inputs = new ArrayList<>();
+	private final ArrayList<IJARView>  views  = new ArrayList<>();
 
 	@Override
 	public long getTime() {
@@ -32,21 +33,21 @@ public class TestModel implements IJARModel {
 		return -1;
 	}
 	@Override
-	public void addView(IJARView ijarv) {
+	public void addView(final IJARView ijarv) {
 
 		ijarv.linkModel(this);
 		views.add(ijarv);
 	}
 
 	@Override
-	public void addInput(IJARInput ijari) {
+	public void addInput(final IJARInput ijari) {
 
 		ijari.linkModel(this);
 		inputs.add(ijari);
 	}
 
 	@Override
-	public void removeInput(IJARInput ijari) {
+	public void removeInput(final IJARInput ijari) {
 
 		if (inputs.remove(ijari)) {
 			ijari.stop();
@@ -70,11 +71,11 @@ public class TestModel implements IJARModel {
 	}
 
 	@Override
-	public void setSneaking(boolean bool) {
+	public void setSneaking(final boolean sneak) {
 
-		sneak = bool;
+		this.sneak = sneak;
 		if (mode == Mode.GAME) {
-			System.out.println(bool ? "Sneaking" : "Not Sneaking");
+			System.out.println(sneak ? "Sneaking" : "Not Sneaking");
 		}
 	}
 
@@ -106,7 +107,7 @@ public class TestModel implements IJARModel {
 		return 0;
 	}
 	@Override
-	public Rectangle[] getHurdels() {
+	public Rectangle[] getHurdles() {
 
 		return new Rectangle[0];
 	}
@@ -120,7 +121,7 @@ public class TestModel implements IJARModel {
 	}
 
 	@Override
-	public void select(int i) {
+	public void select(final int i) {
 
 	}
 
@@ -155,7 +156,7 @@ public class TestModel implements IJARModel {
 	@Override
 	public void updateViews() {
 
-		for (IJARView view : views) {
+		for (final IJARView view : views) {
 			view.forceUpdate();
 		}
 	}
@@ -163,10 +164,10 @@ public class TestModel implements IJARModel {
 	@Override
 	public void start() {
 
-		for (IJARView ijarView : views) {
+		for (final IJARView ijarView : views) {
 			ijarView.start();
 		}
-		for (IJARInput ijarInput : inputs) {
+		for (final IJARInput ijarInput : inputs) {
 			ijarInput.start();
 		}
 	}
@@ -174,14 +175,15 @@ public class TestModel implements IJARModel {
 	@Override
 	public void stop() {
 
-		for (IJARInput ijarInput : inputs) {
+		for (final IJARInput ijarInput : inputs) {
 			ijarInput.stop();
 		}
-		for (IJARView ijarView : views) {
+		for (final IJARView ijarView : views) {
 			ijarView.stop();
 		}
 	}
 
+	@SuppressWarnings("HardcodedLineSeparator")
 	@Override
 	public String toString() {
 

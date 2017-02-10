@@ -14,26 +14,26 @@ import java.util.List;
 public class InputMenu extends BasicMenu {
 
 	private final IJARModel model;
-	List<IJARInput> inputs = new ArrayList<>();
-	List<InputMenuEntry> inputEntries = new ArrayList<>();
+	private       List<IJARInput>      inputs       = new ArrayList<>();
+	private final List<InputMenuEntry> inputEntries = new ArrayList<>();
 
-	InputMenu(IJARModel m) {
+	InputMenu(final IJARModel model) {
 
 		super("Inputs");
-		model = m;
+		this.model = model;
 	}
 
-	public void updateInputs(List<IJARInput> inp) {
+	public void updateInputs(final List<IJARInput> inp) {
 		inputs = new ArrayList<>(inp);
 		inputEntries.clear();
 		int active = 0;
-		for (IJARInput in : inputs) {
+		for (final IJARInput in : inputs) {
 			inputEntries.add(new InputMenuEntry(in));
 			if (in.isEnabled()) {
 				active++;
 			}
 		}
-		for (InputMenuEntry ime : inputEntries) {
+		for (final InputMenuEntry ime : inputEntries) {
 			ime.setActive(active > 1);
 			ime.setModel(model);
 		}
@@ -45,7 +45,7 @@ public class InputMenu extends BasicMenu {
 	}
 
 	@Override
-	public IMenuEntry get(int i) {
+	public IMenuEntry get(final int i) {
 
 		updateActive();
 		if (i < inputEntries.size()) {
@@ -57,12 +57,12 @@ public class InputMenu extends BasicMenu {
 	private void updateActive() {
 
 		int act = 0;
-		for (IJARInput ijarInput : inputs) {
+		for (final IJARInput ijarInput : inputs) {
 			if (ijarInput.isEnabled()) {
 				act++;
 			}
 		}
-		for (InputMenuEntry ijarInput : inputEntries) {
+		for (final InputMenuEntry ijarInput : inputEntries) {
 			ijarInput.setActive(act > 1);
 		}
 	}
@@ -70,17 +70,15 @@ public class InputMenu extends BasicMenu {
 	@Override
 	public List<IMenuEntry> getEntries() {
 
-		List<IMenuEntry> entries = new ArrayList<>();
+		final List<IMenuEntry> entries = new ArrayList<>();
 		entries.addAll(getInputEntries());
 		entries.addAll(super.getEntries());
 		return entries;
 	}
 
 	private List<IMenuEntry> getInputEntries() {
-
 		updateActive();
-		List<IMenuEntry> entry = new ArrayList<>(inputEntries);
-		return entry;
+		return new ArrayList<>(inputEntries);
 	}
 
 }

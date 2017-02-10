@@ -10,7 +10,7 @@ public interface IMenu extends IMenuEntry {
 
 	void add(IMenuEntry entry,int index);
 
-	default void add(IMenuEntry entry){
+	default void add(final IMenuEntry entry){
 		add(entry,size());
 	}
 

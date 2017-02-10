@@ -5,12 +5,13 @@ import de.webtwob.interfaces.IJARModel;
 import java.awt.event.ActionEvent;
 
 /**
- * Created by BB20101997 on 02. Feb. 2017.
+ * @author Bennet Blessmann
+ * Created on 02. Feb. 2017.
  */
 public class SelectAction extends LinkableAction {
 
 	@Override
-	public void actionPerformed(ActionEvent e) {
+	public void actionPerformed(final ActionEvent e) {
 		if(model.getMode() == IJARModel.Mode.MENU) {
 			model.doSelect();
 		}

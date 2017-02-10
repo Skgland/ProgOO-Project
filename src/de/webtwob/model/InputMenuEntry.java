@@ -10,11 +10,11 @@ import de.webtwob.interfaces.IMenuEntry;
  */
 public class InputMenuEntry implements IMenuEntry {
 
-	private IJARInput in;
-	private boolean   active;
-	private IJARModel model;
+	private final IJARInput in;
+	private       boolean   active;
+	private       IJARModel model;
 
-	public InputMenuEntry(IJARInput input) {
+	public InputMenuEntry(final IJARInput input) {
 
 		in = input;
 	}
@@ -22,7 +22,7 @@ public class InputMenuEntry implements IMenuEntry {
 	@Override
 	public String getText() {
 
-		return (in.isEnabled() ? "Disable " : "Enable ") + in;
+		return (in.isEnabled() ? "Disable" : "Enable") +' '+ in;
 	}
 	@Override
 	public boolean isActive() {
@@ -30,9 +30,9 @@ public class InputMenuEntry implements IMenuEntry {
 		return active;
 	}
 	@Override
-	public void setActive(boolean b) {
+	public void setActive(final boolean active) {
 
-		active = b;
+		this.active = active;
 	}
 
 	@Override
@@ -49,7 +49,7 @@ public class InputMenuEntry implements IMenuEntry {
 
 		return getText();
 	}
-	public void setModel(IJARModel model) {
+	public void setModel(final IJARModel model) {
 
 		this.model = model;
 	}

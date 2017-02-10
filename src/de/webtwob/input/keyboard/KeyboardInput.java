@@ -6,15 +6,14 @@ import de.webtwob.interfaces.IJARInput;
 import de.webtwob.interfaces.IJARModel;
 
 import javax.swing.*;
-import java.awt.event.KeyEvent;
-import java.awt.event.KeyListener;
 import java.util.ResourceBundle;
 
 import static de.webtwob.input.keyboard.KeyboardInput.InputActions.*;
 
 
 /**
- * Created by BB20101997 on 31. Jan. 2017.
+ * @author Bennet Blessmann
+ * Created on 31. Jan. 2017.
  */
 public class KeyboardInput implements IJARInput {
 
@@ -38,33 +37,17 @@ public class KeyboardInput implements IJARInput {
 	private final LinkableAction UP_ACTION     = new UpAction();
 	private final LinkableAction DOWN_ACTION   = new DownAction();
 
-	public KeyboardInput(JComponent jc) {
+	public KeyboardInput(final JComponent jc) {
 
 		linkToMaps(jc.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW), jc.getActionMap());
-		jc.addKeyListener(new KeyListener() {
-			@Override
-			public void keyTyped(KeyEvent e) {
-
-				System.out.println(e);
-			}
-
-			@Override
-			public void keyPressed(KeyEvent e) {
-
-				System.out.println(e);
-			}
-
-			@Override
-			public void keyReleased(KeyEvent e) {
-
-				System.out.println(e);
-			}
-		});
 	}
 
-	private void linkToMaps(@NotNull InputMap imap, @NotNull ActionMap amap) {
+	/**
+	 * inserts the necessary key-value pairs into the InputMap and the ActionMap
+	 * */
+	private void linkToMaps(@NotNull final InputMap imap, @NotNull final ActionMap amap) {
 
-		ResourceBundle keys = ResourceBundle.getBundle("de.webtwob.input.Keys");
+		final ResourceBundle keys = ResourceBundle.getBundle("de.webtwob.input.Keys");
 		imap.put(KeyStroke.getKeyStroke(keys.getString("JUMP")), JUMP);
 		imap.put(KeyStroke.getKeyStroke(keys.getString("SNEAK_MOD") + " " + keys.getString("JUMP")), JUMP);
 		imap.put(KeyStroke.getKeyStroke(keys.getString("SNEAK_MOD") + " " + keys.getString("SNEAK")), SNEAK);
@@ -85,7 +68,7 @@ public class KeyboardInput implements IJARInput {
 	}
 
 	@Override
-	public void linkModel(IJARModel ijarm) {
+	public void linkModel(final IJARModel ijarm) {
 
 		model = ijarm;
 		if (enabled) {
@@ -114,10 +97,10 @@ public class KeyboardInput implements IJARInput {
 	}
 
 	@Override
-	public void setEnabled(boolean b) {
+	public void setEnabled(final boolean enable) {
 
-		enabled = b;
-		if (b) {
+		enabled = enable;
+		if (enable) {
 			linkActions();
 		} else {
 			unlinkActions();

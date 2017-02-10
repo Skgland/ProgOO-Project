@@ -3,22 +3,19 @@ package de.webtwob.model;
 import de.webtwob.interfaces.IMenuEntry;
 
 /**
- * Created by BB20101997 on 02. Feb. 2017.
+ * @author Bennet Blessmann
+ * Created on 02. Feb. 2017.
  */
 public class BasicMenuEntry implements IMenuEntry{
 
-	Runnable run;
-	String name;
-	boolean active;
+	private final Runnable run;
+	private final String   name;
+	private       boolean  active;
 
-	public BasicMenuEntry(Runnable r, String n) {
-		this(r,n,true);
-	}
-
-	public BasicMenuEntry(Runnable r, String n, boolean a) {
+	public BasicMenuEntry(final Runnable r, final String title) {
 		run = r;
-		name = n;
-		active = a;
+		name = title;
+		active = true;
 	}
 
 	@Override
@@ -31,8 +28,8 @@ public class BasicMenuEntry implements IMenuEntry{
 		return active;
 	}
 	@Override
-	public void setActive(boolean b) {
-		active = b;
+	public void setActive(final boolean active) {
+		this.active = active;
 	}
 
 	@Override
@@ -42,6 +39,7 @@ public class BasicMenuEntry implements IMenuEntry{
 
 	@Override
 	public String toString() {
+		//noinspection StringConcatenationMissingWhitespace
 		return "[Entry]: "+getText()+(getValue()!=null?" : "+getValue():"");
 	}
 }

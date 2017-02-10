@@ -7,17 +7,19 @@ import javax.swing.*;
 
 /**
  * Created by BB20101997 on 31. Jan. 2017.
+ *
+ * A LinkableAction is an Action that can be linked to a model
  */
 public abstract class LinkableAction extends AbstractAction implements IJARLinkable {
 
-	protected volatile IJARModel model;
+	volatile IJARModel model;
 
-	public LinkableAction(){
+	LinkableAction(){
 		setEnabled(false);
 	}
 
 	@Override
-	public void linkModel(IJARModel ijarm) {
+	public void linkModel(final IJARModel ijarm) {
 		model = ijarm;
 		setEnabled(model!=null);
 	}

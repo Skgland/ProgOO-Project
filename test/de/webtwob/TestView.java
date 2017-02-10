@@ -7,13 +7,14 @@ import javax.swing.*;
 import java.awt.*;
 
 /**
- * Created by BB20101997 on 02. Feb. 2017.
+ * @author Bennet Blessmann
+ * Created on 02. Feb. 2017.
  */
 public class TestView extends JPanel implements IJARView {
 
 	private Thread userThread;
 	private volatile boolean   running = true;
-	private          JTextArea label   = new JTextArea("Running Test!");
+	private final    JTextArea label   = new JTextArea("Running Test!");
 	private IJARModel model;
 
 	private void keepRunning() {
@@ -21,17 +22,17 @@ public class TestView extends JPanel implements IJARView {
 		while (running) {
 			try {
 				if (model != null) {
+					//noinspection HardcodedLineSeparator
 					label.setText("Running Test!:\n" + model.toString());
 					label.setMinimumSize(label.getPreferredSize());
 				}
 				synchronized (this) {
 					try {
 						wait(10);
-					} catch (InterruptedException e) {
-
+					} catch (final InterruptedException ignore) {
 					}
 				}
-			} catch (Exception e) {
+			} catch (final Exception e) {
 				e.printStackTrace();
 				label.setText("Error!");
 			}
@@ -48,7 +49,7 @@ public class TestView extends JPanel implements IJARView {
 	}
 
 	@Override
-	public void linkModel(IJARModel ijarm) {
+	public void linkModel(final IJARModel ijarm) {
 
 		model = ijarm;
 	}

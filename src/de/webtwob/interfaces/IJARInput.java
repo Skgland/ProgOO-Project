@@ -1,15 +1,16 @@
 package de.webtwob.interfaces;
 
 /**
- * Created by BB20101997 on 31. Jan. 2017.
+ * @author Bennet Blessmann
+ * Created on 31. Jan. 2017.
  */
 public interface IJARInput extends IJARLinkable, IJARRunable {
 
-	void setEnabled(boolean b);
+	void setEnabled(boolean enable);
 
 	boolean isEnabled();
 
-	//inputs are not activly polling by default
+	//inputs are not actively polling by default
 	default void start() {
 
 	}

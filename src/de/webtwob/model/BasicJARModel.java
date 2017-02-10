@@ -7,7 +7,8 @@ import java.util.*;
 import java.util.List;
 
 /**
- * Created by BB20101997 on 02. Feb. 2017.
+ * @author Bennet Blessmann
+ * Created on 02. Feb. 2017.
  */
 public class BasicJARModel implements IJARModel {
 
@@ -15,38 +16,80 @@ public class BasicJARModel implements IJARModel {
 	private static final double NORMAL_HEIGHT = 4;
 	private static final double JUMP_VELOCITY = 2;
 
-	private volatile IMenu menu;
+	/**
+	 * The Players Y Position
+	 * */
 	private          double   player_y_pos      = 0;
-	private          double   player_height     = NORMAL_HEIGHT;
-	private          long     gameTime          = 0;
-	private long bonus_score = 0;
-	private          double   player_y_velocity = 0;
-	private volatile int      selection         = 0;
-	private volatile Mode     mode              = Mode.MENU;
-	private volatile boolean  running           = false;
-	private final    GameLoop gameLoop          = new GameLoop();
-	private Thread loop;
-	int wait = 0;
 
+	/**
+	 * The Players Height
+	 * */
+	private          double   player_height     = NORMAL_HEIGHT;
+
+	/**
+	 * The Players vertical velocity
+	 * */
+	private double player_y_velocity;
+
+	/**
+	 * The GameCycles since the game was started
+	 * */
+	private          long     gameTime          = 0;
+
+	/**
+	 * All additionally score not resulting from survival time
+	 * */
+	private long bonus_score = 0;
+	/**
+	 * The current menu
+	 * */
+	private volatile IMenu menu;
+	/**
+	 * The currently selected menu item
+	 * */
+	private volatile int      selection         = 0;
+
+	/**
+	 * The current mode of the Model
+	 * GAME if currently a game is running
+	 * MENU if we are currently in the menu
+	 * */
+	private volatile Mode     mode              = Mode.MENU;
+
+	/**
+	 * Has the Model been started
+	 * */
+	private volatile boolean  running           = false;
+
+	/**
+	 * contains the update logic runnable
+	 * */
+	private final    GameLoop gameLoop          = new GameLoop();
+
+	/**
+	 * The Thread running gameLoop
+	 * */
+	private Thread loop;
 	private final LinkedList<IMenu> back = new LinkedList<>();
 
 	private final IMenu                MAIN_MENU     = new BasicMenu("Main Menu");
-	private final IMenu                PAUSE_MENU    = new BasicMenu("Pause Menu");
-	private final IMenu                SETTINGS_MENU = new BasicMenu("Settings");
-	private final IMenu                GAME_OVER_MENU = new BasicMenu("Game Over");
-	private final ArrayList<IJARInput> inputs        = new ArrayList<>();
-	private final ArrayList<IJARView>  views         = new ArrayList<>();
-	private Rectangle[] rects = new Rectangle[30];
-	Random r = new Random();
 
-	private final InputMenu INPUTS_MENU = new InputMenu(this);
+	private final IMenu                PAUSE_MENU     = new BasicMenu("Pause Menu");
+	private final IMenu                SETTINGS_MENU  = new BasicMenu("Settings");
+	private final IMenu                GAME_OVER_MENU = new BasicMenu("Game Over");
+	private final ArrayList<IJARInput> inputs         = new ArrayList<>();
+	private final ArrayList<IJARView>  views          = new ArrayList<>();
+	@SuppressWarnings("SpellCheckingInspection")
+	private       Rectangle[]          rects          = new Rectangle[30];
+	private final Random               r              = new Random();
+	private final InputMenu            INPUTS_MENU    = new InputMenu(this);
 
 	private final IMenuEntry START = new BasicMenuEntry(
 			() -> {
-				//TODO reset game;
 				gameTime = 0;
 				bonus_score = 0;
 				player_y_pos = 0;
+				player_y_velocity = 0;
 				rects = new Rectangle[rects.length];
 
 				mode = Mode.GAME;
@@ -144,24 +187,23 @@ public class BasicJARModel implements IJARModel {
 			}
 			loop.start();
 		}
-		for (IJARInput ijarInput : inputs) {
+		for (final IJARInput ijarInput : inputs) {
 			ijarInput.start();
 		}
-		for (IJARView ijarView : views) {
+		for (final IJARView ijarView : views) {
 			ijarView.start();
 		}
 	}
 
 	@Override
 	public void stop() {
-
 		running = false;
 		mode = Mode.MENU;
 		loop = null;
-		for (IJARInput ijarInput : inputs) {
+		for (final IJARInput ijarInput : inputs) {
 			ijarInput.stop();
 		}
-		for (IJARView ijarView : views) {
+		for (final IJARView ijarView : views) {
 			ijarView.stop();
 		}
 	}
@@ -171,13 +213,14 @@ public class BasicJARModel implements IJARModel {
 
 		return gameTime;
 	}
+
 	@Override
 	public long getScore() {
 
 		return gameTime/10+bonus_score;
 	}
 	@Override
-	public void addView(IJARView ijarv) {
+	public void addView(final IJARView ijarv) {
 
 		ijarv.linkModel(this);
 		views.add(ijarv);
@@ -185,9 +228,8 @@ public class BasicJARModel implements IJARModel {
 			ijarv.start();
 		}
 	}
-
 	@Override
-	public void addInput(IJARInput ijari) {
+	public void addInput(final IJARInput ijari) {
 
 		ijari.linkModel(this);
 		inputs.add(ijari);
@@ -197,7 +239,7 @@ public class BasicJARModel implements IJARModel {
 		INPUTS_MENU.updateInputs(inputs);
 	}
 
-	public void removeInput(IJARInput ijari) {
+	public void removeInput(final IJARInput ijari) {
 
 		if (inputs.remove(ijari)) {
 			ijari.stop();
@@ -220,9 +262,9 @@ public class BasicJARModel implements IJARModel {
 	}
 
 	@Override
-	public void setSneaking(boolean bool) {
+	public void setSneaking(final boolean sneak) {
 
-		player_height = bool ? SNEAK_HEIGHT : NORMAL_HEIGHT;
+		player_height = sneak ? SNEAK_HEIGHT : NORMAL_HEIGHT;
 	}
 
 	@Override
@@ -239,6 +281,7 @@ public class BasicJARModel implements IJARModel {
 			menu = PAUSE_MENU;
 		}
 	}
+
 	@Override
 	public double getPlayerY() {
 
@@ -248,22 +291,24 @@ public class BasicJARModel implements IJARModel {
 	public double getPlayerHeight() {
 		return player_height;
 	}
+
 	@Override
-	public Rectangle[] getHurdels() {
+	public Rectangle[] getHurdles() {
 
 		return Arrays.copyOf(rects,rects.length);
 	}
-
 	@Override
 	public void doSelect() {
 
 		if (mode == Mode.MENU && selection >= 0 && selection < menu.size()) {
-			menu.get(selection).executeAction();
+			final IMenuEntry ime = menu.get(selection);
+			//noinspection LawOfDemeter
+			ime.executeAction();
 		}
 	}
 
 	@Override
-	public void select(int i) {
+	public void select(final int i) {
 
 		selection = i;
 	}
@@ -285,42 +330,44 @@ public class BasicJARModel implements IJARModel {
 
 	}
 
-
 	@Override
 	public List<IMenuEntry> getMenuEntries() {
 
 		return new ArrayList<>(menu.getEntries());
 	}
 
+
 	@Override
 	public int getSelectedIndex() {
 
 		return selection;
 	}
+
 	@Override
 	public void updateViews() {
 
-		for (IJARView view : views) {
+		for (final IJARView view : views) {
 			view.forceUpdate();
 		}
 	}
-
+	@SuppressWarnings("HardcodedLineSeparator")
 	@Override
 	public String toString() {
 
-		StringBuilder sb = new StringBuilder();
-		sb.append("[BasicJARModel]:\n");
-		sb.append("\t[Mode]: ").append(mode).append('\n');
-		sb.append("\t").append(menu).append('\n');
-		sb.append("\t[Selection]: ").append(selection).append(":");
-		sb.append(menu.get(selection)).append("\n");
-		sb.append("\t[Sneaking]: ").append(isSneaking()).append("\n");
-		sb.append("\t[Player-Y]: ").append(player_y_pos).append("\n");
-		sb.append("\t[Time]: ").append(gameTime).append("\n");
-		return sb.toString();
+		String sb = "[BasicJARModel]:\n" +
+				"\t[Mode]: " + mode + '\n' +
+				"\t" + menu + '\n' +
+				"\t[Selection]: " + selection + ":" +
+				menu.get(selection) + "\n" +
+				"\t[Sneaking]: " + isSneaking() + "\n" +
+				"\t[Player-Y]: " + player_y_pos + "\n" +
+				"\t[Time]: " + gameTime + "\n";
+		return sb;
 	}
 
 	private class GameLoop implements Runnable {
+
+		int wait = 0;
 
 		public void run() {
 
@@ -337,16 +384,17 @@ public class BasicJARModel implements IJARModel {
 
 					System.arraycopy(rects, 1, rects, 0, rects.length-1);
 
-					//if there was enought space since last hurdle generate new one
+					//if there was enough space since last hurdle generate new one
 					if(wait<=0&&r.nextDouble()<0.7){
 						if(r.nextDouble()<0.7){
 							rects[rects.length-1] = new Rectangle(0,0,1,r.nextInt(3)+1);
 						}else{
-							int y = r.nextInt(2)+2;
+							final int y = r.nextInt(2)+2;
 							rects[rects.length-1] = new Rectangle(0,y,1,6-y);
 						}
 						wait = 8+r.nextInt(5);
 					}else{
+						//noinspection AssignmentToNull
 						rects[rects.length-1] = null;
 						wait--;
 					}
@@ -367,17 +415,18 @@ public class BasicJARModel implements IJARModel {
 					}
 					try {
 						synchronized (this) {
-							this.wait(50);
+							gameLoop.wait(50);
 						}
-					} catch (InterruptedException e) {
+					} catch (final InterruptedException e) {
 						e.printStackTrace();
 					}
 				}
+				wait = 0;
 				try {
 					synchronized (this) {
 						this.wait();
 					}
-				} catch (InterruptedException e) {
+				} catch (final InterruptedException e) {
 					e.printStackTrace();
 				}
 			}

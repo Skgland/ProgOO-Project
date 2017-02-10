@@ -12,17 +12,17 @@ import java.util.List;
  */
 public class BasicMenu implements IMenu {
 
-	private List<IMenuEntry> entries = new ArrayList<>();
+	private final List<IMenuEntry> entries = new ArrayList<>();
 	private final String name;
 	private Runnable     runner;
 	private boolean active = true;
 
-	BasicMenu(String name){
+	BasicMenu(final String name){
 		this.name = name;
 	}
 
 	@Override
-	public void add(IMenuEntry entry, int index) {
+	public void add(final IMenuEntry entry, final int index) {
 			entries.add(index,entry);
 	}
 
@@ -32,7 +32,7 @@ public class BasicMenu implements IMenu {
 	}
 
 	@Override
-	public IMenuEntry get(int i) {
+	public IMenuEntry get(final int i) {
 		return entries.get(i);
 	}
 
@@ -42,7 +42,7 @@ public class BasicMenu implements IMenu {
 	}
 
 	@Override
-	public void setAction(Runnable r) {
+	public void setAction(final Runnable r) {
 		runner = r;
 	}
 
@@ -55,8 +55,8 @@ public class BasicMenu implements IMenu {
 		return active;
 	}
 	@Override
-	public void setActive(boolean b) {
-		active = true;
+	public void setActive(final boolean active) {
+		this.active = true;
 	}
 	@Override
 	public void executeAction() {

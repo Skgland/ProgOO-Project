@@ -12,22 +12,15 @@ import java.awt.image.BufferStrategy;
  */
 public class GameField extends Canvas implements Runnable, IJARLinkable {
 
-	BufferStrategy bs;
-
+	private BufferStrategy bs;
 	private IJARModel model;
 
 	@Override
-	public void linkModel(IJARModel ijarm) {
+	public void linkModel(final IJARModel ijarm) {
 
 		model = ijarm;
 	}
 
-	private double player_y, win_player_y;
-	private int[][] playerBlocks;
-	private double  player_height, win_player_height;
-	private Graphics graphics;
-	double win_height;
-	double win_width;
 	public GameField() {
 
 		setBackground(Color.BLUE);
@@ -48,19 +41,20 @@ public class GameField extends Canvas implements Runnable, IJARLinkable {
 	public void run() {
 
 		if (model != null && bs != null) {
-			//Prepwork
-			win_width = getWidth() / 28;
-			win_height = getHeight() / 14;
-			player_y = model.getPlayerY();
-			player_height = model.getPlayerHeight();
+			//Preparation work
+			final double win_width  = getWidth() / 28;
+			final double win_height = getHeight() / 14;
 
-			win_player_height = win_height * player_height;
-			win_player_y = win_height * player_y;
+			final double player_y      = model.getPlayerY();
+			final double player_height = model.getPlayerHeight();
 
-			Rectangle[] hurdels = model.getHurdels();
+			final double win_player_height = win_height * player_height;
+			final double win_player_y      = win_height * player_y;
+
+			final Rectangle[] hurdles = model.getHurdles();
 
 			//get Graphics every cycle to ensure validity
-			graphics = bs.getDrawGraphics();
+			final Graphics graphics = bs.getDrawGraphics();
 
 			//drawBackground
 			graphics.setColor(Color.BLUE);
@@ -72,11 +66,12 @@ public class GameField extends Canvas implements Runnable, IJARLinkable {
 
 			graphics.setColor(Color.CYAN);
 			Rectangle rect;
-			for (int i = 0; i < hurdels.length; i++) {
-				if ((rect = hurdels[i]) != null) {
+			for (int i = 0; i < hurdles.length; i++) {
+				rect = hurdles[i];
+				if (rect != null) {
 					graphics.fillRect(
 							(int) ((i - 1) * win_width),
-							(int) (getHeight()-((rect.getY()+rect.getHeight()+2)*win_height)),
+							(int) (getHeight() - ((rect.getY() + rect.getHeight() + 2) * win_height)),
 							(int) (rect.getWidth() * win_width),
 							(int) (rect.getHeight() * win_height)
 					);
@@ -85,10 +80,12 @@ public class GameField extends Canvas implements Runnable, IJARLinkable {
 
 			//drawPlayer
 			graphics.setColor(Color.YELLOW);
-			graphics.fillRect((int) win_width,
-			                  getHeight() - ((int) (2 * win_height) + (int) (win_player_height) + (int) (win_player_y)),
-			                  (int) win_width,
-			                  (int) (win_player_height));
+			graphics.fillRect(
+					(int) win_width,
+					getHeight() - ((int) (2 * win_height) + (int) (win_player_height) + (int) (win_player_y)),
+					(int) win_width,
+					(int) (win_player_height)
+			);
 
 			graphics.setColor(Color.RED);
 			graphics.drawString("Time: " + model.getTime(), 20, 20);
@@ -99,10 +96,14 @@ public class GameField extends Canvas implements Runnable, IJARLinkable {
 				bs.show();
 			}
 			Toolkit.getDefaultToolkit().sync();
-			if (graphics != null) {
-				//dispose of graphics
-				graphics.dispose();
-			}
+			//dispose of graphics
+			graphics.dispose();
 		}
+	}
+
+	@Override
+	public String toString() {
+
+		return "A GameField Object";
 	}
 }

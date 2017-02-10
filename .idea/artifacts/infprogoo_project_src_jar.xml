@@ -1,0 +1,8 @@
+<component name="ArtifactManager">
+  <artifact type="jar" build-on-make="true" name="infprogoo-project-src:jar">
+    <output-path>$PROJECT_DIR$/out/artifacts/infprogoo_project_src_jar</output-path>
+    <root id="archive" name="infprogoo-project-src.jar">
+      <element id="dir-copy" path="$PROJECT_DIR$/src" />
+    </root>
+  </artifact>
+</component>

@@ -13,69 +13,113 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Created by BB20101997 on 31. Jan. 2017.
+ * @author Bennet Blessmann
+ * Created on 31. Jan. 2017.
  */
 public class BasicView extends JPanel implements IJARView {
 
+	/**
+	 * The linked Model
+	 * */
 	private          IJARModel model;
-	private          Thread    exec;
-	private volatile boolean   running;
-	private final Object waiter = new Object();
-	private IJARModel.Mode               mode        = null;
-	private int                          select      = -1;
-	private List<IMenuEntry>             menuEntries = new ArrayList<>();
-	private DefaultListModel<IMenuEntry> listModel   = new DefaultListModel<>();
-	private GameField            gameField = new GameField();
 
-	private JList<IMenuEntry> list      = new JList<>(listModel);
+	/**
+	 * The thread to update this view
+	 * */
+	private          Thread    exec;
+
+	/**
+	 * if exec should continue running
+	 * */
+	private volatile boolean   running;
+
+	/**
+	 * Used to synchronise on
+	 * */
+	private final Object waiter = new Object();
+
+	/**
+	 * Used to store the latest selected value so we only update on change
+	 * */
+	private int                          select      = -1;
+
+	/**
+	 * Stores the currently in use menuEntries
+	 * */
+	private List<IMenuEntry>             menuEntries = new ArrayList<>();
+
+	/**
+	 * Stores the used listModel
+	 * */
+	private final DefaultListModel<IMenuEntry> listModel = new DefaultListModel<>();
+
+	/**
+	 * Stores the reused GameField
+	 * */
+	private final GameField gameField = new GameField();
+
+	@Override
+	public String toString() {
+		return "BasicView "+(model!=null?"linked to "+model:"not linked to a Model.");
+	}
+
+	/**
+	 * Stores the re-used JList
+	 * */
+	private final JList<IMenuEntry> list = new JList<>(listModel);
 
 	public BasicView() {
 
-		list.setCellRenderer(new MenuEntryListCellRendere());
-		setVisible(true);
+		//set the cell renderer for the list to our cell renderer
+		list.setCellRenderer(new MenuEntryListCellRenderer());
 		setLayout(new BorderLayout());
+
+		//add a SelectionListener to update the model when the user selects an entry via the GUI
 		list.addListSelectionListener(
 				(ListSelectionEvent e) -> {
 					if (select != list.getSelectedIndex()) {
+						//stop the update thread from undoing the change be for it is submitted
 						synchronized (waiter) {
-							model.select(select = list.getSelectedIndex());
+							select = list.getSelectedIndex();
+							model.select(select);
 						}
 					}
 				}
 		);
+		setMinimumSize(getPreferredSize());
+		//to make the buttons in the list "work"
 		list.addMouseListener(new MouseListener() {
 			@Override
-			public void mouseClicked(MouseEvent e) {
-				int       index = list.locationToIndex(e.getPoint());
-				listModel.getElementAt(index).executeAction();
+			public void mouseClicked(final MouseEvent e) {
+				listModel.getElementAt(list.locationToIndex(e.getPoint())).executeAction();
 			}
 
 			@Override
-			public void mousePressed(MouseEvent e) {
+			public void mousePressed(final MouseEvent e) {
 
 			}
 			@Override
-			public void mouseReleased(MouseEvent e) {
+			public void mouseReleased(final MouseEvent e) {
 
 			}
 			@Override
-			public void mouseEntered(MouseEvent e) {
+			public void mouseEntered(final MouseEvent e) {
 
 			}
 			@Override
-			public void mouseExited(MouseEvent e) {
+			public void mouseExited(final MouseEvent e) {
 
 			}
 		});
-		setMinimumSize(getPreferredSize());
+		setVisible(true);
 		updateUI();
-
 	}
 
 	private final Runnable runner = this::keepAlive;
 
 	private void keepAlive() {
-		boolean changed;
+		boolean        changed;
+		IJARModel.Mode mode = null;
 		while (running) {
 			try {
 				if (model != null&&model.getMode()!=null) {
@@ -103,6 +147,7 @@ public class BasicView extends JPanel implements IJARView {
 							changed = true;
 						}
 						if (select != model.getSelectedIndex()) {
+							// w/o synchronize would override clicks by the user
 							synchronized (waiter) {
 								select = model.getSelectedIndex();
 							}
@@ -120,13 +165,18 @@ public class BasicView extends JPanel implements IJARView {
 						}
 					}
 				} else {
-					System.out.println(""+model+((model!=null)?model.getMode():""));
 					synchronized (runner) {
 						runner.wait(100);
 					}
 				}
-			} catch (InterruptedException ignored) {
-			} catch (Exception e) {
+			} catch (final InterruptedException ignored) {
+				//expected from the waits
+			} catch (final Exception e) {
+				/*
+				 * probably missed a null check
+				 * still the view should just keep updating
+				 * no matter what happens
+				*/
 				e.printStackTrace();
 			}
 		}
@@ -134,20 +184,22 @@ public class BasicView extends JPanel implements IJARView {
 	private void menuChanged() {
 		menuEntries = model.getMenuEntries();
 		listModel.clear();
-		for (IMenuEntry ime : menuEntries) {
+		for (final IMenuEntry ime : menuEntries) {
 			listModel.addElement(ime);
 		}
 	}
 
 	@Override
-	public void linkModel(IJARModel ijarm) {
+	public void linkModel(final IJARModel ijarm) {
 		model = ijarm;
 		gameField.linkModel(model);
 	}
 
+	/**
+	 * Start the update Thread
+	 * */
 	@Override
 	public void start() {
-
 		if (exec == null) {
 			running = true;
 			exec = new Thread(runner);
@@ -156,15 +208,28 @@ public class BasicView extends JPanel implements IJARView {
 		}
 	}
 
+	/**
+	 * stop the update Thread
+	 * */
 	@Override
 	public void stop() {
 		running = false;
 		synchronized (runner) {
 			runner.notifyAll();
 		}
+		try {
+			//wait for the thread to yield
+			exec.join();
+		} catch (final InterruptedException ignore) {
+		}
 		exec = null;
 	}
 
+	/**
+	 * handel a forced update
+	 * usually when a MenuEntry changes it's Text
+	 * to get the view to update
+	 * */
 	@Override
 	public void forceUpdate() {
 		updateUI();

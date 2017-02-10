@@ -19,11 +19,11 @@ public interface IJARModel extends IJARRunable {
 		MENU,GAME
 	}
 
-	default void addView(IJARView ijarv){
+	default void addView(final IJARView ijarv){
 		ijarv.linkModel(this);
 	}
 
-	default void addInput(IJARInput ijari){
+	default void addInput(final IJARInput ijari){
 		ijari.linkModel(this);
 	}
 
@@ -45,9 +45,9 @@ public interface IJARModel extends IJARRunable {
 
 	/**
 	 * Set if the Character is sneaking
-	 * @param bool true for sneaking, false for not sneaking
+	 * @param sneak true for sneaking, false for not sneaking
 	 * */
-	void setSneaking(boolean bool);
+	void setSneaking(boolean sneak);
 
 	/**
 	 *@return if the player is sneaking, if not in GAME false
@@ -63,7 +63,7 @@ public interface IJARModel extends IJARRunable {
 
 	double getPlayerHeight();
 
-	Rectangle[] getHurdels();
+	Rectangle[] getHurdles();
 
 	/*===========================================================*
 	* ===================MENU MODE ONLY==========================*
