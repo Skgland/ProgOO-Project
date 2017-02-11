@@ -7,6 +7,7 @@ import de.webtwob.interfaces.IJARModel;
 import de.webtwob.interfaces.IJARView;
 import de.webtwob.model.BasicJARModel;
 import de.webtwob.view.BasicView;
+import de.webtwob.view.lighthouse.LightHouseView;
 
 import javax.swing.*;
 import java.awt.*;
@@ -24,6 +25,7 @@ public class Main {
 
 		final IJARModel model = new BasicJARModel();
 		final IJARView  view  = new BasicView();
+		final IJARView  viewLH = new LightHouseView();
 		final IJARInput in2;
 		IJARInput       in;
 
@@ -50,6 +52,7 @@ public class Main {
 
 		//add all to the model
 		model.addView(view);
+		model.addView(viewLH);
 		model.addInput(input);
 
 		if(in2!=null) {
