@@ -13,28 +13,24 @@ import java.awt.image.BufferStrategy;
 public class GameField extends Canvas implements Runnable, IJARLinkable {
 
 	private BufferStrategy bs;
-	private IJARModel model;
-
-	@Override
-	public void linkModel(final IJARModel ijarm) {
-
-		model = ijarm;
-	}
+	private IJARModel      model;
 
 	public GameField() {
 
 		setBackground(Color.BLUE);
 		setIgnoreRepaint(true);
 	}
+	@Override
+	public void linkModel(final IJARModel ijarm) {
 
+		model = ijarm;
+	}
 	@Override
 	public void addNotify() {
 
 		super.addNotify();
-		if (bs == null) {
-			createBufferStrategy(2);
-			bs = getBufferStrategy();
-		}
+		createBufferStrategy(2);
+		bs = getBufferStrategy();
 	}
 
 	@Override
