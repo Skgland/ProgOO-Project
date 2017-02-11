@@ -53,7 +53,7 @@ public class LighthouseNetwork {
 		sock = new Socket(hostname, port);
 		final OutputStream stream = sock.getOutputStream();
 		stream.write(("POST /LH\r\n").getBytes());
-		stream.write(("a: b\r\ns\r\n").getBytes());
+		stream.write(("a: b\r\n\r\n").getBytes());
 		stream.flush();
 	}
 
