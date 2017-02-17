@@ -8,6 +8,8 @@ import org.junit.jupiter.api.Test;
 
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.FocusAdapter;
+import java.awt.event.FocusEvent;
 import java.awt.event.KeyEvent;
 
 /**
@@ -46,18 +48,30 @@ public class KeyboardInputTest {
 		catch(final AWTException e) {
 			e.printStackTrace();
 		}
-		while(!view.hasFocus()) {
+		frame.addFocusListener(new FocusAdapter() {
+			@Override
+			public void focusGained(FocusEvent e) {
+				super.focusGained(e);
+				synchronized(WAITER) {
+					WAITER.notifyAll();
+				}
+			}
+		});
+
+		model.start();
+
+		while(!frame.hasFocus()) {
 			try {
 				synchronized(WAITER) {
-					WAITER.wait(10);
+					if(!frame.hasFocus()) {
+						WAITER.wait();
+					}
 				}
 			}
 			catch(final InterruptedException e) {
 				e.printStackTrace();
 			}
 		}
-
-		model.start();
 	}
 
 	@Test

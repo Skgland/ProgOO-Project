@@ -1,5 +1,6 @@
 package main;
 
+import de.webtwob.input.auto.AutoRun;
 import de.webtwob.input.controller.ControllerInput;
 import de.webtwob.input.keyboard.KeyboardInput;
 import de.webtwob.interfaces.IJARInput;
@@ -26,6 +27,7 @@ public class Main {
 		final IJARModel model = new BasicJARModel();
 		final IJARView  view  = new BasicView();
 		final IJARView  viewLH = new LightHouseView();
+		final IJARInput       auto = new AutoRun();
 		final IJARInput in2;
 		IJARInput       in;
 
@@ -54,6 +56,7 @@ public class Main {
 		model.addView(view);
 		model.addView(viewLH);
 		model.addInput(input);
+		model.addInput(auto);
 
 		if(in2!=null) {
 			model.addInput(in2);
