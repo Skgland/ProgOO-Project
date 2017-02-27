@@ -15,12 +15,14 @@ public abstract class LinkableAction extends AbstractAction implements IJARLinka
 	volatile IJARModel model;
 
 	LinkableAction(){
+		//until linked this action is disabled
 		setEnabled(false);
 	}
 
 	@Override
 	public void linkModel(final IJARModel ijarm) {
 		model = ijarm;
+		//if it's an actual model this Action can be activated
 		setEnabled(model!=null);
 	}
 }

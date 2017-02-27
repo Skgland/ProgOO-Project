@@ -98,7 +98,6 @@ public class KeyboardInput implements IJARInput {
 
 	@Override
 	public void setEnabled(final boolean enable) {
-
 		enabled = enable;
 		if (enable) {
 			linkActions();
@@ -113,6 +112,10 @@ public class KeyboardInput implements IJARInput {
 		return enabled;
 	}
 
+
+	/**
+	 * This is not an active polling input therefore the next two method's are just dummy implementations
+	 * */
 	@Override
 	public void start() {
 

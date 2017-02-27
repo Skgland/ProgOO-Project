@@ -6,15 +6,26 @@ package de.webtwob.interfaces;
  */
 public interface IJARInput extends IJARLinkable, IJARRunable {
 
+	/**
+	 * @param enable Enables/Disables this input
+	 * */
 	void setEnabled(boolean enable);
 
+	/**
+	 * @return if this input is enabled
+	 * */
 	boolean isEnabled();
 
-	//inputs are not actively polling by default
+	/**
+	 * Starts this input if it's actively polling
+	 * */
 	default void start() {
 
 	}
 
+	/**
+	 * Stops an actively polling input
+	 * */
 	default void stop() {
 
 	}
