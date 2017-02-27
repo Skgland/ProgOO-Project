@@ -16,10 +16,10 @@ public class GameField extends Canvas implements Runnable, IJARLinkable {
 	private IJARModel      model;
 
 	public GameField() {
-
 		setBackground(Color.BLUE);
 		setIgnoreRepaint(true);
 	}
+
 	@Override
 	public void linkModel(final IJARModel ijarm) {
 
@@ -33,6 +33,11 @@ public class GameField extends Canvas implements Runnable, IJARLinkable {
 		bs = getBufferStrategy();
 	}
 
+	@Override
+	public void removeNotify() {
+		super.removeNotify();
+		bs = null;
+	}
 	@Override
 	public void run() {
 
