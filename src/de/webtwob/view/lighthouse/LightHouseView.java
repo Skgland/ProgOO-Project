@@ -45,10 +45,9 @@ public class LightHouseView implements IJARView {
 		}
 	}
 
-	final byte[] windows = new byte[1176];
+	private final byte[] windows = new byte[1176];
 
-	private void update(){
-
+	private void connect(){
 		try {
 			lhn = new LighthouseNetwork(address,port);
 			lhn.connect();
@@ -57,31 +56,44 @@ public class LightHouseView implements IJARView {
 			updateThread = null;
 			System.err.println("Couldn't connect to LightHouse!");
 		}
+	}
+
+	private void send(byte[] windows){
+		assert windows.length==1176:"Unexpected window count: "+windows.length;
+		try {
+			lhn.send(windows);
+		} catch (final IOException e) {
+			System.err.println("Failed to send data to LightHouse! Dropping frame!");
+		}
+	}
+
+	private void update(){
+		connect();
 		while(run){
+
+			//set background
 			for(byte x = 0;x<28;x++){
 				for(byte y = 0 ;y<14;y++){
-					//set background
 					setWindowColor(x, y, Color.BLUE);
 				}
 			}
 
-			byte player_y = (byte) model.getPlayerY();
-			byte player_y_top = (byte) (model.getPlayerY()+model.getPlayerHeight());
+			final byte player_y     = (byte) model.getPlayerY();
+			final byte player_y_top = (byte) (model.getPlayerY()+model.getPlayerHeight());
 
+			//set floor
 			for(byte x = 0;x<28;x++){
-				//set floor
 				setWindowColor(x, (byte) 12, Color.GRAY);
 			}
 
+			//TODO draw hurdles
+
+			//paint player
 			for(byte y = player_y;y<player_y_top;y++){
 				setWindowColor((byte) 1, (byte) (11-y), Color.YELLOW);
 			}
 
-			try {
-				lhn.send(windows);
-			} catch (final IOException e) {
-				System.err.println("Failed to send data to LightHouse!");
-			}
+			send(windows);
 			synchronized (updateLoop){
 				try {
 					updateLoop.wait(10);
@@ -92,12 +104,18 @@ public class LightHouseView implements IJARView {
 	}
 
 	private void setWindowColor(final byte x, final byte y, final Color color){
+		assert x>=0&&x<28:"Window X-Coordinate ot of bounds was:"+x;
+		assert y>=0&&y<14:"Window Y-Coordinate ot of bounds was:"+y;
+
 		windows[coordToWinNumber(x,y)] = (byte)color.getRed();
 		windows[coordToWinNumber(x,y)+1] = (byte)color.getGreen();
 		windows[coordToWinNumber(x,y)+2] = (byte)color.getBlue();
 	}
 
 	private short coordToWinNumber(byte x, byte y){
+		assert x>=0&&x<28:"Window X-Coordinate ot of bounds was:"+x;
+		assert y>=0&&y<14:"Window Y-Coordinate ot of bounds was:"+y;
+
 		return (short) (x*3+y*28*3);
 	}
 
