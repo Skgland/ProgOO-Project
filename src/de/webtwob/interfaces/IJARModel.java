@@ -12,22 +12,41 @@ import java.util.List;
  */
 public interface IJARModel extends IJARRunable {
 
+	/**
+	 * @return the current playtime, may be an arbitrary unit of messurement
+	 * */
 	long getTime();
+
+	/**
+	 * @return the current score
+	 * if score is likely to be lost again this may be excluded
+	 * and only be included if certain that it will be kept
+	 * */
 	long getScore();
 
+	/**
+	 * This enum contains the possible stages of the game
+	 * */
 	enum Mode{
 		MENU,GAME
 	}
 
+	/**
+	 * by default this will link the provided View to the model
+	 * implementations may start the view as well
+	 * */
 	default void addView(final IJARView ijarv){
 		ijarv.linkModel(this);
 	}
 
+
+	/**
+	 * by default this will link the provided Input to the model
+	 * implementations may start the input as well
+	 * */
 	default void addInput(final IJARInput ijari){
 		ijari.linkModel(this);
 	}
-
-	void removeInput(IJARInput ijari);
 
 	/**
 	 * @return the current mode of operation
@@ -50,19 +69,31 @@ public interface IJARModel extends IJARRunable {
 	void setSneaking(boolean sneak);
 
 	/**
-	 *@return if the player is sneaking, if not in GAME false
+	 *@return if the player is sneaking, always false if not in game
 	 * */
 	boolean isSneaking();
 
 	/**
-	 * causes to game to go into the pause screen
+	 * causes the game to go into the pause screen
 	 * */
 	void pause();
 
+	/**
+	 * @return the players y coordinate
+	 * */
 	double getPlayerY();
 
+	/**
+	 * @return the players height
+	 * */
 	double getPlayerHeight();
 
+	/**
+	 * @return the array of hurdles currently in the game
+	 * the place in the array corresponds to it's position
+	 * 0 being 1 unit behind the player,
+	 * 1 being at the players position etc.
+	 * */
 	Rectangle[] getHurdles();
 
 	/*===========================================================*
@@ -103,5 +134,10 @@ public interface IJARModel extends IJARRunable {
 	 * */
 	int getSelectedIndex();
 
+	/**
+	 * if information has updated and the views
+	 * should to update all components this will
+	 * inform all views to update the ui
+	 * */
 	void updateViews();
 }
