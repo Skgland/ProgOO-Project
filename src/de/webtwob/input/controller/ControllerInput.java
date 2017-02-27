@@ -13,6 +13,8 @@ import java.lang.reflect.InvocationTargetException;
  */
 public class ControllerInput implements IJARInput {
 
+	//TODO check for race conditions
+
 	private final Poller poller = new Poller();
 	private           Thread     exec;
 	private transient IJARModel  model;
@@ -34,30 +36,6 @@ public class ControllerInput implements IJARInput {
 
 		model = ijarm;
 	}
-	public Controller getController() {
-
-		return controller;
-	}
-	public void setController(final Controller controller) {
-
-		this.controller = controller;
-	}	@Override
-	public void setEnabled(final boolean enable) {
-
-		if (this.enabled == enable) {
-			return;
-		}
-		if (!this.enabled && (controller == null)) {
-			findController();
-			if (controller == null) {
-				return;
-			}
-		}
-		synchronized (poller) {
-			this.enabled = enable;
-			poller.notifyAll();
-		}
-	}
 	private void findController() {
 
 		ControllerEnvironment controllerEnvironment = ControllerEnvironment.getDefaultEnvironment();
@@ -76,15 +54,27 @@ public class ControllerInput implements IJARInput {
 		} catch (IllegalAccessException | InvocationTargetException | InstantiationException e) {
 			e.printStackTrace();
 		}
+	}	@Override
+	public void setEnabled(final boolean enable) {
+
+		if (this.enabled == enable) {
+			return;
+		}
+		if (!this.enabled && (controller == null)) {
+			findController();
+			if (controller == null) {
+				return;
+			}
+		}
+		synchronized (poller) {
+			this.enabled = enable;
+			poller.notifyAll();
+		}
 	}
 	@Override
 	public String toString() {
 
-		return "[ControllerInput]";
-	}	@Override
-	public boolean isEnabled() {
-
-		return enabled;
+		return "[ControllerInput]" + (controller != null ? " connected to " + controller.getName() : " not connected!");
 	}
 
 	public class Poller implements Runnable {
@@ -185,6 +175,13 @@ public class ControllerInput implements IJARInput {
 		}
 	}
 	@Override
+	public boolean isEnabled() {
+
+		return enabled;
+	}
+
+
+	@Override
 	public void start() {
 
 		if (exec == null) {
@@ -202,7 +199,5 @@ public class ControllerInput implements IJARInput {
 		exec = null;
 		System.out.println("Stopped ControllerInput");
 	}
-
-
 
 }
