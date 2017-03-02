@@ -140,7 +140,7 @@ public class BasicJARModel implements IJARModel {
                     back.addFirst(menu);
                     selection = 0;
                     menu = INPUTS_MENU;
-	                updateViews();
+                    updateViews();
                 }
         );
 
@@ -149,7 +149,7 @@ public class BasicJARModel implements IJARModel {
                     back.addFirst(menu);
                     selection = 0;
                     menu = SETTINGS_MENU;
-	                updateViews();
+                    updateViews();
                 }
         );
 
