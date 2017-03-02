@@ -56,6 +56,7 @@ public class BasicJARModel implements IJARModel {
      * The currently selected menu item
      */
     private volatile int        selection = 0;
+
     private final    IMenuEntry BACK      = new BasicMenuEntry(
             () -> {
                 menu = back.pop();
@@ -82,6 +83,7 @@ public class BasicJARModel implements IJARModel {
                 mode = Mode.GAME;
                 synchronized (gameLoop) {
                     gameLoop.notifyAll();
+                    updateViews();
                 }
             }, "Continue"
     );
@@ -90,6 +92,7 @@ public class BasicJARModel implements IJARModel {
      * Has the Model been started
      */
     private volatile boolean running = false;
+
     /**
      * The Thread running gameLoop
      */
@@ -100,6 +103,7 @@ public class BasicJARModel implements IJARModel {
                 System.exit(0);
             }, "Quit"
     );
+
     @SuppressWarnings("SpellCheckingInspection")
     private       Rectangle[] rects = new Rectangle[30];
     private final IMenuEntry  START = new BasicMenuEntry(
@@ -113,6 +117,7 @@ public class BasicJARModel implements IJARModel {
                 mode = Mode.GAME;
                 synchronized (gameLoop) {
                     gameLoop.notifyAll();
+                    updateViews();
                 }
             }, "Start");
 
@@ -134,8 +139,8 @@ public class BasicJARModel implements IJARModel {
                 () -> {
                     back.addFirst(menu);
                     selection = 0;
-                    updateViews();
                     menu = INPUTS_MENU;
+	                updateViews();
                 }
         );
 
@@ -143,8 +148,8 @@ public class BasicJARModel implements IJARModel {
                 () -> {
                     back.addFirst(menu);
                     selection = 0;
-                    updateViews();
                     menu = SETTINGS_MENU;
+	                updateViews();
                 }
         );
 
@@ -324,7 +329,7 @@ public class BasicJARModel implements IJARModel {
                         e.printStackTrace();
                     }
                 }
-                wait = 0;
+                wait = 0;//TODO check if pause may cause issues
                 try {
                     synchronized (this) {
                         this.wait();
