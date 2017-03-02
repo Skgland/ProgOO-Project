@@ -1,6 +1,5 @@
 package de.webtwob.input.keyboard;
 
-import com.sun.istack.internal.NotNull;
 import de.webtwob.input.action.*;
 import de.webtwob.interfaces.IJARInput;
 import de.webtwob.interfaces.IJARModel;
@@ -45,7 +44,7 @@ public class KeyboardInput implements IJARInput {
     /**
      * inserts the necessary key-value pairs into the InputMap and the ActionMap
      * */
-    private void linkToMaps(@NotNull final InputMap imap, @NotNull final ActionMap amap) {
+    private void linkToMaps(final InputMap imap, final ActionMap amap) {
 
         final ResourceBundle keys = ResourceBundle.getBundle("de.webtwob.input.Keys");
         imap.put(KeyStroke.getKeyStroke(keys.getString("JUMP")), JUMP);
