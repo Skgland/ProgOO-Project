@@ -5,6 +5,23 @@ repositories {
     mavenCentral()
 }
 
+import org.gradle.internal.os.OperatingSystem
+
+switch (OperatingSystem.current()) {
+    case OperatingSystem.WINDOWS:
+        project.ext.lwjglNatives = "natives-windows"
+        break
+    case OperatingSystem.LINUX:
+        project.ext.lwjglNatives = "natives-linux"
+        break
+    case OperatingSystem.MAC_OS:
+        project.ext.lwjglNatives = "natives-macos"
+        break
+}
+
+project.ext.lwjglVersion = "3.1.1"
+
+
 sourceCompatibility = 1.8
 mainClassName = 'main.Main'
 
@@ -27,7 +44,11 @@ sourceSets {
 }
 
 dependencies {
-    compile files('lib/jinput.jar')
+    compile "org.lwjgl:lwjgl:${lwjglVersion}"
+    compile "org.lwjgl:lwjgl-glfw:${lwjglVersion}"
+    runtime "org.lwjgl:lwjgl:${lwjglVersion}:${lwjglNatives}"
+    runtime "org.lwjgl:lwjgl-glfw:${lwjglVersion}:${lwjglNatives}"
+
     testCompile("org.junit.jupiter:junit-jupiter-api:5.+")
 }
 
