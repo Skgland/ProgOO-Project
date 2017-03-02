@@ -10,11 +10,11 @@ import java.awt.event.ActionEvent;
  */
 public class SelectAction extends LinkableAction {
 
-	@Override
-	public void actionPerformed(final ActionEvent e) {
-		if(model.getMode() == IJARModel.Mode.MENU) {
-			model.doSelect();
-		}
-	}
+    @Override
+    public void actionPerformed(final ActionEvent e) {
+        if(model.getMode() == IJARModel.Mode.MENU) {
+            model.doSelect();
+        }
+    }
 }
 

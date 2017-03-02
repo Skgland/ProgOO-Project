@@ -10,11 +10,11 @@ import java.awt.event.ActionEvent;
  */
 public class UpAction extends LinkableAction {
 
-	@Override
-	public void actionPerformed(final ActionEvent e) {
-		if(model.getMode() == IJARModel.Mode.MENU) {
-			model.up();
-		}
-	}
+    @Override
+    public void actionPerformed(final ActionEvent e) {
+        if(model.getMode() == IJARModel.Mode.MENU) {
+            model.up();
+        }
+    }
 
 }

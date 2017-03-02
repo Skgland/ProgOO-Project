@@ -6,11 +6,11 @@ package de.webtwob.interfaces;
  */
 public interface IMenuEntry {
 
-	String getText();
-	boolean isActive();
-	void setActive(boolean active);
-	void executeAction();
-	default String getValue(){return null;}
-	default void setValue(final String update){}
+    String getText();
+    boolean isActive();
+    void setActive(boolean active);
+    void executeAction();
+    default String getValue(){return null;}
+    default void setValue(final String update){}
 
 }

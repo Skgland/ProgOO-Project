@@ -7,8 +7,8 @@ import java.awt.event.ActionEvent;
  * Created on 01. Feb. 2017.
  */
 public class PauseAction extends LinkableAction{
-	@Override
-	public void actionPerformed(final ActionEvent e) {
-		model.pause();
-	}
+    @Override
+    public void actionPerformed(final ActionEvent e) {
+        model.pause();
+    }
 }

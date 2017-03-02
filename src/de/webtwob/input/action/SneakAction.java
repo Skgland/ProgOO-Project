@@ -9,12 +9,12 @@ import java.awt.event.InputEvent;
  */
 public class SneakAction extends LinkableAction {
 
-	@Override
-	public void actionPerformed(final ActionEvent e) {
-		final boolean sneak = (e.getModifiers() & InputEvent.SHIFT_MASK) != 0;
-		if(model.isSneaking() != sneak) {
-			model.setSneaking(sneak);
-		}
-	}
+    @Override
+    public void actionPerformed(final ActionEvent e) {
+        final boolean sneak = (e.getModifiers() & InputEvent.SHIFT_MASK) != 0;
+        if(model.isSneaking() != sneak) {
+            model.setSneaking(sneak);
+        }
+    }
 
 }

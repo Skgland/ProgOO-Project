@@ -20,61 +20,61 @@ import java.awt.event.ActionEvent;
  */
 public class Main {
 
-	/**
-	 * initializes the Model, all Views and Inputs
-	 * */
-	public static void main(final String[] tArgs){
+    /**
+     * initializes the Model, all Views and Inputs
+     * */
+    public static void main(final String[] tArgs){
 
-		final IJARModel model = new BasicJARModel();
-		final IJARView  view  = new BasicView();
-		final IJARView  viewLH = new LightHouseView();
-		final IJARInput auto = new AutoRun();
-		final IJARInput in2;
-		IJARInput       in;
+        final IJARModel model = new BasicJARModel();
+        final IJARView  view  = new BasicView();
+        final IJARView  viewLH = new LightHouseView();
+        final IJARInput auto = new AutoRun();
+        final IJARInput in2;
+        IJARInput       in;
 
-		try {
-			Class<?> clazz = ClassLoader.getSystemClassLoader().loadClass("net.java.games.input.ControllerEnvironment");
-			in = new ControllerInput();
-		} catch (final ClassNotFoundException e) {
-			//in case the jinput.jar is not in the class path
-			//noinspection AssignmentToNull
-			in = null;
-		}
+        try {
+            Class<?> clazz = ClassLoader.getSystemClassLoader().loadClass("net.java.games.input.ControllerEnvironment");
+            in = new ControllerInput();
+        } catch (final ClassNotFoundException e) {
+            //in case the jinput.jar is not in the class path
+            //noinspection AssignmentToNull
+            in = null;
+        }
 
-		in2 = in;
+        in2 = in;
 
-		//setup the JFrame
-		final JFrame jFrame = new JFrame();
-		JMenuBar jmb = new JMenuBar();
-		jmb.add(new JMenuItem(new AbstractAction("Exit") {
+        //setup the JFrame
+        final JFrame jFrame = new JFrame();
+        JMenuBar jmb = new JMenuBar();
+        jmb.add(new JMenuItem(new AbstractAction("Exit") {
 
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				System.exit(0);
-			}
-		}));
-		jFrame.setJMenuBar(jmb);
-		jFrame.add((Component) view);
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                System.exit(0);
+            }
+        }));
+        jFrame.setJMenuBar(jmb);
+        jFrame.add((Component) view);
 
-		jFrame.setMinimumSize(new Dimension(400,200));
-		jFrame.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
-		jFrame.pack();
-		jFrame.setAutoRequestFocus(true);
-		jFrame.setVisible(true);
+        jFrame.setMinimumSize(new Dimension(400,200));
+        jFrame.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
+        jFrame.pack();
+        jFrame.setAutoRequestFocus(true);
+        jFrame.setVisible(true);
 
-		final IJARInput input = new KeyboardInput(jFrame.getRootPane());
+        final IJARInput input = new KeyboardInput(jFrame.getRootPane());
 
-		//add all to the model
-		model.addView(view);
-		model.addView(viewLH);
-		model.addInput(input);
-		model.addInput(auto);
+        //add all to the model
+        model.addView(view);
+        model.addView(viewLH);
+        model.addInput(input);
+        model.addInput(auto);
 
-		if(in2!=null) {
-			model.addInput(in2);
-		}
+        if(in2!=null) {
+            model.addInput(in2);
+        }
 
-		model.start();
-	}
+        model.start();
+    }
 
 }

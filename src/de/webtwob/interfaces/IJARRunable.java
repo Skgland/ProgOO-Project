@@ -6,22 +6,22 @@ package de.webtwob.interfaces;
  */
 public interface IJARRunable {
 
-	/**
-	 * if this component is active should start itself in a new Thread if none is already running
-	 */
-	void start();
+    /**
+     * if this component is active should start itself in a new Thread if none is already running
+     */
+    void start();
 
-	/**
-	 * should stop itself if currently running and than start itself again
-	 * */
-	default void restart(){
-		stop();
-		start();
-	}
+    /**
+     * should stop itself if currently running and than start itself again
+     * */
+    default void restart(){
+        stop();
+        start();
+    }
 
-	/**
-	 * if this component is active and running at the moment should stop itself
-	 */
-	void stop();
+    /**
+     * if this component is active and running at the moment should stop itself
+     */
+    void stop();
 
 }

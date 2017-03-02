@@ -10,12 +10,12 @@ import java.awt.event.ActionEvent;
  */
 public class JumpAction extends LinkableAction {
 
-	@Override
-	public void actionPerformed(final ActionEvent e) {
-		//if in game jump
-		if (model.getMode() == IJARModel.Mode.GAME) {
-			model.jump();
-		}
-	}
+    @Override
+    public void actionPerformed(final ActionEvent e) {
+        //if in game jump
+        if (model.getMode() == IJARModel.Mode.GAME) {
+            model.jump();
+        }
+    }
 
 }

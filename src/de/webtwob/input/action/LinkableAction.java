@@ -12,17 +12,17 @@ import javax.swing.*;
  */
 public abstract class LinkableAction extends AbstractAction implements IJARLinkable {
 
-	volatile IJARModel model;
+    volatile IJARModel model;
 
-	LinkableAction(){
-		//until linked this action is disabled
-		setEnabled(false);
-	}
+    LinkableAction(){
+        //until linked this action is disabled
+        setEnabled(false);
+    }
 
-	@Override
-	public void linkModel(final IJARModel ijarm) {
-		model = ijarm;
-		//if it's an actual model this Action can be activated
-		setEnabled(model!=null);
-	}
+    @Override
+    public void linkModel(final IJARModel ijarm) {
+        model = ijarm;
+        //if it's an actual model this Action can be activated
+        setEnabled(model!=null);
+    }
 }

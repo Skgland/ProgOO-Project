@@ -6,10 +6,10 @@ package de.webtwob.interfaces;
  */
 public interface IJARLinkable {
 
-	/**
-	 * link this to a model
-	 * @param ijarm the Model this will be linked to
-	 * */
-	void linkModel(IJARModel ijarm);
+    /**
+     * link this to a model
+     * @param ijarm the Model this will be linked to
+     * */
+    void linkModel(IJARModel ijarm);
 
 }

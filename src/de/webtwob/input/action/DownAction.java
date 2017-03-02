@@ -10,12 +10,12 @@ import java.awt.event.ActionEvent;
  */
 public class DownAction extends LinkableAction {
 
-	@Override
-	public void actionPerformed(final ActionEvent e) {
-		//if in menu perform down action
-		if(model.getMode()== IJARModel.Mode.MENU) {
-			model.down();
-		}
-	}
+    @Override
+    public void actionPerformed(final ActionEvent e) {
+        //if in menu perform down action
+        if(model.getMode()== IJARModel.Mode.MENU) {
+            model.down();
+        }
+    }
 
 }
