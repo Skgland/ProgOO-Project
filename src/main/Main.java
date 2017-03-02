@@ -33,12 +33,14 @@ public class Main {
         IJARInput       in;
 
         try {
-            Class<?> clazz = ClassLoader.getSystemClassLoader().loadClass("net.java.games.input.ControllerEnvironment");
-            in = new ControllerInput();
-        } catch (final ClassNotFoundException e) {
+              in = new ControllerInput();
+        } catch(final InternalError ignore){
+            in = null;
+        }catch (final UnsatisfiedLinkError e) {
             //in case the jinput.jar is not in the class path
             //noinspection AssignmentToNull
             in = null;
+            System.err.println("Couldn't find Controller libraries!\nController support disabled!");
         }
 
         in2 = in;

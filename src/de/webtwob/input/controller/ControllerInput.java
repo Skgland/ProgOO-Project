@@ -2,79 +2,65 @@ package de.webtwob.input.controller;
 
 import de.webtwob.interfaces.IJARInput;
 import de.webtwob.interfaces.IJARModel;
-import net.java.games.input.*;
+import org.lwjgl.glfw.GLFW;
 
-import java.lang.reflect.Constructor;
-import java.lang.reflect.InvocationTargetException;
+import static org.lwjgl.glfw.GLFW.*;
 
 /**
- * @author Bennet Blessmann
- *         Created on 01. Feb. 2017.
+ * @author Bennet Blessmann Created on 01. Feb. 2017.
  */
 public class ControllerInput implements IJARInput {
 
-    //TODO check for race conditions
-
     private final Poller poller = new Poller();
-    private           Thread     exec;
-    private transient IJARModel  model;
-    private transient Controller controller;
+    private           Thread    exec;
+    private transient IJARModel model;
     private boolean enabled = true;
+
+    private XBox360Handler xBox360Handler = new XBox360Handler();
 
     public ControllerInput() {
 
-        findController();
-        if (controller == null) {
+        if(!glfwInit()) {
+            throw new InternalError("Failed to Initialize glfw!");
+        }
+        if(!glfwJoystickPresent(GLFW_JOYSTICK_1)) {
             enabled = false;
         }
-        //does not work :(
-        //ControllerEnvironment.getDefaultEnvironment().addControllerListener(new ControllerInputControllerListener(this));
+
+        Runtime.getRuntime().addShutdownHook(new Thread() {
+            @Override
+            public void run() {
+                glfwTerminate();
+            }
+        });
+
+        System.out.println(GLFW.glfwGetJoystickName(GLFW_JOYSTICK_1));
     }
 
     @Override
     public void linkModel(final IJARModel ijarm) {
 
         model = ijarm;
+        xBox360Handler.linkModel(ijarm);
     }
-    private void findController() {
 
-        ControllerEnvironment controllerEnvironment = ControllerEnvironment.getDefaultEnvironment();
-        try {
-            //horrible hack to update the list of connected controllers
-            final Class       clazz = controllerEnvironment.getClass();
-            final Constructor field = clazz.getConstructors()[0];
-            field.setAccessible(true);
-            controllerEnvironment = (ControllerEnvironment) field.newInstance();
-            for (final Controller cont : controllerEnvironment.getControllers()) {
-                if (cont.getType() == Controller.Type.GAMEPAD) {
-                    controller = cont;
-                    break;
-                }
-            }
-        } catch (IllegalAccessException | InvocationTargetException | InstantiationException e) {
-            e.printStackTrace();
-        }
-    }    @Override
+    @Override
     public void setEnabled(final boolean enable) {
 
-        if (this.enabled == enable) {
+        if(this.enabled == enable) {
             return;
         }
-        if (!this.enabled && (controller == null)) {
-            findController();
-            if (controller == null) {
-                return;
-            }
+        if(!this.enabled && !glfwJoystickPresent(GLFW_JOYSTICK_1)) {
+            //if disabled and no controller stay disabled
+            return;
         }
-        synchronized (poller) {
-            this.enabled = enable;
-            poller.notifyAll();
-        }
+        this.enabled = enable;
     }
+
     @Override
     public String toString() {
 
-        return "[ControllerInput]" + (controller != null ? " connected to " + controller.getName() : " not connected!");
+        return "[ControllerInput]" + (glfwJoystickPresent(GLFW_JOYSTICK_1) ? " connected to " + GLFW.glfwGetJoystickName(GLFW_JOYSTICK_1) : " not connected!");
     }
 
     public class Poller implements Runnable {
@@ -84,96 +70,28 @@ public class ControllerInput implements IJARInput {
         @Override
         public void run() {
 
-            final Event event = new Event();
-            EventQueue  eventQueue;
-            while (run) {
-                if (enabled) {
-                    if (controller != null && model != null) {
-                        if (!controller.poll()) {
-                            controller = null;
-                            if (model.getMode() == IJARModel.Mode.GAME) {
-                                model.pause();
-                            }
-                            continue;
-                        }
-                        eventQueue = controller.getEventQueue();
-                        while (eventQueue.getNextEvent(event)) {
-                            handleEvent(event);
-                        }
-                    } else if (controller == null) {
-                        findController();
-                        if (controller == null) {
-                            try {
-                                synchronized (poller) {
-                                    poller.wait(1000);
-                                }
-                            } catch (final InterruptedException e) {
-                                e.printStackTrace();
-                            }
-                        }
-                    }
 
-                    try {
-                        java.awt.EventQueue.invokeAndWait(() -> {
-                        });
-                        synchronized (poller) {
-                            poller.wait(10);
+            while(run) {
+                if(enabled && model != null) {
+                    glfwPollEvents();
+                    if(glfwJoystickPresent(GLFW_JOYSTICK_1)) {
+                        if("Xbox 360 Controller".equals(glfwGetJoystickName(GLFW_JOYSTICK_1))) {
+                           xBox360Handler.handleXBoxController();
                         }
-                    } catch (InterruptedException | InvocationTargetException e) {
-                        e.printStackTrace();
-                    }
-                } else {
-                    synchronized (poller) {
-                        if (!enabled) {
-                            try {
-                                poller.wait();
-                            } catch (final InterruptedException e) {
-                                e.printStackTrace();
-                            }
-                        }
-                    }
-                }
-            }
-        }
-
-        public void handleEvent(final Event event) {
-
-            final Component.Identifier identifier;
-            identifier = event.getComponent().getIdentifier();
-            //noinspection IfStatementWithTooManyBranches
-            if (identifier == Component.Identifier.Button._0) {
-                if (event.getValue() == 1.0) {
-                    if (model.getMode() == IJARModel.Mode.GAME) {
-                        model.jump();
                     } else {
-                        model.doSelect();
+                        if(model.getMode() == IJARModel.Mode.GAME) { model.pause(); }
                     }
                 }
-            } else if (identifier == Component.Identifier.Button._7) {
-                if (event.getValue() == 1.0) {
-                    java.awt.EventQueue.invokeLater(model::pause);
-                }
-            } else if (identifier == Component.Identifier.Button._5) {
-                //sometimes a bit unreliable, sometimes even analogue?
-                model.setSneaking(event.getComponent().getPollData() == 1.0);
-            } else if (identifier == Component.Identifier.Axis.POV) {
-                if (event.getValue() == Component.POV.UP) {
-                    java.awt.EventQueue.invokeLater(model::up);
-                } else if (event.getValue() == Component.POV.DOWN) {
-                    java.awt.EventQueue.invokeLater(model::down);
-                }
             }
-            /*else {
-             *     System.out.println(event+" | "+event.getComponent().getIdentifier().getClass());
-            }*/
         }
 
         @Override
         public String toString() {
 
-            return "[ControllerInput]" + ((controller != null) ? "[Port]:" + controller.getPortNumber() : "");
+            return "[Poller]";
         }
     }
+
     @Override
     public boolean isEnabled() {
 
@@ -184,7 +102,7 @@ public class ControllerInput implements IJARInput {
     @Override
     public void start() {
 
-        if (exec == null) {
+        if(exec == null) {
             exec = new Thread(poller);
             exec.setName("Controller Poller");
             exec.start();
