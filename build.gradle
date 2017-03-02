@@ -26,5 +26,5 @@ sourceSets {
 
 dependencies {
     compile files('lib/jinput.jar')
+    testCompile("org.junit.jupiter:junit-jupiter-api:5.+")
 }
-
