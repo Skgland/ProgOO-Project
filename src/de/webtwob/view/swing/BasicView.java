@@ -86,6 +86,8 @@ public class BasicView extends JPanel implements IJARView {
                             removeAll();
                             add(menuPanel, BorderLayout.CENTER);
                             mode = IJARModel.Mode.MENU;
+                            menuChanged();
+                            updateUI();
                         }
                         if(!menuEntries.equals(model.getMenuEntries())) {
                             menuChanged();
