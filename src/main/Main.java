@@ -7,7 +7,7 @@ import de.webtwob.interfaces.IJARInput;
 import de.webtwob.interfaces.IJARModel;
 import de.webtwob.interfaces.IJARView;
 import de.webtwob.model.BasicJARModel;
-import de.webtwob.view.BasicView;
+import de.webtwob.view.swing.BasicView;
 import de.webtwob.view.lighthouse.LightHouseView;
 
 import javax.swing.*;

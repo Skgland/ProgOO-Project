@@ -1,4 +1,4 @@
-package de.webtwob.view;
+package de.webtwob.view.swing;
 
 import de.webtwob.interfaces.IJARLinkable;
 import de.webtwob.interfaces.IJARModel;

@@ -129,6 +129,8 @@ public interface IJARModel extends IJARRunable {
      * */
     List<IMenuEntry> getMenuEntries();
 
+    IMenu getCurrentMenu();
+
     /**
      * @return the selected Menu Entry, default is 0
      * */
