@@ -6,76 +6,87 @@ import de.webtwob.interfaces.IMenuEntry;
 import javax.swing.*;
 import javax.swing.border.Border;
 import java.awt.*;
-import java.util.*;
+import java.util.ArrayList;
 import java.util.List;
 
+import static java.awt.GridBagConstraints.BOTH;
 import static java.awt.GridBagConstraints.CENTER;
+import static java.awt.GridBagConstraints.NORTH;
 
 /**
  * Created by BB20101997 on 02. Mär. 2017.
  */
 public class MenuPanel extends JPanel {
 
-    int selected = -1;
-    Box titleBox = Box.createHorizontalBox();
-    Box contentBox = Box.createVerticalBox();
-    GridBagConstraints gridBagConstraints = new GridBagConstraints();
-    JLabel title = new JLabel();
-    JPanel content = new JPanel();
-    Border butdef = UIManager.getBorder("Button.border");
+    int                selected     = -1;
+    GridBagConstraints contentConst = new GridBagConstraints();
+    GridBagConstraints titleConst   = new GridBagConstraints();
+    JLabel             title        = new JLabel();
+    Border             butdef       = UIManager.getBorder("Button.border");
     Border comp;
     List<JButton> buttonList = new ArrayList<>();
 
     {
-        titleBox.add(title);
-        contentBox.add(content);
-        contentBox.setAlignmentY(TOP_ALIGNMENT);
-        content.setAlignmentY(TOP_ALIGNMENT);
-        content.setLayout(new GridBagLayout());
-        gridBagConstraints.anchor = CENTER;
-        gridBagConstraints.gridheight = 1;
-        gridBagConstraints.gridwidth = 1;
-        comp = BorderFactory.createCompoundBorder(butdef,BorderFactory.createDashedBorder(null));
+        title.setAlignmentX(CENTER_ALIGNMENT);
+        title.setAlignmentY(JLabel.TOP_ALIGNMENT);
+        titleConst.anchor = NORTH;
+        titleConst.gridx = 0;
+        titleConst.gridy = 0;
+        titleConst.fill = BOTH;
+        titleConst.gridwidth = 2;
+        titleConst.gridheight = 1;
+        titleConst.weightx = 2;
+        titleConst.weighty = 1;
+
+        contentConst.weightx = 1;
+        contentConst.insets = new Insets(1,1,1,1);
+        contentConst.anchor = CENTER;
+        contentConst.gridheight = 1;
+        contentConst.gridwidth = 1;
+        contentConst.fill = BOTH;
+        contentConst.weighty = 2;
+
+        comp = BorderFactory.createCompoundBorder(butdef, BorderFactory.createDashedBorder(null));
     }
 
-    public MenuPanel(){
-        setLayout(new BoxLayout(this,BoxLayout.Y_AXIS));
-        add(titleBox);
-        add(contentBox);
+    public MenuPanel() {
+        setLayout(new GridBagLayout());
     }
 
-    public void updateMenu(IMenu im){
-        if(im!=null){
-        title.setText(im.getText());
-        content.removeAll();
-        buttonList.clear();
-        gridBagConstraints.gridy = 0;
-        JButton button;
-        for(IMenuEntry iMenuEntry:im.getEntries()){
-            gridBagConstraints.gridx = 0;
-            button = new JButton(iMenuEntry.getText());
-            buttonList.add(button);
-            content.add(button,gridBagConstraints);
-            button.addActionListener((actionEvent)-> iMenuEntry.executeAction());
-            if(iMenuEntry.getValue()!=null){
-                gridBagConstraints.gridx = 1;
-                content.add(new JTextField(iMenuEntry.getValue()),gridBagConstraints);
+    public void updateMenu(IMenu im) {
+        removeAll();
+        add(title,titleConst);
+        if (im != null) {
+            title.setText(im.getText());
+            buttonList.clear();
+            contentConst.gridy = 1;
+            JButton button;
+            for (IMenuEntry iMenuEntry : im.getEntries()) {
+                contentConst.gridx = 0;
+                contentConst.gridwidth = iMenuEntry.getValue()==null?2:1;
+                button = new JButton(iMenuEntry.getText());
+                buttonList.add(button);
+                add(button, contentConst);
+                button.addActionListener((actionEvent) -> iMenuEntry.executeAction());
+                if (iMenuEntry.getValue() != null) {
+                    contentConst.gridx = 1;
+                    add(new JTextField(iMenuEntry.getValue()), contentConst);
+                }
+                contentConst.gridy++;
             }
-            gridBagConstraints.gridy++;
-        }
-        }else{
+        } else {
             title.setText("Menu is NULL!");
-            contentBox.removeAll();
         }
     }
 
-   public void updateSelection(int  i) {
-       if(selected>=0&&selected<buttonList.size()){
-           buttonList.get(selected).setBorder(butdef);
-       }
-       if(i>=0&&i<buttonList.size()){
-           buttonList.get(i).setBorder(comp);
-           selected = i;
+    public void updateSelection(int i) {
+
+        if (selected >= 0 && selected < buttonList.size()) {
+            buttonList.get(selected).setBorder(butdef);
+        }
+        if (i >= 0 && i < buttonList.size()) {
+            buttonList.get(i).setBorder(comp);
+            selected = i;
         }
     }
 }
