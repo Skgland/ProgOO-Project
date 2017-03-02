@@ -1,9 +1,6 @@
 package de.webtwob;
 
-import de.webtwob.interfaces.IJARInput;
-import de.webtwob.interfaces.IJARModel;
-import de.webtwob.interfaces.IJARView;
-import de.webtwob.interfaces.IMenuEntry;
+import de.webtwob.interfaces.*;
 
 import java.awt.*;
 import java.util.ArrayList;
@@ -137,6 +134,11 @@ public class TestModel implements IJARModel {
     public List<IMenuEntry> getMenuEntries() {
 
         return new ArrayList<>();
+    }
+
+    @Override
+    public IMenu getCurrentMenu() {
+        return null;
     }
 
     @Override
