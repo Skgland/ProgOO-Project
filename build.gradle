@@ -1,0 +1,30 @@
+apply plugin: 'java'
+
+repositories {
+    mavenCentral()
+}
+
+sourceCompatibility = 1.8
+
+sourceSets {
+    main {
+        java {
+            srcDir 'src'
+        }
+
+        resources {
+            srcDir 'resource'
+        }
+    }
+
+    test {
+        java {
+            srcDir 'test'
+        }
+    }
+}
+
+dependencies {
+    compile files('lib/jinput.jar')
+}
+
