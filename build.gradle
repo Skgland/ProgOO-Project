@@ -24,15 +24,17 @@ sourceSets {
     }
 }
 
-jar {
-    manifest {
-        attributes(
-                'Main-Class': 'main.Main'
-        )
-    }
-}
-
 dependencies {
     compile files('lib/jinput.jar')
     testCompile("org.junit.jupiter:junit-jupiter-api:5.+")
 }
+
+jar {
+    manifest {
+        attributes(
+                'Main-Class': 'main.Main',
+                'Class-Path': configurations.compile.collect { it.getName() }.join(' ')
+        )
+    }
+}
+
