@@ -19,28 +19,29 @@ public class AutoRun implements IJARInput {
     @Override
     public void linkModel(IJARModel ijarm) {
 
-        if (enabled && model == null && ijarm != null) {
-            synchronized (run) {
+        if(enabled && model == null && ijarm != null) {
+            synchronized(run) {
                 run.notifyAll();
             }
         }
         model = ijarm;
     }
+
     private void marathon() {
 
-        while (running) {
-            if (model != null && enabled) {
+        while(running) {
+            if(model != null && enabled) {
                 Rectangle[] rectangles = model.getHurdles();
                 boolean     jump       = false;
                 boolean     sneak      = false;
-                if (rectangles[1] != null && rectangles[1].getY() != 0) {
+                if(rectangles[1] != null && rectangles[1].getY() != 0) {
                     sneak = true;
                 }
                 inner:
-                for (int i = 2; i < 7; i++) {
-                    if (rectangles[i] != null) {
-                        if (rectangles[i].getY() == 0) {
-                            if (!sneak) {
+                for(int i = 2; i < 7; i++) {
+                    if(rectangles[i] != null) {
+                        if(rectangles[i].getY() == 0) {
+                            if(!sneak) {
                                 jump = true;
                             }
                         } else {
@@ -50,31 +51,35 @@ public class AutoRun implements IJARInput {
                     }
                 }
 
-                if (sneak != model.isSneaking()) {
+                if(sneak != model.isSneaking()) {
                     model.setSneaking(sneak);
                 }
-                if (jump) {
+                if(jump) {
                     model.jump();
                 }
             } else {
-                synchronized (run) {
+                synchronized(run) {
                     try {
                         run.wait();
-                    } catch (final InterruptedException ignore) {
+                    }
+                    catch(final InterruptedException ignore) {
                     }
                 }
             }
         }
     }
+
     @Override
     public String toString() {
 
         return "[Auto Run]";
-    }    @Override
+    }
+
+    @Override
     public void setEnabled(boolean enable) {
 
-        if (!enabled && enable && model != null) {
-            synchronized (run) {
+        if(!enabled && enable && model != null) {
+            synchronized(run) {
                 run.notifyAll();
             }
         }
@@ -90,9 +95,9 @@ public class AutoRun implements IJARInput {
     @Override
     public void start() {
 
-        if (runner == null) {
-            synchronized (run) {
-                if (runner == null) {
+        if(runner == null) {
+            synchronized(run) {
+                if(runner == null) {
                     running = true;
                     runner = new Thread(run);
                     runner.start();
@@ -103,15 +108,19 @@ public class AutoRun implements IJARInput {
 
     @Override
     public void stop() {
-        if (runner != null) {
-            synchronized (run) {
-                if (runner != null) {
-                    running = false;
-                    try {
-                        runner.join();
-                    } catch (final InterruptedException ignore) {
-                    }
-                    runner = null;
+        if(runner != null) {
+            Thread old;
+            synchronized(run) {
+                running = false;
+                old = runner;
+                run.notifyAll();
+                runner = null;
+            }
+            if(old!=null){
+                try {
+                    old.join();
+                }
+                catch(final InterruptedException ignore) {
                 }
             }
         }
