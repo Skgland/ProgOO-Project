@@ -101,6 +101,7 @@ public class BasicJARModel implements IJARModel {
         bonus_score = 0;
         player_y_pos = 0;
         player_y_velocity = 0;
+        gameLoop.wait = 0;
         rects = new Rectangle[rects.length];
 
         mode = Mode.GAME;
@@ -255,8 +256,9 @@ public class BasicJARModel implements IJARModel {
     @Override
     public String toString() {
 
-        String sb = "[BasicJARModel]:\n" + "\t[Mode]: " + mode + '\n' + "\t" + menu + '\n' + "\t[Selection]: " + selection + ":" + menu.get(selection) + "\n" + "\t[Sneaking]: " + isSneaking() + "\n" + "\t[Player-Y]: " + player_y_pos + "\n" + "\t[Time]: " + gameTime + "\n";
-        return sb;
+        return "[BasicJARModel]:\n" + "\t[Mode]: " + mode + '\n' + "\t" + menu + '\n' + "\t[Selection]: " + selection
+                       + ":" + menu.get(selection) + "\n" + "\t[Sneaking]: " + isSneaking() + "\n" + "\t[Player-Y]: "
+                       + player_y_pos + "\n" + "\t[Time]: " + gameTime + "\n";
     }
 
     private class GameLoop implements Runnable {
@@ -300,7 +302,8 @@ public class BasicJARModel implements IJARModel {
                             select(0);
                             mode = Mode.MENU;
                         }
-                        if(player_y_pos + player_height > rects[1].getY() && rects[1].getY() + rects[1].getHeight() > player_y_pos + player_height) {
+                        if(player_y_pos + player_height > rects[1].getY() && rects[1].getY() + rects[1].getHeight() >
+                                                                                     player_y_pos + player_height) {
                             //player hurt his head at a hurdle
                             menu = GAME_OVER_MENU;
                             select(0);
@@ -315,7 +318,6 @@ public class BasicJARModel implements IJARModel {
                     catch(final InterruptedException ignore) {
                     }
                 }
-                wait = 0;//TODO check if pause may cause issues
                 try {
                     synchronized(this) {
                         this.wait();
