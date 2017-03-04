@@ -27,12 +27,7 @@ public class ControllerInput implements IJARInput {
             enabled = false;
         }
 
-        Runtime.getRuntime().addShutdownHook(new Thread() {
-            @Override
-            public void run() {
-                glfwTerminate();
-            }
-        });
+        Runtime.getRuntime().addShutdownHook(new Thread(GLFW::glfwTerminate));
 
         System.out.println(GLFW.glfwGetJoystickName(GLFW_JOYSTICK_1));
     }
@@ -42,19 +37,29 @@ public class ControllerInput implements IJARInput {
 
         model = ijarm;
         xBox360Handler.linkModel(ijarm);
+        if(enabled && model != null) {
+            synchronized(poller) {
+                poller.notifyAll();
+            }
+        }
     }
 
     @Override
     public void setEnabled(final boolean enable) {
 
-        if(this.enabled == enable) {
+        if(enabled == enable) {
             return;
         }
-        if(!this.enabled && !glfwJoystickPresent(GLFW_JOYSTICK_1)) {
+        if(!enabled && !glfwJoystickPresent(GLFW_JOYSTICK_1)) {
             //if disabled and no controller stay disabled
             return;
         }
-        this.enabled = enable;
+        enabled = enable;
+        if(enabled && model != null) {
+            synchronized(poller) {
+                poller.notifyAll();
+            }
+        }
     }
 
     @Override
@@ -63,24 +68,34 @@ public class ControllerInput implements IJARInput {
         return "[ControllerInput]" + (glfwJoystickPresent(GLFW_JOYSTICK_1) ? " connected to " + GLFW.glfwGetJoystickName(GLFW_JOYSTICK_1) : " not connected!");
     }
 
-    public class Poller implements Runnable {
+    private class Poller implements Runnable {
 
         transient boolean run = true;
 
         @Override
         public void run() {
 
-
             while(run) {
-                if(enabled && model != null) {
-                    glfwPollEvents();
-                    if(glfwJoystickPresent(GLFW_JOYSTICK_1)) {
-                        if("Xbox 360 Controller".equals(glfwGetJoystickName(GLFW_JOYSTICK_1))) {
-                            xBox360Handler.handleXBoxController();
+                try {
+                    if(enabled && model != null) {
+                        glfwPollEvents();
+                        if(glfwJoystickPresent(GLFW_JOYSTICK_1)) {
+                            if("Xbox 360 Controller".equals(glfwGetJoystickName(GLFW_JOYSTICK_1))) {
+                                xBox360Handler.handleXBoxController();
+                            }
+                        } else {
+                            if(model.getMode() == IJARModel.Mode.GAME) { model.pause(); }
                         }
                     } else {
-                        if(model.getMode() == IJARModel.Mode.GAME) { model.pause(); }
+                        synchronized(poller) {
+                            if(!enabled||model==null){
+                                poller.wait();
+                            }
+                        }
                     }
+                }
+                catch(final NullPointerException | InterruptedException ignore) {
+                    //NullPointer can occur if model is set to null after the null check by another Thread
                 }
             }
         }
@@ -106,7 +121,7 @@ public class ControllerInput implements IJARInput {
             exec.setName("Controller Poller");
             exec.start();
             System.out.println("Started ControllerInput");
-        }else{
+        } else {
             System.out.println("ControllerInput already running!");
         }
     }
@@ -125,7 +140,7 @@ public class ControllerInput implements IJARInput {
             }
             exec = null;
             System.out.println("Stopped ControllerInput");
-        }else{
+        } else {
             System.out.println("ControllerInput was not running!");
         }
     }
