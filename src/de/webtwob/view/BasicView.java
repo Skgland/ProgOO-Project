@@ -165,8 +165,17 @@ public class BasicView extends JPanel implements IJARView {
                         }
                     }
                 } else {
-                    synchronized(runner) {
-                        runner.wait(100);
+                    if(model == null) {
+                        synchronized(runner) {
+                            if(model==null){
+                                runner.wait();
+                            }
+                        }
+                    } else {
+                        //wait for the models mode to be set
+                        synchronized(runner) {
+                            runner.wait(100);
+                        }
                     }
                 }
             }
@@ -196,6 +205,11 @@ public class BasicView extends JPanel implements IJARView {
     public void linkModel(final IJARModel ijarm) {
         model = ijarm;
         gameField.linkModel(model);
+        if(model != null) {
+            synchronized(runner){
+                runner.notifyAll();
+            }
+        }
     }
 
     /**
