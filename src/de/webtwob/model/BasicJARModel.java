@@ -191,7 +191,7 @@ public class BasicJARModel implements IJARModel {
                 ijarInput.stop();
             }
             synchronized(gameLoop) {
-                loop.notifyAll();
+                gameLoop.notifyAll();
             }
             while(loop.isAlive()) {
                 try {
