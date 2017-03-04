@@ -7,12 +7,11 @@ import de.webtwob.interfaces.IJARInput;
 import de.webtwob.interfaces.IJARModel;
 import de.webtwob.interfaces.IJARView;
 import de.webtwob.model.BasicJARModel;
-import de.webtwob.view.BasicView;
 import de.webtwob.view.lighthouse.LightHouseView;
+import de.webtwob.view.swing.BasicView;
 
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.ActionEvent;
 
 /**
  * @author Bennet Blessmann
@@ -47,15 +46,6 @@ public class Main {
 
         //setup the JFrame
         final JFrame jFrame = new JFrame();
-        JMenuBar jmb = new JMenuBar();
-        jmb.add(new JMenuItem(new AbstractAction("Exit") {
-
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                System.exit(0);
-            }
-        }));
-        jFrame.setJMenuBar(jmb);
         jFrame.add((Component) view);
 
         jFrame.setMinimumSize(new Dimension(400,200));
