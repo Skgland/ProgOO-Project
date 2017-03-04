@@ -97,6 +97,7 @@ public class AutoRun implements IJARInput {
             runner = new Thread(run);
             runner.setName("AutoRun");
             runner.start();
+            System.out.println("Started AutoRun Thread");
         }
     }
 
@@ -115,6 +116,8 @@ public class AutoRun implements IJARInput {
                     e.printStackTrace();
                 }
             }
+            runner = null;
+            System.out.println("Stopped AutoRun Thread");
         }
     }
 

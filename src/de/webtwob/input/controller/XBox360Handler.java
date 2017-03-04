@@ -3,6 +3,7 @@ package de.webtwob.input.controller;
 import de.webtwob.interfaces.IJARLinkable;
 import de.webtwob.interfaces.IJARModel;
 
+import java.awt.*;
 import java.nio.ByteBuffer;
 
 import static de.webtwob.input.controller.XBox360Const.*;
@@ -26,7 +27,8 @@ public class XBox360Handler implements IJARLinkable{
             } else {
                 if(!pressed[0]) {
                     pressed[0] = true;
-                    model.doSelect();
+                    //if done directly quit causes deadlock when stopping the ControllerInput
+                    EventQueue.invokeLater(model::doSelect);
                 }
             }
         } else {
