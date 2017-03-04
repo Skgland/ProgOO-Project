@@ -93,7 +93,6 @@ public class LightHouseView implements IJARView {
                             setWindowColor(x, (byte) 12, Color.GRAY);
                         }
 
-                        //TODO draw hurdles
                         Rectangle[] rects = model.getHurdles();
                         byte        size  = (byte) rects.length;
                         for(byte i = 0; i < size && i < 28; i++) {
