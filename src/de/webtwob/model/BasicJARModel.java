@@ -7,8 +7,7 @@ import java.util.*;
 import java.util.List;
 
 /**
- * @author Bennet Blessmann
- *         Created on 02. Feb. 2017.
+ * @author Bennet Blessmann Created on 02. Feb. 2017.
  */
 public class BasicJARModel implements IJARModel {
 
@@ -55,38 +54,31 @@ public class BasicJARModel implements IJARModel {
     /**
      * The currently selected menu item
      */
-    private volatile int        selection = 0;
+    private volatile int selection = 0;
 
-    private final    IMenuEntry BACK      = new BasicMenuEntry(
-            () -> {
-                menu = back.pop();
-                selection = 0;
-                updateViews();
-            },
-            "Back"
-    );
-    private final    IMenuEntry GOTO_MAIN = new BasicMenuEntry(
-            () -> {
-                menu = MAIN_MENU;
-                selection = 0;
-                updateViews();
-            }, "Main Menu"
-    );
+    private final    IMenuEntry BACK      = new BasicMenuEntry(() -> {
+        menu = back.pop();
+        selection = 0;
+        updateViews();
+    }, "Back");
+    private final    IMenuEntry GOTO_MAIN = new BasicMenuEntry(() -> {
+        menu = MAIN_MENU;
+        selection = 0;
+        updateViews();
+    }, "Main Menu");
     /**
      * The current mode of the Model
      * GAME if currently a game is running
      * MENU if we are currently in the menu
      */
     private volatile Mode       mode      = Mode.MENU;
-    private final    IMenuEntry CONTINUE  = new BasicMenuEntry(
-            () -> {
-                mode = Mode.GAME;
-                synchronized (gameLoop) {
-                    gameLoop.notifyAll();
-                    updateViews();
-                }
-            }, "Continue"
-    );
+    private final    IMenuEntry CONTINUE  = new BasicMenuEntry(() -> {
+        mode = Mode.GAME;
+        synchronized(gameLoop) {
+            gameLoop.notifyAll();
+            updateViews();
+        }
+    }, "Continue");
 
     /**
      * Has the Model been started
@@ -97,29 +89,26 @@ public class BasicJARModel implements IJARModel {
      * The Thread running gameLoop
      */
     private Thread loop;
-    private final IMenuEntry  QUIT  = new BasicMenuEntry(
-            () -> {
-                stop();
-                System.exit(0);
-            }, "Quit"
-    );
+    private final IMenuEntry QUIT = new BasicMenuEntry(() -> {
+        stop();
+        System.exit(0);
+    }, "Quit");
 
     @SuppressWarnings("SpellCheckingInspection")
     private       Rectangle[] rects = new Rectangle[30];
-    private final IMenuEntry  START = new BasicMenuEntry(
-            () -> {
-                gameTime = 0;
-                bonus_score = 0;
-                player_y_pos = 0;
-                player_y_velocity = 0;
-                rects = new Rectangle[rects.length];
+    private final IMenuEntry  START = new BasicMenuEntry(() -> {
+        gameTime = 0;
+        bonus_score = 0;
+        player_y_pos = 0;
+        player_y_velocity = 0;
+        rects = new Rectangle[rects.length];
 
-                mode = Mode.GAME;
-                synchronized (gameLoop) {
-                    gameLoop.notifyAll();
-                    updateViews();
-                }
-            }, "Start");
+        mode = Mode.GAME;
+        synchronized(gameLoop) {
+            gameLoop.notifyAll();
+            updateViews();
+        }
+    }, "Start");
 
     {
         //setup all menus
@@ -135,23 +124,19 @@ public class BasicJARModel implements IJARModel {
         SETTINGS_MENU.add(BACK);
 
         INPUTS_MENU.add(BACK);
-        INPUTS_MENU.setAction(
-                () -> {
-                    back.addFirst(menu);
-                    selection = 0;
-                    menu = INPUTS_MENU;
-                    updateViews();
-                }
-        );
+        INPUTS_MENU.setAction(() -> {
+            back.addFirst(menu);
+            selection = 0;
+            menu = INPUTS_MENU;
+            updateViews();
+        });
 
-        SETTINGS_MENU.setAction(
-                () -> {
-                    back.addFirst(menu);
-                    selection = 0;
-                    menu = SETTINGS_MENU;
-                    updateViews();
-                }
-        );
+        SETTINGS_MENU.setAction(() -> {
+            back.addFirst(menu);
+            selection = 0;
+            menu = SETTINGS_MENU;
+            updateViews();
+        });
 
         GAME_OVER_MENU.add(new BasicMenuEntry(() -> {
         }, "Score") {
@@ -172,46 +157,50 @@ public class BasicJARModel implements IJARModel {
      * Start the model if not running
      */
     @Override
-    public void start() {
+    public synchronized void start() {
 
         //set the model running
-        if (loop == null && !running) {
-            synchronized (gameLoop) {
-                if (loop == null && !running) {
-                    running = true;
-                    loop = new Thread(gameLoop);
-                    loop.setName("Main GameLoop");
-                    if (views.isEmpty()) {
-                        loop.setDaemon(false);
-                    }
-                    loop.start();
-                    for (final IJARInput ijarInput : inputs) {
-                        ijarInput.start();
-                    }
-                    for (final IJARView ijarView : views) {
-                        ijarView.start();
-                    }
+        if(loop == null && !running) {
+            running = true;
+            loop = new Thread(gameLoop);
+            loop.setName("Main GameLoop");
+            if(views.isEmpty()) {
+                loop.setDaemon(false);
+                loop.start();
+            } else {
+                loop.start();
+                for(final IJARView ijarView : views) {
+                    ijarView.start();
                 }
+            }
+            for(final IJARInput ijarInput : inputs) {
+                ijarInput.start();
             }
         }
     }
 
     @Override
-    public void stop() {
-        if (running && loop != null) {
-            synchronized (gameLoop) {
-                if (running && loop != null) {
-                    running = false;
-                    mode = Mode.MENU;
-                    loop = null;
-                    for (final IJARInput ijarInput : inputs) {
-                        ijarInput.stop();
-                    }
-                    for (final IJARView ijarView : views) {
-                        ijarView.stop();
-                    }
+    public synchronized void stop() {
+        if(running && loop != null) {
+            running = false;
+            mode = Mode.MENU;
+            for(final IJARView ijarView : views) {
+                ijarView.stop();
+            }
+            for(final IJARInput ijarInput : inputs) {
+                ijarInput.stop();
+            }
+            synchronized(gameLoop) {
+                loop.notifyAll();
+            }
+            while(loop.isAlive()) {
+                try {
+                    loop.join();
+                }
+                catch(InterruptedException ignore) {
                 }
             }
+            loop = null;
         }
     }
 
@@ -226,34 +215,38 @@ public class BasicJARModel implements IJARModel {
 
         return gameTime / 10 + bonus_score;
     }
+
     @Override
-    public void addView(final IJARView ijarv) {
+    public synchronized void addView(final IJARView ijarv) {
 
         ijarv.linkModel(this);
         views.add(ijarv);
-        if (running) {
+        if(running) {
             ijarv.start();
         }
     }
+
     @Override
-    public void addInput(final IJARInput ijari) {
+    public synchronized void addInput(final IJARInput ijari) {
 
         ijari.linkModel(this);
         inputs.add(ijari);
-        if (running) {
+        if(running) {
             ijari.start();
         }
         INPUTS_MENU.updateInputs(inputs);
     }
+
     @Override
     public Mode getMode() {
 
         return mode;
     }
+
     @Override
     public void jump() {
 
-        if (player_y_pos == 0 && mode == Mode.GAME) {
+        if(player_y_pos == 0 && mode == Mode.GAME) {
             player_y_velocity = JUMP_VELOCITY;
         }
     }
@@ -262,14 +255,7 @@ public class BasicJARModel implements IJARModel {
     @Override
     public String toString() {
 
-        String sb = "[BasicJARModel]:\n" +
-                "\t[Mode]: " + mode + '\n' +
-                "\t" + menu + '\n' +
-                "\t[Selection]: " + selection + ":" +
-                menu.get(selection) + "\n" +
-                "\t[Sneaking]: " + isSneaking() + "\n" +
-                "\t[Player-Y]: " + player_y_pos + "\n" +
-                "\t[Time]: " + gameTime + "\n";
+        String sb = "[BasicJARModel]:\n" + "\t[Mode]: " + mode + '\n' + "\t" + menu + '\n' + "\t[Selection]: " + selection + ":" + menu.get(selection) + "\n" + "\t[Sneaking]: " + isSneaking() + "\n" + "\t[Player-Y]: " + player_y_pos + "\n" + "\t[Time]: " + gameTime + "\n";
         return sb;
     }
 
@@ -279,22 +265,22 @@ public class BasicJARModel implements IJARModel {
 
         public void run() {
 
-            while (running) {
-                while (mode == Mode.GAME) {
+            while(running) {
+                while(mode == Mode.GAME) {
                     gameTime++;
-                    if (player_y_pos != 0 || player_y_velocity > 0) {
+                    if(player_y_pos != 0 || player_y_velocity > 0) {
                         player_y_pos += player_y_velocity;
                         player_y_velocity -= 0.5;
                     }
-                    if (player_y_pos < 0) {
+                    if(player_y_pos < 0) {
                         player_y_pos = 0;
                     }
 
                     System.arraycopy(rects, 1, rects, 0, rects.length - 1);
 
                     //if there was enough space since last hurdle generate new one
-                    if (wait <= 0 && r.nextDouble() < 0.7) {
-                        if (r.nextDouble() < 0.7) {
+                    if(wait <= 0 && r.nextDouble() < 0.7) {
+                        if(r.nextDouble() < 0.7) {
                             rects[rects.length - 1] = new Rectangle(0, 0, 1, r.nextInt(3) + 1);
                         } else {
                             final int y = r.nextInt(2) + 2;
@@ -307,14 +293,14 @@ public class BasicJARModel implements IJARModel {
                         wait--;
                     }
 
-                    if (rects[1] != null) {
-                        if (player_y_pos >= rects[1].getY() && rects[1].getY() + rects[1].getHeight() > player_y_pos) {
+                    if(rects[1] != null) {
+                        if(player_y_pos >= rects[1].getY() && rects[1].getY() + rects[1].getHeight() > player_y_pos) {
                             //players hurt his feet at a hurdle
                             menu = GAME_OVER_MENU;
                             select(0);
                             mode = Mode.MENU;
                         }
-                        if (player_y_pos + player_height > rects[1].getY() && rects[1].getY() + rects[1].getHeight() > player_y_pos + player_height) {
+                        if(player_y_pos + player_height > rects[1].getY() && rects[1].getY() + rects[1].getHeight() > player_y_pos + player_height) {
                             //player hurt his head at a hurdle
                             menu = GAME_OVER_MENU;
                             select(0);
@@ -322,20 +308,20 @@ public class BasicJARModel implements IJARModel {
                         }
                     }
                     try {
-                        synchronized (this) {
+                        synchronized(this) {
                             gameLoop.wait(50);
                         }
-                    } catch (final InterruptedException e) {
-                        e.printStackTrace();
+                    }
+                    catch(final InterruptedException ignore) {
                     }
                 }
                 wait = 0;//TODO check if pause may cause issues
                 try {
-                    synchronized (this) {
+                    synchronized(this) {
                         this.wait();
                     }
-                } catch (final InterruptedException e) {
-                    e.printStackTrace();
+                }
+                catch(final InterruptedException ignore) {
                 }
             }
         }
@@ -343,11 +329,10 @@ public class BasicJARModel implements IJARModel {
         @Override
         public String toString() {
 
-            return "GameLoop{" +
-                    "wait=" + wait +
-                    '}';
+            return "GameLoop{" + "wait=" + wait + '}';
         }
     }
+
     @Override
     public void setSneaking(final boolean sneak) {
 
@@ -364,7 +349,7 @@ public class BasicJARModel implements IJARModel {
     @Override
     public void pause() {
 
-        if (mode == Mode.GAME) {
+        if(mode == Mode.GAME) {
             mode = Mode.MENU;
             menu = PAUSE_MENU;
         }
@@ -375,6 +360,7 @@ public class BasicJARModel implements IJARModel {
 
         return player_y_pos;
     }
+
     @Override
     public double getPlayerHeight() {
 
@@ -386,10 +372,11 @@ public class BasicJARModel implements IJARModel {
 
         return Arrays.copyOf(rects, rects.length);
     }
+
     @Override
     public void doSelect() {
 
-        if (mode == Mode.MENU && selection >= 0 && selection < menu.size()) {
+        if(mode == Mode.MENU && selection >= 0 && selection < menu.size()) {
             final IMenuEntry ime = menu.get(selection);
             //noinspection LawOfDemeter
             ime.executeAction();
@@ -405,7 +392,7 @@ public class BasicJARModel implements IJARModel {
     @Override
     public void up() {
 
-        if (mode == Mode.MENU) {
+        if(mode == Mode.MENU) {
             selection = (selection + menu.size() - 1) % menu.size();
         }
     }
@@ -413,7 +400,7 @@ public class BasicJARModel implements IJARModel {
     @Override
     public void down() {
 
-        if (mode == Mode.MENU) {
+        if(mode == Mode.MENU) {
             selection = (selection + 1) % menu.size();
         }
 
@@ -435,7 +422,7 @@ public class BasicJARModel implements IJARModel {
     @Override
     public void updateViews() {
 
-        for (final IJARView view : views) {
+        for(final IJARView view : views) {
             view.forceUpdate();
         }
     }
