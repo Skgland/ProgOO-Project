@@ -130,6 +130,9 @@ public class ControllerInput implements IJARInput {
     public synchronized void stop() {
         if(exec != null) {
             poller.run = false;
+            synchronized(poller){
+                poller.notifyAll();
+            }
             while(exec.isAlive()) {
                 try {
                     exec.join();
