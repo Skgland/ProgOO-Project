@@ -17,10 +17,9 @@ public class AutoRun implements IJARInput {
     private Thread runner;
 
     @Override
-    public void linkModel(IJARModel ijarm) {
-
-        if(enabled && model == null && ijarm != null) {
-            model = ijarm;
+    public void linkModel(final IJARModel ijarm) {
+        model = ijarm;
+        if(enabled && model != null) {
             synchronized(run) {
                 run.notifyAll();
             }
@@ -76,14 +75,13 @@ public class AutoRun implements IJARInput {
     }
 
     @Override
-    public void setEnabled(boolean enable) {
-
-        if(!enabled && enable && model != null) {
+    public void setEnabled(final boolean enable) {
+        enabled = enable;
+        if(enabled && model != null) {
             synchronized(run) {
                 run.notifyAll();
             }
         }
-        enabled = enable;
     }
 
     @Override
@@ -97,6 +95,7 @@ public class AutoRun implements IJARInput {
         if(runner == null) {
             running = true;
             runner = new Thread(run);
+            runner.setName("AutoRun");
             runner.start();
         }
     }
