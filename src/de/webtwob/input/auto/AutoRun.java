@@ -20,11 +20,11 @@ public class AutoRun implements IJARInput {
     public void linkModel(IJARModel ijarm) {
 
         if(enabled && model == null && ijarm != null) {
+            model = ijarm;
             synchronized(run) {
                 run.notifyAll();
             }
         }
-        model = ijarm;
     }
 
     private void marathon() {
@@ -93,34 +93,27 @@ public class AutoRun implements IJARInput {
     }
 
     @Override
-    public void start() {
-
+    public synchronized void start() {
         if(runner == null) {
-            synchronized(run) {
-                if(runner == null) {
-                    running = true;
-                    runner = new Thread(run);
-                    runner.start();
-                }
-            }
+            running = true;
+            runner = new Thread(run);
+            runner.start();
         }
     }
 
     @Override
-    public void stop() {
+    public synchronized void stop() {
         if(runner != null) {
-            Thread old;
+            running = false;
             synchronized(run) {
-                running = false;
-                old = runner;
                 run.notifyAll();
-                runner = null;
             }
-            if(old!=null){
+            while(runner.isAlive()) {
                 try {
-                    old.join();
+                    runner.join();
                 }
-                catch(final InterruptedException ignore) {
+                catch(InterruptedException e) {
+                    e.printStackTrace();
                 }
             }
         }

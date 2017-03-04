@@ -76,7 +76,7 @@ public class ControllerInput implements IJARInput {
                     glfwPollEvents();
                     if(glfwJoystickPresent(GLFW_JOYSTICK_1)) {
                         if("Xbox 360 Controller".equals(glfwGetJoystickName(GLFW_JOYSTICK_1))) {
-                           xBox360Handler.handleXBoxController();
+                            xBox360Handler.handleXBoxController();
                         }
                     } else {
                         if(model.getMode() == IJARModel.Mode.GAME) { model.pause(); }
@@ -100,22 +100,34 @@ public class ControllerInput implements IJARInput {
 
 
     @Override
-    public void start() {
-
+    public synchronized void start() {
         if(exec == null) {
             exec = new Thread(poller);
             exec.setName("Controller Poller");
             exec.start();
+            System.out.println("Started ControllerInput");
+        }else{
+            System.out.println("ControllerInput already running!");
         }
-        System.out.println("Started ControllerInput");
     }
 
     @Override
-    public void stop() {
-
-        poller.run = false;
-        exec = null;
-        System.out.println("Stopped ControllerInput");
+    public synchronized void stop() {
+        if(exec != null) {
+            poller.run = false;
+            while(exec.isAlive()) {
+                try {
+                    exec.join();
+                }
+                catch(InterruptedException e) {
+                    e.printStackTrace();
+                }
+            }
+            exec = null;
+            System.out.println("Stopped ControllerInput");
+        }else{
+            System.out.println("ControllerInput was not running!");
+        }
     }
 
 }
