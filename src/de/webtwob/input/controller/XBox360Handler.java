@@ -14,7 +14,7 @@ import static org.lwjgl.glfw.GLFW.glfwGetJoystickButtons;
  */
 public class XBox360Handler implements IJARLinkable{
 
-    boolean[] pressed = new boolean[3];
+    boolean[] pressed = new boolean[4];
     ByteBuffer button;
     IJARModel model;
 
@@ -52,9 +52,11 @@ public class XBox360Handler implements IJARLinkable{
         } else {
             pressed[2] = false;
         }
-        if(!model.isSneaking() == (button.get(BUTTON_RB) == 1)) {
+        final boolean sneak = button.get(BUTTON_RB)==1;
+        if(model.isSneaking() != sneak&&sneak!=pressed[3]) {
             model.setSneaking(button.get(BUTTON_RB) == 1);
         }
+        pressed[3]=sneak;
     }
 
     @Override

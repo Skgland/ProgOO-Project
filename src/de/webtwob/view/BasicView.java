@@ -1,11 +1,14 @@
-package de.webtwob.view.swing;
+package de.webtwob.view;
 
 import de.webtwob.interfaces.IJARModel;
 import de.webtwob.interfaces.IJARView;
 import de.webtwob.interfaces.IMenuEntry;
 
 import javax.swing.*;
+import javax.swing.event.ListSelectionEvent;
 import java.awt.*;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -42,23 +45,72 @@ public class BasicView extends JPanel implements IJARView {
     /**
      * Stores the currently in use menuEntries
      */
-    private       List<IMenuEntry> menuEntries = new ArrayList<>();
+    private List<IMenuEntry> menuEntries = new ArrayList<>();
+
+    /**
+     * Stores the used listModel
+     */
+    private final DefaultListModel<IMenuEntry> listModel = new DefaultListModel<>();
+
     /**
      * Stores the reused GameField
      */
-    private final GameField        gameField   = new GameField();
-    private final MenuPanel        menuPanel   = new MenuPanel();
+    private final GameField gameField = new GameField();
 
     @Override
     public String toString() {
         return "BasicView " + (model != null ? "linked to " + model : "not linked to a Model.");
     }
 
+    /**
+     * Stores the re-used JList
+     */
+    private final JList<IMenuEntry> list = new JList<>(listModel);
 
     public BasicView() {
+
+        //set the cell renderer for the list to our cell renderer
+        list.setCellRenderer(new MenuEntryListCellRenderer());
         setLayout(new BorderLayout());
-        add(menuPanel);
+
+        //add a SelectionListener to update the model when the user selects an entry via the GUI
+        list.addListSelectionListener((ListSelectionEvent e) -> {
+            if(select != list.getSelectedIndex()) {
+                //stop the update thread from undoing the change be for it is submitted
+                synchronized(waiter) {
+                    select = list.getSelectedIndex();
+                    model.select(select);
+                }
+            }
+        });
         setMinimumSize(getPreferredSize());
+        //to make the buttons in the list "work"
+        list.addMouseListener(new MouseListener() {
+            @Override
+            public void mouseClicked(final MouseEvent e) {
+                listModel.getElementAt(list.locationToIndex(e.getPoint())).executeAction();
+            }
+
+            @Override
+            public void mousePressed(final MouseEvent e) {
+
+            }
+
+            @Override
+            public void mouseReleased(final MouseEvent e) {
+
+            }
+
+            @Override
+            public void mouseEntered(final MouseEvent e) {
+
+            }
+
+            @Override
+            public void mouseExited(final MouseEvent e) {
+
+            }
+        });
         setVisible(true);
         updateUI();
     }
@@ -66,10 +118,12 @@ public class BasicView extends JPanel implements IJARView {
     private final Runnable runner = this::keepAlive;
 
     private void keepAlive() {
+        boolean        changed;
         IJARModel.Mode mode = null;
         while(running) {
             try {
                 if(model != null && model.getMode() != null) {
+                    changed = false;
                     if(model.getMode() == IJARModel.Mode.GAME) {
                         if(mode != IJARModel.Mode.GAME) {
                             removeAll();
@@ -84,17 +138,27 @@ public class BasicView extends JPanel implements IJARView {
                     } else {
                         if(mode != IJARModel.Mode.MENU) {
                             removeAll();
-                            add(menuPanel, BorderLayout.CENTER);
+                            add(list, BorderLayout.CENTER);
                             mode = IJARModel.Mode.MENU;
-                            menuChanged();
-                            updateUI();
+                            changed = true;
                         }
                         if(!menuEntries.equals(model.getMenuEntries())) {
                             menuChanged();
+                            changed = true;
                         }
                         if(select != model.getSelectedIndex()) {
-                            select = model.getSelectedIndex();
-                            menuPanel.updateSelection(select);
+                            // w/o synchronize would override clicks by the user
+                            synchronized(waiter) {
+                                select = model.getSelectedIndex();
+                            }
+                            changed = true;
+                        }
+                        if(select != list.getSelectedIndex()) {
+                            list.setSelectedIndex(select);
+                            changed = true;
+                        }
+                        if(changed) {
+                            updateUI();
                         }
                         synchronized(runner) {
                             runner.wait(10);
@@ -131,14 +195,17 @@ public class BasicView extends JPanel implements IJARView {
 
     private void menuChanged() {
         menuEntries = model.getMenuEntries();
-        menuPanel.updateMenu(model.getCurrentMenu());
-        select = model.getSelectedIndex();
+        listModel.clear();
+        for(final IMenuEntry ime : menuEntries) {
+            listModel.addElement(ime);
+        }
     }
 
     @Override
     public void linkModel(final IJARModel ijarm) {
         model = ijarm;
-        gameField.linkModel(model);if(model != null) {
+        gameField.linkModel(model);
+        if(model != null) {
             synchronized(runner){
                 runner.notifyAll();
             }
@@ -185,7 +252,6 @@ public class BasicView extends JPanel implements IJARView {
      */
     @Override
     public void forceUpdate() {
-        menuChanged();
         updateUI();
     }
 }

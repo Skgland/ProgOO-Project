@@ -90,8 +90,7 @@ public class BasicJARModel implements IJARModel {
      */
     private Thread loop;
     private final IMenuEntry QUIT = new BasicMenuEntry(() -> {
-        //TODO make stop not get stuck
-        //stop();
+        stop();
         System.exit(0);
     }, "Quit");
 
@@ -102,6 +101,7 @@ public class BasicJARModel implements IJARModel {
         bonus_score = 0;
         player_y_pos = 0;
         player_y_velocity = 0;
+        gameLoop.wait = 0;
         rects = new Rectangle[rects.length];
 
         mode = Mode.GAME;
@@ -162,46 +162,50 @@ public class BasicJARModel implements IJARModel {
      * Start the model if not running
      */
     @Override
-    public void start() {
+    public synchronized void start() {
 
         //set the model running
         if(loop == null && !running) {
-            synchronized(gameLoop) {
-                if(loop == null && !running) {
-                    running = true;
-                    loop = new Thread(gameLoop);
-                    loop.setName("Main GameLoop");
-                    if(views.isEmpty()) {
-                        loop.setDaemon(false);
-                    }
-                    loop.start();
-                    for(final IJARInput ijarInput : inputs) {
-                        ijarInput.start();
-                    }
-                    for(final IJARView ijarView : views) {
-                        ijarView.start();
-                    }
+            running = true;
+            loop = new Thread(gameLoop);
+            loop.setName("Main GameLoop");
+            if(views.isEmpty()) {
+                loop.setDaemon(false);
+                loop.start();
+            } else {
+                loop.start();
+                for(final IJARView ijarView : views) {
+                    ijarView.start();
                 }
+            }
+            for(final IJARInput ijarInput : inputs) {
+                ijarInput.start();
             }
         }
     }
 
     @Override
-    public void stop() {
+    public synchronized void stop() {
         if(running && loop != null) {
+            running = false;
+            mode = Mode.MENU;
+            for(final IJARView ijarView : views) {
+                ijarView.stop();
+            }
+            for(final IJARInput ijarInput : inputs) {
+                ijarInput.stop();
+            }
             synchronized(gameLoop) {
-                if(running && loop != null) {
-                    running = false;
-                    mode = Mode.MENU;
-                    loop = null;
-                    for(final IJARInput ijarInput : inputs) {
-                        ijarInput.stop();
-                    }
-                    for(final IJARView ijarView : views) {
-                        ijarView.stop();
-                    }
+                gameLoop.notifyAll();
+            }
+            while(loop.isAlive()) {
+                try {
+                    loop.join();
+                }
+                catch(InterruptedException ignore) {
                 }
             }
+            loop = null;
         }
     }
 
@@ -218,7 +222,7 @@ public class BasicJARModel implements IJARModel {
     }
 
     @Override
-    public void addView(final IJARView ijarv) {
+    public synchronized void addView(final IJARView ijarv) {
 
         ijarv.linkModel(this);
         views.add(ijarv);
@@ -228,7 +232,7 @@ public class BasicJARModel implements IJARModel {
     }
 
     @Override
-    public void addInput(final IJARInput ijari) {
+    public synchronized void addInput(final IJARInput ijari) {
 
         ijari.linkModel(this);
         inputs.add(ijari);
@@ -256,15 +260,9 @@ public class BasicJARModel implements IJARModel {
     @Override
     public String toString() {
 
-        String sb = "[BasicJARModel]:\n" +
-                "\t[Mode]: " + mode + '\n' +
-                "\t" + menu + '\n' +
-                "\t[Selection]: " + selection + ":" +
-                menu.get(selection) + "\n" +
-                "\t[Sneaking]: " + isSneaking() + "\n" +
-                "\t[Player-Y]: " + player_y_pos + "\n" +
-                "\t[Time]: " + gameTime + "\n";
-        return sb;
+        return "[BasicJARModel]:\n" + "\t[Mode]: " + mode + '\n' + "\t" + menu + '\n' + "\t[Selection]: " + selection
+                       + ":" + menu.get(selection) + "\n" + "\t[Sneaking]: " + isSneaking() + "\n" + "\t[Player-Y]: "
+                       + player_y_pos + "\n" + "\t[Time]: " + gameTime + "\n";
     }
 
     private class GameLoop implements Runnable {
@@ -308,7 +306,8 @@ public class BasicJARModel implements IJARModel {
                             select(0);
                             mode = Mode.MENU;
                         }
-                        if(player_y_pos + player_height > rects[1].getY() && rects[1].getY() + rects[1].getHeight() > player_y_pos + player_height) {
+                        if(player_y_pos + player_height > rects[1].getY() && rects[1].getY() + rects[1].getHeight() >
+                                                                                     player_y_pos + player_height) {
                             //player hurt his head at a hurdle
                             menu = GAME_OVER_MENU;
                             select(0);
@@ -320,18 +319,15 @@ public class BasicJARModel implements IJARModel {
                             gameLoop.wait(50);
                         }
                     }
-                    catch(final InterruptedException e) {
-                        e.printStackTrace();
+                    catch(final InterruptedException ignore) {
                     }
                 }
-                wait = 0;//TODO check if pause may cause issues
                 try {
                     synchronized(this) {
                         this.wait();
                     }
                 }
-                catch(final InterruptedException e) {
-                    e.printStackTrace();
+                catch(final InterruptedException ignore) {
                 }
             }
         }
