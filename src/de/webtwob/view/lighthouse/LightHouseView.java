@@ -159,6 +159,7 @@ public class LightHouseView implements IJARView {
             run = true;
             updateThread = new Thread(updateLoop);
             updateThread.setName("LightHouseView");
+            updateThread.setDaemon(true);
             updateThread.start();
         }
     }

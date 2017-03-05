@@ -96,6 +96,7 @@ public class AutoRun implements IJARInput {
             running = true;
             runner = new Thread(run);
             runner.setName("AutoRun");
+            runner.setDaemon(true);
             runner.start();
             System.out.println("Started AutoRun Thread");
         }

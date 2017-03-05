@@ -154,6 +154,7 @@ public class BasicView extends JPanel implements IJARView {
             running = true;
             exec = new Thread(runner);
             exec.setName("Basic-View-Updater");
+            exec.setDaemon(true);
             exec.start();
         }
     }

@@ -119,6 +119,7 @@ public class ControllerInput implements IJARInput {
         if(exec == null) {
             exec = new Thread(poller);
             exec.setName("Controller Poller");
+            exec.setDaemon(true);
             exec.start();
             System.out.println("Started ControllerInput");
         } else {

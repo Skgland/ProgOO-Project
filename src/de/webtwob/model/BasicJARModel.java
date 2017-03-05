@@ -125,23 +125,19 @@ public class BasicJARModel implements IJARModel {
         SETTINGS_MENU.add(BACK);
 
         INPUTS_MENU.add(BACK);
-        INPUTS_MENU.setAction(
-                () -> {
-                    back.addFirst(menu);
-                    selection = 0;
-                    menu = INPUTS_MENU;
-                    updateViews();
-                }
-        );
+        INPUTS_MENU.setAction(() -> {
+            back.addFirst(menu);
+            selection = 0;
+            menu = INPUTS_MENU;
+            updateViews();
+        });
 
-        SETTINGS_MENU.setAction(
-                () -> {
-                    back.addFirst(menu);
-                    selection = 0;
-                    menu = SETTINGS_MENU;
-                    updateViews();
-                }
-        );
+        SETTINGS_MENU.setAction(() -> {
+            back.addFirst(menu);
+            selection = 0;
+            menu = SETTINGS_MENU;
+            updateViews();
+        });
 
         GAME_OVER_MENU.add(new BasicMenuEntry(() -> {
         }, "Score") {
@@ -169,14 +165,9 @@ public class BasicJARModel implements IJARModel {
             running = true;
             loop = new Thread(gameLoop);
             loop.setName("Main GameLoop");
-            if(views.isEmpty()) {
-                loop.setDaemon(false);
-                loop.start();
-            } else {
-                loop.start();
-                for(final IJARView ijarView : views) {
-                    ijarView.start();
-                }
+            loop.start();
+            for(final IJARView ijarView : views) {
+                ijarView.start();
             }
             for(final IJARInput ijarInput : inputs) {
                 ijarInput.start();
