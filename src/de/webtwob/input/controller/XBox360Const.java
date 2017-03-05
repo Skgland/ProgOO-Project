@@ -5,6 +5,8 @@ package de.webtwob.input.controller;
  */
 public class XBox360Const {
 
+    public static final String NAME ="Xbox 360 Controller";
+
     public static final int BUTTON_A      = 0;
     public static final int BUTTON_B      = 1;
     public static final int BUTTON_X      = 2;
