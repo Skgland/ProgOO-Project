@@ -53,14 +53,18 @@ public class ControllerInput implements IJARInput {
     }
 
     private void joystick_callback(int id, int event) {
-        if(id == joystick_id && event == GLFW_DISCONNECTED) {
-            if(model.getMode() == IJARModel.Mode.GAME) { model.pause(); }
-            joystick_id = -1;
+        if(event == GLFW_DISCONNECTED) {
+            if(id == joystick_id) {
+                if(model.getMode() == IJARModel.Mode.GAME) {
+                    model.pause();
+                }
+                joystick_id = -1;
+            }
             System.out.println("Joystick disconnected!");
         }
         if(event == GLFW_CONNECTED) {
             if(-1 == joystick_id) {
-                synchronized(poller){
+                synchronized(poller) {
                     poller.notifyAll();
                 }
                 findJoystick();
@@ -102,7 +106,8 @@ public class ControllerInput implements IJARInput {
     @Override
     public String toString() {
 
-        return "[ControllerInput]" + (glfwJoystickPresent(joystick_id) ? " connected to " + GLFW.glfwGetJoystickName(joystick_id) : " not connected!");
+        return "[ControllerInput]" + (glfwJoystickPresent(joystick_id) ? " connected to " + GLFW.glfwGetJoystickName
+                                                                                                         (joystick_id) : " not connected!");
     }
 
     private class Poller implements Runnable {
@@ -121,8 +126,13 @@ public class ControllerInput implements IJARInput {
                                 xBox360Handler.handleXBoxController();
                             }
                         } else {
-                            synchronized(poller){
-                                poller.wait();
+                            findJoystick();
+                            if(joystick_id == -1) {
+                                synchronized(poller) {
+                                    if(joystick_id == -1) {
+                                        poller.wait();
+                                    }
+                                }
                             }
                         }
                     } else {
