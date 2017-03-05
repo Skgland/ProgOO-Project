@@ -67,6 +67,7 @@ public class Main {
         }
 
         model.start();
+        GLFWQueue.getInstance().run();
     }
 
 }
