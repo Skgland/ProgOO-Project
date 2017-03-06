@@ -2,6 +2,8 @@ package de.webtwob.input.controller;
 
 /**
  * Created by BB20101997 on 02. Mär. 2017.
+ *
+ * This class contains constants that are used for the Xbox 360 Controller
  */
 public class XBox360Const {
 

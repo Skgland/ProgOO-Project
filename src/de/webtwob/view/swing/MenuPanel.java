@@ -18,13 +18,13 @@ import static java.awt.GridBagConstraints.NORTH;
  */
 public class MenuPanel extends JPanel {
 
-    int                selected     = -1;
-    GridBagConstraints contentConst = new GridBagConstraints();
-    GridBagConstraints titleConst   = new GridBagConstraints();
-    JLabel             title        = new JLabel();
-    Border             butdef       = UIManager.getBorder("Button.border");
-    Border comp;
-    List<JButton> buttonList = new ArrayList<>();
+    private       int                selected     = -1;
+    private final GridBagConstraints contentConst = new GridBagConstraints();
+    private final GridBagConstraints titleConst   = new GridBagConstraints();
+    private final JLabel             title        = new JLabel();
+    private final Border             butdef       = UIManager.getBorder("Button.border");
+    private final Border comp;
+    private final List<JButton> buttonList = new ArrayList<>();
 
     {
         title.setAlignmentX(CENTER_ALIGNMENT);
@@ -53,7 +53,7 @@ public class MenuPanel extends JPanel {
         setLayout(new GridBagLayout());
     }
 
-    public void updateMenu(IMenu im) {
+    public void updateMenu(final IMenu im) {
         removeAll();
         add(title,titleConst);
         if (im != null) {
@@ -61,7 +61,7 @@ public class MenuPanel extends JPanel {
             buttonList.clear();
             contentConst.gridy = 1;
             JButton button;
-            for (IMenuEntry iMenuEntry : im.getEntries()) {
+            for (final IMenuEntry iMenuEntry : im.getEntries()) {
                 contentConst.gridx = 0;
                 contentConst.gridwidth = iMenuEntry.getValue()==null?2:1;
                 button = new JButton(iMenuEntry.getText());
@@ -79,7 +79,7 @@ public class MenuPanel extends JPanel {
         }
     }
 
-    public void updateSelection(int i) {
+    public void updateSelection(final int i) {
 
         if (selected >= 0 && selected < buttonList.size()) {
             buttonList.get(selected).setBorder(butdef);

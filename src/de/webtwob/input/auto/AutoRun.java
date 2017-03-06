@@ -30,9 +30,9 @@ public class AutoRun implements IJARInput {
 
         while(running) {
             if(model != null && enabled) {
-                Rectangle[] rectangles = model.getHurdles();
-                boolean     jump       = false;
-                boolean     sneak      = false;
+                final Rectangle[] rectangles = model.getHurdles();
+                boolean           jump       = false;
+                boolean           sneak      = false;
                 if(rectangles[1] != null && rectangles[1].getY() != 0) {
                     sneak = true;
                 }
@@ -46,6 +46,7 @@ public class AutoRun implements IJARInput {
                         } else {
                             sneak = true;
                         }
+                        //noinspection UnnecessaryLabelOnBreakStatement
                         break inner;
                     }
                 }
@@ -113,7 +114,7 @@ public class AutoRun implements IJARInput {
                 try {
                     runner.join();
                 }
-                catch(InterruptedException e) {
+                catch(final InterruptedException e) {
                     e.printStackTrace();
                 }
             }

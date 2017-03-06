@@ -18,12 +18,21 @@ public class BasicJARModel implements IJARModel {
      * contains the update logic runnable
      */
     private final        GameLoop             gameLoop       = new GameLoop();
+    /**
+     * Stores the menu traversal so we can go back
+     */
     private final        LinkedList<IMenu>    back           = new LinkedList<>();
     private final        IMenu                MAIN_MENU      = new BasicMenu("Main Menu");
     private final        IMenu                PAUSE_MENU     = new BasicMenu("Pause Menu");
     private final        IMenu                SETTINGS_MENU  = new BasicMenu("Settings");
     private final        IMenu                GAME_OVER_MENU = new BasicMenu("Game Over");
+    /**
+     * all inputs added to the model
+     */
     private final        ArrayList<IJARInput> inputs         = new ArrayList<>();
+    /**
+     * all views added to this model
+     */
     private final        ArrayList<IJARView>  views          = new ArrayList<>();
     private final        Random               r              = new Random();
     private final        InputMenu            INPUTS_MENU    = new InputMenu(this);
@@ -61,17 +70,20 @@ public class BasicJARModel implements IJARModel {
         selection = 0;
         updateViews();
     }, "Back");
+
     private final    IMenuEntry GOTO_MAIN = new BasicMenuEntry(() -> {
         menu = MAIN_MENU;
         selection = 0;
         updateViews();
     }, "Main Menu");
+
     /**
      * The current mode of the Model
      * GAME if currently a game is running
      * MENU if we are currently in the menu
      */
     private volatile Mode       mode      = Mode.MENU;
+
     private final    IMenuEntry CONTINUE  = new BasicMenuEntry(() -> {
         mode = Mode.GAME;
         synchronized(gameLoop) {
@@ -193,7 +205,7 @@ public class BasicJARModel implements IJARModel {
                 try {
                     loop.join();
                 }
-                catch(InterruptedException ignore) {
+                catch(final InterruptedException ignore) {
                 }
             }
             loop = null;

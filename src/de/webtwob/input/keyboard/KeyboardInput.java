@@ -75,6 +75,9 @@ public class KeyboardInput implements IJARInput {
         }
     }
 
+    /**
+     * link all actions to the current model
+     * */
     private void linkActions() {
 
         JUMP_ACTION.linkModel(model);
@@ -85,6 +88,9 @@ public class KeyboardInput implements IJARInput {
         DOWN_ACTION.linkModel(model);
     }
 
+    /**
+     * unlink all actions from the model by linking them to null
+     * */
     private void unlinkActions() {
 
         JUMP_ACTION.linkModel(null);

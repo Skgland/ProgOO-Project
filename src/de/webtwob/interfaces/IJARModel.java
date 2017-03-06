@@ -13,7 +13,7 @@ import java.util.List;
 public interface IJARModel extends IJARRunable {
 
     /**
-     * @return the current playtime, may be an arbitrary unit of messurement
+     * @return the current playtime, may be an arbitrary unit of measurement
      * */
     long getTime();
 

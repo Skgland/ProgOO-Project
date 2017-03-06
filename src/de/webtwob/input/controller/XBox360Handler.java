@@ -7,20 +7,27 @@ import java.awt.*;
 import java.nio.ByteBuffer;
 
 import static de.webtwob.input.controller.XBox360Const.*;
-import static org.lwjgl.glfw.GLFW.GLFW_JOYSTICK_1;
 import static org.lwjgl.glfw.GLFW.glfwGetJoystickButtons;
 
 /**
  * Created by BB20101997 on 02. Mär. 2017.
+ * <p>
+ * This class handels Controller input for the XBox 360 Controller
  */
-public class XBox360Handler implements IJARLinkable{
+public class XBox360Handler implements IJARLinkable {
 
-    boolean[] pressed = new boolean[4];
-    ByteBuffer button;
-    IJARModel model;
+    private final boolean[] pressed = new boolean[4];
+    private IJARModel model;
 
-    public  void handleXBoxController(){
-        button = glfwGetJoystickButtons(GLFW_JOYSTICK_1);
+    /**
+     * This function handles input from Xbox 360 controllers
+     * Note: needs to be executed on the main Thread
+     *
+     * @param id the controller to be handled
+     *           <p>
+     */
+    public void handleXBoxController(int id) {
+        ByteBuffer button = glfwGetJoystickButtons(id);
         if(button.get(BUTTON_A) == 1) {
             if(model.getMode() == IJARModel.Mode.GAME) {
                 model.jump();
@@ -54,15 +61,15 @@ public class XBox360Handler implements IJARLinkable{
         } else {
             pressed[2] = false;
         }
-        final boolean sneak = button.get(BUTTON_RB)==1;
-        if(model.isSneaking() != sneak&&sneak!=pressed[3]) {
+        final boolean sneak = button.get(BUTTON_RB) == 1;
+        if(model.isSneaking() != sneak && sneak != pressed[3]) {
             model.setSneaking(button.get(BUTTON_RB) == 1);
         }
-        pressed[3]=sneak;
+        pressed[3] = sneak;
     }
 
     @Override
-    public void linkModel(IJARModel ijarm) {
+    public void linkModel(final IJARModel ijarm) {
         model = ijarm;
     }
 }

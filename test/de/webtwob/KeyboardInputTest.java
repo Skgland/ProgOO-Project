@@ -50,7 +50,7 @@ public class KeyboardInputTest {
         }
         frame.addFocusListener(new FocusAdapter() {
             @Override
-            public void focusGained(FocusEvent e) {
+            public void focusGained(final FocusEvent e) {
                 super.focusGained(e);
                 synchronized(WAITER) {
                     WAITER.notifyAll();

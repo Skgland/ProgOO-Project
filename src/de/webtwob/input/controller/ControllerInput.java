@@ -4,6 +4,7 @@ import de.webtwob.interfaces.IJARInput;
 import de.webtwob.interfaces.IJARModel;
 import main.GLFWQueue;
 import org.lwjgl.glfw.GLFW;
+import org.lwjgl.glfw.GLFWErrorCallback;
 
 import static de.webtwob.input.controller.XBox360Const.NAME;
 import static org.lwjgl.glfw.GLFW.*;
@@ -19,7 +20,7 @@ public class ControllerInput implements IJARInput {
     private          boolean enabled     = true;
     private volatile int     joystick_id = -1;
 
-    private XBox360Handler xBox360Handler = new XBox360Handler();
+    private final XBox360Handler xBox360Handler = new XBox360Handler();
 
 
     /**
@@ -39,6 +40,9 @@ public class ControllerInput implements IJARInput {
         Runtime.getRuntime().addShutdownHook(new Thread(GLFW::glfwTerminate));
     }
 
+    /**
+     * Should only be called by the main Thread!
+     * */
     private void findJoystick() {
         for(int i = GLFW_JOYSTICK_1; i <= GLFW_JOYSTICK_LAST; i++) {
             if(glfwJoystickPresent(i)) {
@@ -55,21 +59,20 @@ public class ControllerInput implements IJARInput {
         joystick_id = -1;
     }
 
-    private void error_callback(int code, long description) {
+    private void error_callback(final int code, final long description) {
         switch(code) {
             case 65537: {
                 System.out.println("GLFW Error not Initialized!");
-                glfwInit();
+                GLFWQueue.getInstance().pushEvent(GLFW::glfwInit);
                 break;
             }
             default: {
-                System.out.println("GLFW Error Code: " + code + "\n" + org.lwjgl.glfw.GLFWErrorCallback
-                                                                               .getDescription(description));
+                System.out.println("GLFW Error Code: " + code + "\n" + GLFWErrorCallback.getDescription(description));
             }
         }
     }
 
-    private void joystick_callback(int id, int event) {
+    private void joystick_callback(final int id, final int event) {
         if(event == GLFW_DISCONNECTED) {
             if(id == joystick_id) {
                 if(model.getMode() == IJARModel.Mode.GAME) {
@@ -125,7 +128,6 @@ public class ControllerInput implements IJARInput {
 
     @Override
     public String toString() {
-
         return "[ControllerInput]" + (joystick_id != -1 ? " connected to " + GLFW.glfwGetJoystickName(joystick_id) :
                                       " not connected!");
     }
@@ -144,7 +146,7 @@ public class ControllerInput implements IJARInput {
                             glfwPollEvents();
                             if(joystick_id != -1 && glfwJoystickPresent(joystick_id)) {
                                 if(NAME.equals(glfwGetJoystickName(joystick_id))) {
-                                    xBox360Handler.handleXBoxController();
+                                    xBox360Handler.handleXBoxController(joystick_id);
                                 }
                             } else {
                                 glfwTerminate();
@@ -204,7 +206,7 @@ public class ControllerInput implements IJARInput {
                 try {
                     exec.join();
                 }
-                catch(InterruptedException e) {
+                catch(final InterruptedException e) {
                     e.printStackTrace();
                 }
             }

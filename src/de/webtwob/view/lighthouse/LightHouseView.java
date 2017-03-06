@@ -26,7 +26,7 @@ public class LightHouseView implements IJARView {
         this("localhost", 8000);
     }
 
-    public LightHouseView(String address, int port) {
+    public LightHouseView(final String address, final int port) {
 
         if(0 > port || port > 65535) {
             throw new IllegalArgumentException("Port has to be in the Interval [0,65535] but was " + port + "!");
@@ -62,7 +62,7 @@ public class LightHouseView implements IJARView {
         }
     }
 
-    private void send(byte[] windows) {
+    private void send(final byte[] windows) {
 
         assert windows.length == 1176 : "Unexpected window count: " + windows.length;
         try {
@@ -93,8 +93,8 @@ public class LightHouseView implements IJARView {
                             setWindowColor(x, (byte) 12, Color.GRAY);
                         }
 
-                        Rectangle[] rects = model.getHurdles();
-                        byte        size  = (byte) rects.length;
+                        final Rectangle[] rects = model.getHurdles();
+                        final byte        size  = (byte) rects.length;
                         for(byte i = 0; i < size && i < 28; i++) {
                             if(rects[i] != null) {
                                 for(byte x = 0; x < rects[i].getWidth(); x++) {
@@ -124,7 +124,7 @@ public class LightHouseView implements IJARView {
                             try {
                                 updateLoop.wait();
                             }
-                            catch(InterruptedException ignore) {
+                            catch(final InterruptedException ignore) {
                             }
                         }
                     }
@@ -145,7 +145,7 @@ public class LightHouseView implements IJARView {
         windows[coordToWinNumber(x, y) + 2] = (byte) color.getBlue();
     }
 
-    private short coordToWinNumber(byte x, byte y) {
+    private short coordToWinNumber(final byte x, final byte y) {
 
         assert x >= 0 && x < 28 : "Window X-Coordinate ot of bounds was:" + x;
         assert y >= 0 && y < 14 : "Window Y-Coordinate ot of bounds was:" + y;

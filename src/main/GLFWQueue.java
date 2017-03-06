@@ -7,31 +7,46 @@ import java.util.LinkedList;
  */
 public class GLFWQueue implements Runnable {
 
-    private static final GLFWQueue instance = new GLFWQueue();
+    private static final GLFWQueue INSTANCE = new GLFWQueue();
 
-    private LinkedList<Runnable> queue = new LinkedList<>();
+    private final LinkedList<Runnable> queue = new LinkedList<>();
 
     public static GLFWQueue getInstance() {
-        return instance;
+        return INSTANCE;
     }
 
-    public synchronized void pushEvent(Runnable run) {
+    /**
+     * Pushes the Runnable onto the Queue and returns immediately
+     * will execute in FIFO order
+     */
+    public synchronized void pushEvent(final Runnable run) {
         queue.addLast(run);
         notifyAll();
     }
 
-    public void pushEventAndWait(Runnable run) {
-        if(!isRunning){
-            pushEvent(run);
+    /**
+     * Pushes the Runnable onto the Queue and waits till it has been executed
+     * <p>
+     * Note:
+     * If current Thread is the main Thread the Runnable will be executed immediate and not at the end of the queue
+     */
+    public void pushEventAndWait(final Runnable run) {
+        if(isMainThread()) {
+            //would never execute if we pushed and waited
+            run.run();
             return;
         }
-        final Object    waiter     = new Object();
+        final Object    waiter      = new Object();
         final boolean[] interrupted = {false};
         pushEvent(() -> {
-            run.run();
-            synchronized(waiter) {
-                interrupted[0] = true;
-                waiter.notifyAll();
+            try {
+                run.run();
+            }
+            finally {
+                synchronized(waiter) {
+                    interrupted[0] = true;
+                    waiter.notifyAll();
+                }
             }
         });
         synchronized(waiter) {
@@ -39,41 +54,44 @@ public class GLFWQueue implements Runnable {
                 try {
                     waiter.wait();
                 }
-                catch(InterruptedException ignore) {
+                catch(final InterruptedException ignore) {
                 }
             }
         }
 
+    }
+
+    private boolean isMainThread() {
+        return Thread.currentThread().getId() == 1;
     }
 
     private GLFWQueue() {}
 
-    public void stop(){
-        run = false;
-    }
-
-    private boolean isRunning = false;
-    private boolean run = true;
-
+    /**
+     * Will run the GLFWQueue in an endless loop
+     * can be used for everything that needs to be done on the main Thread
+     */
     public void run() {
-        isRunning = true;
-        while(run) {
+        //only the main Thread may handle the queue
+        if(!isMainThread()) { return; }
+        //noinspection InfiniteLoopStatement
+        while(true) {
             while(!queue.isEmpty()) {
                 try {
                     queue.pop().run();
-                }catch(Exception ignore){}
+                }
+                catch(final Exception ignore) {}
             }
-            synchronized(instance) {
+            synchronized(INSTANCE) {
                 if(queue.isEmpty()) {
                     try {
-                        instance.wait();
+                        INSTANCE.wait();
                     }
-                    catch(InterruptedException ignore) {
+                    catch(final InterruptedException ignore) {
                     }
                 }
             }
         }
-        isRunning = false;
     }
 
 }
