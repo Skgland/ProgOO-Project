@@ -167,7 +167,9 @@ public class LightHouseView implements IJARView {
                                 if(!wait) {
                                     wait = true;
                                     currentColor = nextColor;
-                                    nextColor = new Color(rng.nextInt());
+                                    do {
+                                        nextColor = new Color(rng.nextInt());
+                                    }while(colorDiff(Color.CYAN,nextColor)<50||colorDiff(Color.YELLOW,nextColor)<50);
                                 }
                             } else {
                                 wait = false;
@@ -259,6 +261,13 @@ public class LightHouseView implements IJARView {
                 }
             }
         }
+    }
+
+    private int colorDiff(final Color a, final Color b){
+        final int green = Math.abs(a.getGreen()-b.getGreen());
+        final int red = Math.abs(a.getRed()-b.getRed());
+        final int blue = Math.abs(a.getBlue()-b.getBlue());
+        return green+blue+red;
     }
 
     private short coordToWinNumber(final byte x, final byte y) {

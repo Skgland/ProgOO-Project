@@ -69,7 +69,10 @@ public class GameField extends Canvas implements Runnable, IJARLinkable {
                 if(!wait) {
                     wait = true;
                     currentColor = nextColor;
-                    nextColor = new Color(rng.nextInt());
+                    do {
+                        nextColor = new Color(rng.nextInt());
+                    } while(colorDiff(Color.CYAN, nextColor) < 50 || colorDiff(Color.YELLOW, nextColor) < 50);
+
                 }
             } else {
                 wait = false;
@@ -79,7 +82,7 @@ public class GameField extends Canvas implements Runnable, IJARLinkable {
             graphics.setColor(currentColor);
             graphics.fillRect(0, 0, getWidth(), getHeight());
 
-            if(time <30) {
+            if(time < 30) {
                 graphics.setColor(nextColor);
                 graphics.fillRect((int) (getWidth() - time * win_width), 0, (int) (time * win_width), getHeight());
             }
@@ -114,6 +117,14 @@ public class GameField extends Canvas implements Runnable, IJARLinkable {
             //dispose of graphics
             graphics.dispose();
         }
+
+    }
+
+    private int colorDiff(final Color a, final Color b) {
+        final int green = Math.abs(a.getGreen() - b.getGreen());
+        final int red   = Math.abs(a.getRed() - b.getRed());
+        final int blue  = Math.abs(a.getBlue() - b.getBlue());
+        return green + blue + red;
     }
 
     @Override
