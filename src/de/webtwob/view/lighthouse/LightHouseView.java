@@ -86,7 +86,6 @@ public class LightHouseView implements IJARView {
         if(connect()) {
             while(run) {
                 if(model != null) {
-
                     try {
 
                         if(model.getMode() == IJARModel.Mode.MENU) {
@@ -103,11 +102,7 @@ public class LightHouseView implements IJARView {
 
                                     if(score < 100_000) {
 
-                                        byte xoff = 4;
-                                        for(byte i = 0; i < Letter.SCORE.length; i++) {
-                                            setWindowPattern(xoff, (byte) 1, Letter.SCORE[i], Color.RED);
-                                            xoff += Letter.SCORE[i][0].length + 1;
-                                        }
+                                        setPatterns(4, 1, 1, Letter.SCORE, Color.RED);
 
                                         int index = 0;
                                         int n;
@@ -122,37 +117,18 @@ public class LightHouseView implements IJARView {
 
                                     } else {
                                         //score to high
-                                        byte xoff  = 5;
-                                        byte xoff2 = 6;
-                                        for(int i = 0; i < 4; i++) {
-                                            setWindowPattern(xoff, (byte) 1, Letter.GAME[i], Color.RED);
-                                            setWindowPattern(xoff2, (byte) 7, Letter.OVER[i], Color.RED);
-                                            xoff += Letter.GAME[i][0].length + 1;
-                                            xoff2 += Letter.OVER[i][0].length + 1;
-                                        }
+                                        setPatterns(5, 1, 1, Letter.GAME, Color.RED);
+                                        setPatterns(6, 7, 1, Letter.OVER, Color.RED);
                                     }
                                     break;
                                 }
                                 case "Main Menu": {
-                                    byte xoff = 4;
-                                    for(byte i = 0; i < Letter.MAIN.length; i++) {
-                                        setWindowPattern(xoff, (byte) 1, Letter.MAIN[i], Color.RED);
-                                        xoff += Letter.MAIN[i][0].length + 1;
-                                    }
-
-                                    xoff = 4;
-                                    for(byte i = 0; i < Letter.MENU.length; i++) {
-                                        setWindowPattern(xoff, (byte) 7, Letter.MENU[i], Color.RED);
-                                        xoff += Letter.MENU[i][0].length + 1;
-                                    }
+                                    setPatterns(4, 1, 1, Letter.MAIN, Color.RED);
+                                    setPatterns(4, 7, 1, Letter.MENU, Color.RED);
                                     break;
                                 }
                                 default: {
-                                    byte xoff = 4;
-                                    for(byte i = 0; i < Letter.MENU.length; i++) {
-                                        setWindowPattern(xoff, (byte) 1, Letter.MENU[i], Color.RED);
-                                        xoff += Letter.MENU[i][0].length + 1;
-                                    }
+                                    setPatterns(4, 1, 1, Letter.MENU, Color.RED);
                                 }
                             }
                             send(windows);
@@ -195,11 +171,11 @@ public class LightHouseView implements IJARView {
 
                             final Rectangle[] rects = model.getHurdles();
                             final byte        size  = (byte) rects.length;
-                            for(byte i = 0; i < size && i < 28; i++) {
-                                if(rects[i] != null) {
-                                    for(byte x = 0; x < rects[i].getWidth(); x++) {
-                                        for(byte y = 0; y < rects[i].getHeight(); y++) {
-                                            setWindowColor((byte) (i + x), (byte) (11 - rects[i].getY() - y), Color.CYAN);
+                            for(byte b = 0; b < size && b < 28; b++) {
+                                if(rects[b] != null) {
+                                    for(byte x = 0; x < rects[b].getWidth(); x++) {
+                                        for(byte y = 0; y < rects[b].getHeight(); y++) {
+                                            setWindowColor((byte) (b + x), (byte) (11 - rects[b].getY() - y), Color.CYAN);
                                         }
                                     }
                                 }
@@ -253,7 +229,7 @@ public class LightHouseView implements IJARView {
      * @param y       y-offset
      * @param pattern not as may be intuitive [x][y] instead [y][x]
      */
-    private void setWindowPattern(final byte x, final byte y, final boolean[][] pattern, Color c) {
+    private void setWindowPattern(final byte x, final byte y, final boolean[][] pattern, final Color c) {
         for(byte iy = 0; iy < pattern.length; iy++) {
             for(byte ix = 0; ix < pattern[iy].length; ix++) {
                 if(pattern[iy][ix]) {
@@ -268,6 +244,29 @@ public class LightHouseView implements IJARView {
         final int red = Math.abs(a.getRed()-b.getRed());
         final int blue = Math.abs(a.getBlue()-b.getBlue());
         return green+blue+red;
+    }
+
+    /**
+     * annoyed of typecasting constant parameters
+     */
+    private void setPatterns(final int x, final int y, final int offset, final boolean[][][] over, final Color red) {
+        setPatterns((byte) x, (byte) y, (byte) offset, over, red);
+    }
+
+    /**
+     * @param x        the x-Coordinat to start at
+     * @param y        the y-Coordinate to start at
+     * @param offset   the distance between each pattern
+     * @param patterns the array of patterns to draw
+     * @param c        The Color to set the Patterns to
+     */
+    private void setPatterns(final byte x, final byte y, final byte offset, final boolean[][][] patterns, final Color
+                                                                                                                  c) {
+        byte xOffset = x;
+        for(final boolean[][] pattern : patterns) {
+            setWindowPattern(xOffset, y, pattern, c);
+            xOffset += pattern[0].length + offset;
+        }
     }
 
     private short coordToWinNumber(final byte x, final byte y) {
