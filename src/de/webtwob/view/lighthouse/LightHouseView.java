@@ -6,6 +6,7 @@ import de.webtwob.interfaces.IJARView;
 
 import java.awt.*;
 import java.io.IOException;
+import java.util.Random;
 
 /**
  * @author Bennet Blessmann Created on 10.02.2017.
@@ -19,7 +20,12 @@ public class LightHouseView implements IJARView {
     private Thread            updateThread;
     private boolean           run;
     private IJARModel         model;
-    private final Runnable updateLoop = this::update;
+    private final Runnable updateLoop   = this::update;
+    private       Random   rng          = new Random();
+    private       Color    currentColor = new Color(rng.nextInt());
+    private       Color    nextColor    = new Color(rng.nextInt());
+    private boolean wait;
+
 
     public LightHouseView() {
 
@@ -131,9 +137,27 @@ public class LightHouseView implements IJARView {
                             }
                         } else {
                             //set background
+                            final long time = (model.getTime() % 60) - 5;
+
+                            if(time == 30) {
+                                if(!wait) {
+                                    wait = true;
+                                    currentColor = nextColor;
+                                    do {
+                                        nextColor = new Color(rng.nextInt());
+                                    }while(colorDiff(Color.CYAN,nextColor)<50||colorDiff(Color.YELLOW,nextColor)<50);
+                                }
+                            } else {
+                                wait = false;
+                            }
+
                             for(byte x = 0; x < 28; x++) {
                                 for(byte y = 0; y < 14; y++) {
-                                    setWindowColor(x, y, Color.BLUE);
+                                    if(time >= 30 || x < (28 - time)) {
+                                        setWindowColor(x, y, currentColor);
+                                    } else {
+                                        setWindowColor(x, y, nextColor);
+                                    }
                                 }
                             }
 
@@ -213,6 +237,13 @@ public class LightHouseView implements IJARView {
                 }
             }
         }
+    }
+
+    private int colorDiff(final Color a, final Color b){
+        final int green = Math.abs(a.getGreen()-b.getGreen());
+        final int red = Math.abs(a.getRed()-b.getRed());
+        final int blue = Math.abs(a.getBlue()-b.getBlue());
+        return green+blue+red;
     }
 
     /**
