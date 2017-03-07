@@ -26,8 +26,8 @@ public class XBox360Handler implements IJARLinkable {
      * @param id the controller to be handled
      *           <p>
      */
-    public void handleXBoxController(int id) {
-        ByteBuffer button = glfwGetJoystickButtons(id);
+    public void handleXBoxController(final int id) {
+        final ByteBuffer button = glfwGetJoystickButtons(id);
         if(button.get(BUTTON_A) == 1) {
             if(model.getMode() == IJARModel.Mode.GAME) {
                 model.jump();
