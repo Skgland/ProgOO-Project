@@ -58,6 +58,11 @@ public interface IJARModel extends IJARRunable {
     * ===========================================================*/
 
     /**
+     * executes one game cycle
+     * */
+    void cycle();
+
+    /**
      *Perform a jump if possible
      * */
     void jump();

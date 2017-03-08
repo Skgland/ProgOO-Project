@@ -1,5 +1,6 @@
 package de.webtwob.model;
 
+import de.webtwob.input.gameloop.GameLoop;
 import de.webtwob.interfaces.*;
 
 import java.awt.*;
@@ -65,13 +66,13 @@ public class BasicJARModel implements IJARModel {
      */
     private volatile int selection = 0;
 
-    private final    IMenuEntry BACK      = new BasicMenuEntry(() -> {
+    private final IMenuEntry BACK = new BasicMenuEntry(() -> {
         menu = back.pop();
         selection = 0;
         updateViews();
     }, "Back");
 
-    private final    IMenuEntry GOTO_MAIN = new BasicMenuEntry(() -> {
+    private final IMenuEntry GOTO_MAIN = new BasicMenuEntry(() -> {
         menu = MAIN_MENU;
         selection = 0;
         updateViews();
@@ -82,14 +83,11 @@ public class BasicJARModel implements IJARModel {
      * GAME if currently a game is running
      * MENU if we are currently in the menu
      */
-    private volatile Mode       mode      = Mode.MENU;
+    private volatile Mode mode = Mode.MENU;
 
-    private final    IMenuEntry CONTINUE  = new BasicMenuEntry(() -> {
+    private final IMenuEntry CONTINUE = new BasicMenuEntry(() -> {
         mode = Mode.GAME;
-        synchronized(gameLoop) {
-            gameLoop.notifyAll();
-            updateViews();
-        }
+        updateViews();
     }, "Continue");
 
     /**
@@ -113,14 +111,11 @@ public class BasicJARModel implements IJARModel {
         bonus_score = 0;
         player_y_pos = 0;
         player_y_velocity = 0;
-        gameLoop.wait = 0;
+        wait = 0;
         rects = new Rectangle[rects.length];
 
         mode = Mode.GAME;
-        synchronized(gameLoop) {
-            gameLoop.notifyAll();
-            updateViews();
-        }
+        updateViews();
     }, "Start");
 
     {
@@ -172,12 +167,9 @@ public class BasicJARModel implements IJARModel {
     @Override
     public synchronized void start() {
 
-        //set the model running
-        if(loop == null && !running) {
+        //set everything running
+        if(!running) {
             running = true;
-            loop = new Thread(gameLoop);
-            loop.setName("Main GameLoop");
-            loop.start();
             for(final IJARView ijarView : views) {
                 ijarView.start();
             }
@@ -189,7 +181,7 @@ public class BasicJARModel implements IJARModel {
 
     @Override
     public synchronized void stop() {
-        if(running && loop != null) {
+        if(running) {
             running = false;
             mode = Mode.MENU;
             for(final IJARView ijarView : views) {
@@ -198,18 +190,7 @@ public class BasicJARModel implements IJARModel {
             for(final IJARInput ijarInput : inputs) {
                 ijarInput.stop();
             }
-            synchronized(gameLoop) {
-                gameLoop.notifyAll();
-            }
-            while(loop.isAlive()) {
-                try {
-                    loop.join();
-                }
-                catch(final InterruptedException ignore) {
-                }
-            }
-            loop = null;
-        }
+          }
     }
 
     @Override
@@ -268,77 +249,59 @@ public class BasicJARModel implements IJARModel {
                        + player_y_pos + "\n" + "\t[Time]: " + gameTime + "\n";
     }
 
-    private class GameLoop implements Runnable {
+    private int wait = 0;
 
-        int wait = 0;
+    @Override
+    public void cycle() {
+        if(mode == Mode.GAME) {
+            gameTime++;
+            //update player position and velocity
+            if(player_y_pos != 0 || player_y_velocity > 0) {
+                player_y_pos += player_y_velocity;
+                player_y_velocity -= 0.5;
+            }
 
-        public void run() {
+            //stuck in floor? let's fix that!
+            if(player_y_pos < 0) {
+                player_y_pos = 0;
+            }
 
-            while(running) {
-                while(mode == Mode.GAME) {
-                    gameTime++;
-                    if(player_y_pos != 0 || player_y_velocity > 0) {
-                        player_y_pos += player_y_velocity;
-                        player_y_velocity -= 0.5;
-                    }
-                    if(player_y_pos < 0) {
-                        player_y_pos = 0;
-                    }
+            //move hurdles
+            System.arraycopy(rects, 1, rects, 0, rects.length - 1);
 
-                    System.arraycopy(rects, 1, rects, 0, rects.length - 1);
-
-                    //if there was enough space since last hurdle generate new one
-                    if(wait <= 0 && r.nextDouble() < 0.7) {
-                        if(r.nextDouble() < 0.7) {
-                            rects[rects.length - 1] = new Rectangle(0, 0, 1, r.nextInt(3) + 1);
-                        } else {
-                            final int y = r.nextInt(2) + 2;
-                            rects[rects.length - 1] = new Rectangle(0, y, 1, 6 - y);
-                        }
-                        wait = 8 + r.nextInt(5);
-                    } else {
-                        //noinspection AssignmentToNull
-                        rects[rects.length - 1] = null;
-                        wait--;
-                    }
-
-                    if(rects[1] != null) {
-                        if(player_y_pos >= rects[1].getY() && rects[1].getY() + rects[1].getHeight() > player_y_pos) {
-                            //players hurt his feet at a hurdle
-                            menu = GAME_OVER_MENU;
-                            select(0);
-                            mode = Mode.MENU;
-                        }
-                        if(player_y_pos + player_height > rects[1].getY() && rects[1].getY() + rects[1].getHeight() >
-                                                                                     player_y_pos + player_height) {
-                            //player hurt his head at a hurdle
-                            menu = GAME_OVER_MENU;
-                            select(0);
-                            mode = Mode.MENU;
-                        }
-                    }
-                    try {
-                        synchronized(this) {
-                            gameLoop.wait(50);
-                        }
-                    }
-                    catch(final InterruptedException ignore) {
-                    }
+            //if there was enough space since last hurdle generate new one
+            if(wait <= 0 && r.nextDouble() < 0.7) {
+                if(r.nextDouble() < 0.7) {
+                    //generate floor hurdle
+                    rects[rects.length - 1] = new Rectangle(0, 0, 1, r.nextInt(3) + 1);
+                } else {
+                    //generate floating hurdle
+                    final int y = r.nextInt(2) + 2;
+                    rects[rects.length - 1] = new Rectangle(0, y, 1, 6 - y);
                 }
-                try {
-                    synchronized(this) {
-                        this.wait();
-                    }
+                wait = 8 + r.nextInt(5);
+            } else {
+                //noinspection AssignmentToNull
+                rects[rects.length - 1] = null;
+                wait--;
+            }
+
+            if(rects[1] != null) {
+                if(player_y_pos >= rects[1].getY() && rects[1].getY() + rects[1].getHeight() > player_y_pos) {
+                    //players hurt his feet at a hurdle
+                    menu = GAME_OVER_MENU;
+                    select(0);
+                    mode = Mode.MENU;
                 }
-                catch(final InterruptedException ignore) {
+                if(player_y_pos + player_height > rects[1].getY() && rects[1].getY() + rects[1].getHeight() >
+                                                                             player_y_pos + player_height) {
+                    //player hurt his head at a hurdle
+                    menu = GAME_OVER_MENU;
+                    select(0);
+                    mode = Mode.MENU;
                 }
             }
-        }
 
-        @Override
-        public String toString() {
-
-            return "GameLoop{" + "wait=" + wait + '}';
         }
     }
 
