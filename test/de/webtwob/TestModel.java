@@ -50,6 +50,11 @@ public class TestModel implements IJARModel {
     }
 
     @Override
+    public void cycle() {
+
+    }
+
+    @Override
     public void jump() {
 
         if (mode == Mode.GAME) {
