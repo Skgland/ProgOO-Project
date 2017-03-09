@@ -37,6 +37,7 @@ public class GameField extends Canvas implements Runnable {
     public void removeNotify() {
 
         super.removeNotify();
+        bs.dispose();
         bs = null;
     }
     @Override
@@ -49,14 +50,14 @@ public class GameField extends Canvas implements Runnable {
 
         if (bs != null) {
             //Preparation work
-            final double win_width  = getWidth() / 28;
+            final double win_width = getWidth() / 28;
             final double win_height = getHeight() / 14;
 
             final double player_y      = game.getPlayerY();
             final double player_height = game.getPlayerHeight();
 
             final double win_player_height = win_height * player_height;
-            final double win_player_y      = win_height * player_y;
+            final double win_player_y = win_height * player_y;
 
             final long time = (game.getTime() % 60) - 5;
 
@@ -127,8 +128,8 @@ public class GameField extends Canvas implements Runnable {
     private int colorDiff(final Color a, final Color b) {
 
         final int green = Math.abs(a.getGreen() - b.getGreen());
-        final int red   = Math.abs(a.getRed() - b.getRed());
-        final int blue  = Math.abs(a.getBlue() - b.getBlue());
+        final int red = Math.abs(a.getRed() - b.getRed());
+        final int blue = Math.abs(a.getBlue() - b.getBlue());
         return green + blue + red;
     }
 }
