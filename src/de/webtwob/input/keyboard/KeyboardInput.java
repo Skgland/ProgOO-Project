@@ -25,7 +25,8 @@ public class KeyboardInput implements IJARInput {
         SELECT,
         PAUSE,
         UP,
-        DOWN
+        DOWN,
+        STEP
     }
 
     private boolean enabled = true;
@@ -35,6 +36,7 @@ public class KeyboardInput implements IJARInput {
     private AbstractAction SELECT_ACTION;
     private AbstractAction UP_ACTION;
     private AbstractAction DOWN_ACTION;
+    private AbstractAction STEP_ACTION;
 
     /**
      * inserts the necessary key-value pairs into the InputMap and the ActionMap
@@ -44,13 +46,18 @@ public class KeyboardInput implements IJARInput {
         final ResourceBundle keys = ResourceBundle.getBundle("de.webtwob.input.Keys");
         imap.put(KeyStroke.getKeyStroke(keys.getString("JUMP")), JUMP);
         imap.put(KeyStroke.getKeyStroke(keys.getString("SNEAK_MOD") + " " + keys.getString("JUMP")), JUMP);
+        imap.put(KeyStroke.getKeyStroke(keys.getString("STEP")), STEP);
+        imap.put(KeyStroke.getKeyStroke(keys.getString("SNEAK_MOD") + " " + keys.getString("STEP")), STEP);
         imap.put(KeyStroke.getKeyStroke(keys.getString("SNEAK_MOD") + " " + keys.getString("SNEAK")), SNEAK);
         imap.put(KeyStroke.getKeyStroke("released " + keys.getString("SNEAK")), UN_SNEAK);
         imap.put(KeyStroke.getKeyStroke(keys.getString("PAUSE")), PAUSE);
-        imap.put(KeyStroke.getKeyStroke(keys.getString("SNEAK_MOD")+" "+keys.getString("PAUSE")), PAUSE);
+        imap.put(KeyStroke.getKeyStroke(keys.getString("SNEAK_MOD") + " " + keys.getString("PAUSE")), PAUSE);
         imap.put(KeyStroke.getKeyStroke(keys.getString("ARROW_UP")), UP);
         imap.put(KeyStroke.getKeyStroke(keys.getString("ARROW_DOWN")), DOWN);
         imap.put(KeyStroke.getKeyStroke("ENTER"), SELECT);
+        imap.put(KeyStroke.getKeyStroke("typed " + keys.getString("LONG_STEP").toLowerCase()), STEP);
+        imap.put(KeyStroke.getKeyStroke(keys.getString("SNEAK_MOD") + " " + "typed " + keys.getString("LONG_STEP")),
+                 STEP);
 
         amap.put(JUMP, JUMP_ACTION);
         amap.put(SNEAK, SNEAK_ACTION);
@@ -59,6 +66,7 @@ public class KeyboardInput implements IJARInput {
         amap.put(SELECT, SELECT_ACTION);
         amap.put(UP, UP_ACTION);
         amap.put(DOWN, DOWN_ACTION);
+        amap.put(STEP, STEP_ACTION);
     }
 
     public KeyboardInput(final JComponent jc, final IJARGameModel gameModel, final IJARMenuModel menuModel, final
@@ -69,6 +77,7 @@ public class KeyboardInput implements IJARInput {
         SELECT_ACTION = new SelectAction(modeModel, menuModel);
         UP_ACTION = new UpAction(modeModel, menuModel);
         DOWN_ACTION = new DownAction(modeModel, menuModel);
+        STEP_ACTION = new StepAction(modeModel, gameModel, menuModel);
 
         linkToMaps(jc.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW), jc.getActionMap());
     }
@@ -82,6 +91,7 @@ public class KeyboardInput implements IJARInput {
         SELECT_ACTION.setEnabled(enable);
         UP_ACTION.setEnabled(enable);
         DOWN_ACTION.setEnabled(enable);
+        STEP_ACTION.setEnabled(enable);
     }
 
     @Override
