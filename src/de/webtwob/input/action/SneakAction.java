@@ -26,4 +26,8 @@ public class SneakAction extends AbstractAction {
         }
     }
 
+    @Override
+    public String toString() {
+        return "SneakAction{" + "gameModel=" + gameModel + '}';
+    }
 }

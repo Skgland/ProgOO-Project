@@ -80,4 +80,8 @@ public class InputMenu extends BasicMenu {
         return new ArrayList<>(inputEntries);
     }
 
+    @Override
+    public String toString() {
+        return "InputMenu{" + "model=" + model + ", inputs=" + inputs + ", inputEntries=" + inputEntries + '}';
+    }
 }

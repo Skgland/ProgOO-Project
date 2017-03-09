@@ -27,4 +27,8 @@ public class UpAction extends AbstractAction {
         }
     }
 
+    @Override
+    public String toString() {
+        return "UpAction{" + "modeModel=" + modeModel + ", menuModel=" + menuModel + '}';
+    }
 }

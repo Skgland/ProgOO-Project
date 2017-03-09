@@ -93,4 +93,10 @@ public class MenuPanel extends JPanel {
         }
     }
 
+    @Override
+    public String toString() {
+        return "MenuPanel{" + "selected=" + selected + ", contentConst=" + contentConst + ", titleConst=" +
+                       titleConst + ", title=" + title + ", butdef=" + butdef + ", menu=" + menu + ", comp=" + comp +
+                       ", buttonList=" + buttonList + '}';
+    }
 }

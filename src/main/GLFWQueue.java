@@ -94,4 +94,8 @@ public class GLFWQueue implements Runnable {
         }
     }
 
+    @Override
+    public String toString() {
+        return "GLFWQueue{" + "queue=" + queue + '}';
+    }
 }

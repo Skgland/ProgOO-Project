@@ -30,4 +30,9 @@ public class PauseAction extends AbstractAction {
             menuModel.pause();
         }
     }
+
+    @Override
+    public String toString() {
+        return "PauseAction{" + "modeModel=" + modeModel + ", menuModel=" + menuModel + '}';
+    }
 }

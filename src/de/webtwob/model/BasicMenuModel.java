@@ -176,4 +176,13 @@ public class BasicMenuModel implements IJARMenuModel {
 
         menu = GAME_OVER_MENU;
     }
+
+    @Override
+    public String toString() {
+        return "BasicMenuModel{" + "back=" + back + ", MAIN_MENU=" + MAIN_MENU + ", PAUSE_MENU=" + PAUSE_MENU + ", " +
+                       "SETTINGS_MENU=" + SETTINGS_MENU + ", GAME_OVER_MENU=" + GAME_OVER_MENU + ", INPUTS_MENU=" +
+                       INPUTS_MENU + ", QUIT=" + QUIT + ", game=" + game + ", mode=" + mode + ", dirty=" + dirty + "," +
+                       " CONTINUE=" + CONTINUE + ", START=" + START + ", menu=" + menu + ", selection=" + selection +
+                       ", BACK=" + BACK + ", GOTO_MAIN=" + GOTO_MAIN + '}';
+    }
 }

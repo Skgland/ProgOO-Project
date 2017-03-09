@@ -7,6 +7,7 @@ import de.webtwob.model.ModeModel;
 
 import java.awt.*;
 import java.nio.ByteBuffer;
+import java.util.Arrays;
 
 import static de.webtwob.input.controller.XBox360Const.*;
 import static org.lwjgl.glfw.GLFW.glfwGetJoystickButtons;
@@ -78,5 +79,11 @@ public class XBox360Handler{
             game.setSneaking(button.get(BUTTON_RB) == 1);
         }
         pressed[3] = sneak;
+    }
+
+    @Override
+    public String toString() {
+        return "XBox360Handler{" + "pressed=" + Arrays.toString(pressed) + ", mode=" + mode + ", game=" + game + ", " +
+                       "menu=" + menu + '}';
     }
 }

@@ -40,6 +40,7 @@ public class BasicGameModel implements IJARGameModel {
      */
     private long bonus_score = 0;
     private int  wait        = 0;
+
     @Override
     public boolean cycle() {
 
@@ -150,4 +151,10 @@ public class BasicGameModel implements IJARGameModel {
         return Arrays.copyOf(rects, rects.length);
     }
 
+    @Override
+    public String toString() {
+        return "BasicGameModel{" + "r=" + r + ", player_y_pos=" + player_y_pos + ", player_height=" + player_height +
+                       ", rects=" + Arrays.toString(rects) + ", player_y_velocity=" + player_y_velocity + ", " +
+                       "gameTime=" + gameTime + ", bonus_score=" + bonus_score + ", wait=" + wait + '}';
+    }
 }

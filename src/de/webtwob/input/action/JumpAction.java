@@ -29,4 +29,8 @@ public class JumpAction extends AbstractAction {
         }
     }
 
+    @Override
+    public String toString() {
+        return "JumpAction{" + "modeModel=" + modeModel + ", gameModel=" + gameModel + '}';
+    }
 }

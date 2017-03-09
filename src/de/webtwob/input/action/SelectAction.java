@@ -27,5 +27,10 @@ public class SelectAction extends AbstractAction {
             menuModel.doSelect();
         }
     }
+
+    @Override
+    public String toString() {
+        return "SelectAction{" + "modeModel=" + modeModel + ", menuModel=" + menuModel + '}';
+    }
 }
 

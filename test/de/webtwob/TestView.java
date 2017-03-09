@@ -20,8 +20,7 @@ public class TestView extends JPanel implements IJARView {
 
         while (running) {
             try {
-                    //noinspection HardcodedLineSeparator
-                    label.setText("Running Test!:");
+                label.setText("Running Test!:");
                     label.setMinimumSize(label.getPreferredSize());
 
                 synchronized (this) {
@@ -65,5 +64,10 @@ public class TestView extends JPanel implements IJARView {
             notifyAll();
         }
         userThread = null;
+    }
+
+    @Override
+    public String toString() {
+        return "TestView{" + "userThread=" + userThread + ", running=" + running + ", label=" + label + '}';
     }
 }

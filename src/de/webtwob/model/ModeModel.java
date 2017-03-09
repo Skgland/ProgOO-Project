@@ -18,4 +18,9 @@ public class ModeModel {
 
         return mode;
     }
+
+    @Override
+    public String toString() {
+        return "ModeModel{" + "mode=" + mode + '}';
+    }
 }

@@ -30,4 +30,8 @@ public class DownAction extends AbstractAction {
         }
     }
 
+    @Override
+    public String toString() {
+        return "DownAction{" + "modeModel=" + modeModel + ", menuModel=" + menuModel + '}';
+    }
 }

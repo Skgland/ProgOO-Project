@@ -76,4 +76,9 @@ public class LighthouseNetwork {
         stream.write("\r\n".getBytes());
         stream.flush();
     }
+
+    @Override
+    public String toString() {
+        return "LighthouseNetwork{" + "hostname='" + hostname + '\'' + ", port=" + port + ", sock=" + sock + '}';
+    }
 }

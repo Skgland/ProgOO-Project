@@ -9,6 +9,7 @@ import de.webtwob.model.ModeModel;
 
 import java.awt.*;
 import java.io.IOException;
+import java.util.Arrays;
 import java.util.Random;
 
 /**
@@ -291,5 +292,10 @@ public class LightHouseView implements IJARView {
             }
             updateThread = null;
         }
+    }
+
+    @Override
+    public String toString() {
+        return "LightHouseView{" + "address='" + address + '\'' + ", port=" + port + ", windows=" + Arrays.toString(windows) + ", lhn=" + lhn + ", updateThread=" + updateThread + ", run=" + run + ", menu=" + menu + ", game=" + game + ", mode=" + mode + ", rng=" + rng + ", currentColor=" + currentColor + ", nextColor=" + nextColor + ", wait=" + wait + ", updateLoop=" + updateLoop + '}';
     }
 }
