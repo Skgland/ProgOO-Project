@@ -30,8 +30,8 @@ public class Main {
         final IJARGameModel game = new BasicGameModel();
         final IJARMenuModel menu = new BasicMenuModel(game,mode);
 
-        final IJARView  view   = new BasicView();
-        final IJARView  viewLH = new LightHouseView();
+        final IJARView  view   = new BasicView(game,menu,mode);
+        final IJARView  viewLH = new LightHouseView(game,menu,mode);
         final IJARInput loop = new GameLoop(mode,game,menu);
         final IJARInput auto   = new AutoRun(game);
         final IJARInput in2;

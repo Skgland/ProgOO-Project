@@ -1,7 +1,7 @@
 package de.webtwob.view.swing;
 
-import de.webtwob.interfaces.IJARView;
-import de.webtwob.interfaces.IMenuEntry;
+import de.webtwob.interfaces.*;
+import de.webtwob.model.menu.ModeModel;
 
 import javax.swing.*;
 import java.awt.*;
@@ -13,111 +13,94 @@ import java.util.List;
  */
 public class BasicView extends JPanel implements IJARView {
 
-    /**
-     * The linked Model
-     */
-    private IJARModel model;
-
-    /**
-     * The thread to update this view
-     */
-    private Thread exec;
-
-    /**
-     * if exec should continue running
-     */
-    private volatile boolean running;
 
     /**
      * Used to synchronise on
      */
-    private final Object waiter = new Object();
-
+    private final Object    waiter    = new Object();
+    private final MenuPanel menuPanel = new MenuPanel();
+    private IJARGameModel game;
+    /**
+     * Stores the reused GameField
+     */
+    private final GameField gameField = new GameField(game);
+    private          IJARMenuModel menu;
+    private          ModeModel     mode;
+    /**
+     * The thread to update this view
+     */
+    private          Thread        exec;
+    /**
+     * if exec should continue running
+     */
+    private volatile boolean       running;
     /**
      * Used to store the latest selected value so we only update on change
      */
-    private int select = -1;
-
+    private       int              select      = -1;
     /**
      * Stores the currently in use menuEntries
      */
     private       List<IMenuEntry> menuEntries = new ArrayList<>();
-    /**
-     * Stores the reused GameField
-     */
-    private final GameField        gameField   = new GameField();
-    private final MenuPanel        menuPanel   = new MenuPanel();
-
-    @Override
-    public String toString() {
-        return "BasicView " + (model != null ? "linked to " + model : "not linked to a Model.");
-    }
+    private final Runnable         runner      = this::keepAlive;
 
 
-    public BasicView() {
+    public BasicView(final IJARGameModel game, final IJARMenuModel menu, final ModeModel mode) {
+
+        this.game = game;
+        this.menu = menu;
+        this.mode = mode;
         setLayout(new BorderLayout());
         add(menuPanel);
         setMinimumSize(getPreferredSize());
         setVisible(true);
         updateUI();
     }
+    @Override
+    public String toString() {
 
-    private final Runnable runner = this::keepAlive;
-
+        return "BasicView ";
+    }
     private void keepAlive() {
-        IJARModel.Mode mode = null;
-        while(running) {
+
+        Mode currentMode = null;
+        while (running) {
             try {
-                if(model != null && model.getMode() != null) {
-                    if(model.getMode() == IJARModel.Mode.GAME) {
-                        if(mode != IJARModel.Mode.GAME) {
+                if (mode.getMode() != null) {
+                    if (mode.getMode() == Mode.GAME) {
+                        if (currentMode != Mode.GAME) {
                             removeAll();
                             add(gameField, BorderLayout.CENTER);
-                            mode = IJARModel.Mode.GAME;
+                            currentMode = Mode.GAME;
                             updateUI();
                         }
                         gameField.run();
-                        synchronized(runner) {
+                        synchronized (runner) {
                             runner.wait(10);
                         }
                     } else {
-                        if(mode != IJARModel.Mode.MENU) {
+                        if (currentMode != Mode.MENU) {
                             removeAll();
                             add(menuPanel, BorderLayout.CENTER);
-                            mode = IJARModel.Mode.MENU;
+                            currentMode = Mode.MENU;
                             menuChanged();
                             updateUI();
                         }
-                        if(!menuEntries.equals(model.getMenuEntries())) {
+                        if (!menuEntries.equals(menu.getMenuEntries())) {
                             menuChanged();
                         }
-                        if(select != model.getSelectedIndex()) {
-                            select = model.getSelectedIndex();
+                        if (select != menu.getSelectedIndex()) {
+                            select = menu.getSelectedIndex();
                             menuPanel.updateSelection(select);
                         }
-                        synchronized(runner) {
+                        synchronized (runner) {
                             runner.wait(10);
                         }
                     }
-                } else {
-                    if(model == null) {
-                        synchronized(runner) {
-                            if(model==null){
-                                runner.wait();
-                            }
-                        }
-                    } else {
-                        //wait for the models mode to be set
-                        synchronized(runner) {
-                            runner.wait(100);
-                        }
-                    }
                 }
-            }
-            catch(final InterruptedException ignored) {
+            } catch (final InterruptedException ignored) {
                 //expected from the waits
-            }
-            catch(final Exception e) {
+            } catch (final Exception e) {
                 /*
                  * probably missed a null check
                  * still the view should just keep updating
@@ -129,19 +112,10 @@ public class BasicView extends JPanel implements IJARView {
     }
 
     private void menuChanged() {
-        menuEntries = model.getMenuEntries();
-        menuPanel.updateMenu(model.getCurrentMenu());
-        select = model.getSelectedIndex();
-    }
 
-    @Override
-    public void linkModel(final IJARModel ijarm) {
-        model = ijarm;
-        gameField.linkModel(model);if(model != null) {
-            synchronized(runner){
-                runner.notifyAll();
-            }
-        }
+        menuEntries = menu.getMenuEntries();
+        menuPanel.updateMenu(menu.getCurrentMenu());
+        select = menu.getSelectedIndex();
     }
 
     /**
@@ -149,7 +123,8 @@ public class BasicView extends JPanel implements IJARView {
      */
     @Override
     public synchronized void start() {
-        if(exec == null) {
+
+        if (exec == null) {
             running = true;
             exec = new Thread(runner);
             exec.setName("Basic-View-Updater");
@@ -163,16 +138,16 @@ public class BasicView extends JPanel implements IJARView {
      */
     @Override
     public synchronized void stop() {
+
         running = false;
-        synchronized(runner) {
+        synchronized (runner) {
             runner.notifyAll();
         }
-        while(exec.isAlive()) {
+        while (exec.isAlive()) {
             try {
                 //wait for the thread to yield
                 exec.join();
-            }
-            catch(final InterruptedException ignore) {
+            } catch (final InterruptedException ignore) {
             }
         }
         exec = null;
@@ -185,6 +160,7 @@ public class BasicView extends JPanel implements IJARView {
      */
     @Override
     public void forceUpdate() {
+
         menuChanged();
         updateUI();
     }
