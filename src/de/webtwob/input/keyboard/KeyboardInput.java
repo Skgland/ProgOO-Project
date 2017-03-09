@@ -1,7 +1,10 @@
 package de.webtwob.input.keyboard;
 
 import de.webtwob.input.action.*;
+import de.webtwob.interfaces.IJARGameModel;
 import de.webtwob.interfaces.IJARInput;
+import de.webtwob.interfaces.IJARMenuModel;
+import de.webtwob.model.menu.ModeModel;
 
 import javax.swing.*;
 import java.util.ResourceBundle;
@@ -11,9 +14,10 @@ import static de.webtwob.input.keyboard.KeyboardInput.InputActions.*;
 
 /**
  * @author Bennet Blessmann
- * Created on 31. Jan. 2017.
+ *         Created on 31. Jan. 2017.
  */
 public class KeyboardInput implements IJARInput {
+
 
     enum InputActions {
         JUMP,
@@ -25,15 +29,16 @@ public class KeyboardInput implements IJARInput {
         DOWN
     }
 
-
-    private IJARModel model;
-    private       boolean        enabled       = true;
-    private final LinkableAction JUMP_ACTION   = new JumpAction();
-    private final LinkableAction SNEAK_ACTION  = new SneakAction();
-    private final LinkableAction PAUSE_ACTION  = new PauseAction();
-    private final LinkableAction SELECT_ACTION = new SelectAction();
-    private final LinkableAction UP_ACTION     = new UpAction();
-    private final LinkableAction DOWN_ACTION   = new DownAction();
+    private IJARGameModel gameModel;
+    private IJARMenuModel menuModel;
+    private ModeModel modeModel;
+    private boolean enabled = true;
+    private AbstractAction JUMP_ACTION = new JumpAction(modeModel, gameModel);
+    private AbstractAction SNEAK_ACTION = new SneakAction(gameModel);
+    private AbstractAction PAUSE_ACTION = new PauseAction(modeModel, menuModel);
+    private AbstractAction SELECT_ACTION = new SelectAction(modeModel, menuModel);
+    private AbstractAction UP_ACTION = new UpAction(modeModel, menuModel);
+    private AbstractAction DOWN_ACTION = new DownAction(modeModel, menuModel);
 
     public KeyboardInput(final JComponent jc) {
 
@@ -42,7 +47,7 @@ public class KeyboardInput implements IJARInput {
 
     /**
      * inserts the necessary key-value pairs into the InputMap and the ActionMap
-     * */
+     */
     private void linkToMaps(final InputMap imap, final ActionMap amap) {
 
         final ResourceBundle keys = ResourceBundle.getBundle("de.webtwob.input.Keys");
@@ -65,49 +70,22 @@ public class KeyboardInput implements IJARInput {
         amap.put(DOWN, DOWN_ACTION);
     }
 
-    @Override
-    public void linkModel(final IJARModel ijarm) {
+    public KeyboardInput(final IJARGameModel gameModel, final IJARMenuModel menuModel, final ModeModel modeModel) {
+        this.gameModel = gameModel;
+        this.menuModel = menuModel;
+        this.modeModel = modeModel;
+        this.JUMP_ACTION = new JumpAction(modeModel, gameModel);
+        this.SNEAK_ACTION = new SneakAction(gameModel);
+        this.PAUSE_ACTION = new PauseAction(modeModel, menuModel);
+        this.SELECT_ACTION = new SelectAction(modeModel, menuModel);
+        this.UP_ACTION = new UpAction(modeModel, menuModel);
+        this.DOWN_ACTION = new DownAction(modeModel, menuModel);
 
-        model = ijarm;
-        if (enabled) {
-            linkActions();
-        }
-    }
-
-    /**
-     * link all actions to the current model
-     * */
-    private void linkActions() {
-
-        JUMP_ACTION.linkModel(model);
-        SNEAK_ACTION.linkModel(model);
-        PAUSE_ACTION.linkModel(model);
-        SELECT_ACTION.linkModel(model);
-        UP_ACTION.linkModel(model);
-        DOWN_ACTION.linkModel(model);
-    }
-
-    /**
-     * unlink all actions from the model by linking them to null
-     * */
-    private void unlinkActions() {
-
-        JUMP_ACTION.linkModel(null);
-        SNEAK_ACTION.linkModel(null);
-        PAUSE_ACTION.linkModel(null);
-        SELECT_ACTION.linkModel(null);
-        UP_ACTION.linkModel(null);
-        DOWN_ACTION.linkModel(null);
     }
 
     @Override
     public void setEnabled(final boolean enable) {
         enabled = enable;
-        if (enable) {
-            linkActions();
-        } else {
-            unlinkActions();
-        }
     }
 
     @Override
@@ -119,7 +97,7 @@ public class KeyboardInput implements IJARInput {
 
     /**
      * This is not an active polling input therefore the next two method's are just dummy implementations
-     * */
+     */
     @Override
     public void start() {
 
