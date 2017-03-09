@@ -1,14 +1,29 @@
 package de.webtwob.input.action;
 
+import de.webtwob.interfaces.IJARMenuModel;
+import de.webtwob.interfaces.Mode;
+import de.webtwob.model.menu.ModeModel;
+
+import javax.swing.*;
 import java.awt.event.ActionEvent;
 
 /**
  * @author Bennet Blessmann
  * Created on 01. Feb. 2017.
  */
-public class PauseAction extends LinkableAction{
+public class PauseAction extends AbstractAction {
+
+    private final ModeModel modeModel;
+    private final IJARMenuModel menuModel;
+
+    public PauseAction(ModeModel modeModel, IJARMenuModel menuModel) {
+        this.modeModel = modeModel;
+        this.menuModel = menuModel;
+    }
+
     @Override
     public void actionPerformed(final ActionEvent e) {
-        model.pause();
+        modeModel.setMode(Mode.MENU);
+        menuModel.pause();
     }
 }
