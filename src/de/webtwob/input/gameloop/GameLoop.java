@@ -20,34 +20,60 @@ public class GameLoop implements IJARInput {
     private Timer         timer;
     private boolean enabled = true;
 
-    public GameLoop(ModeModel mode,IJARGameModel game,IJARMenuModel menu){
+    public GameLoop(ModeModel mode, IJARGameModel game, IJARMenuModel menu) {
+
         this.menu = menu;
         this.game = game;
         this.mode = mode;
     }
-
     @Override
+    public String toString() {
+
+        return "Main GameLoop";
+    }    @Override
     public void setEnabled(boolean enable) {
-            enabled = enable;
+
+        enabled = enable;
     }
 
-    @Override
+    private class Loop extends TimerTask {
+
+        @Override
+        public void run() {
+
+            if (isEnabled() && mode != null) {
+                if (mode.getMode() == Mode.GAME) {
+                    if (!game.cycle()) {
+                        mode.setMode(Mode.MENU);
+                        menu.gameover();
+                    }
+                }else{
+                    if(menu.isDirty()){
+                        mode.updateViews();
+                    }
+                }
+            }
+        }
+    }    @Override
     public boolean isEnabled() {
+
         return enabled;
     }
 
     @Override
     public synchronized void start() {
-        if(timer==null){
-            timer = new Timer("GameLoop",true);
-            timer.scheduleAtFixedRate(new Loop(),10,50);
+
+        if (timer == null) {
+            timer = new Timer("GameLoop", true);
+            timer.scheduleAtFixedRate(new Loop(), 10, 50);
             System.out.println("Started GameLoop!");
         }
     }
 
     @Override
     public synchronized void stop() {
-        if(timer!=null){
+
+        if (timer != null) {
             timer.cancel();
             timer = null;
             System.out.println("Stopped GameLoop!");
@@ -55,20 +81,7 @@ public class GameLoop implements IJARInput {
 
     }
 
-    private class Loop extends TimerTask {
-        @Override
-        public void run() {
-            if(isEnabled() && mode != null){
-                if(!game.cycle()){
-                    mode.setMode(Mode.MENU);
-                    menu.gameover();
-                }
-            }
-        }
-    }
 
-    @Override
-    public String toString() {
-        return "Main GameLoop";
-    }
+
+
 }

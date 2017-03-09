@@ -40,7 +40,7 @@ public class InputMenuEntry implements IMenuEntry {
 
         if (!in.isEnabled() || active) {
             in.setEnabled(!in.isEnabled());
-            model.updateViews();
+            model.setDirty();
         }
     }
 

@@ -13,11 +13,6 @@ import java.util.List;
  */
 public class BasicView extends JPanel implements IJARView {
 
-
-    /**
-     * Used to synchronise on
-     */
-    private final Object    waiter    = new Object();
     private final MenuPanel menuPanel = new MenuPanel();
     private IJARGameModel game;
     /**

@@ -176,6 +176,10 @@ public class BasicMenuModel implements IJARMenuModel {
         dirty = false;
     }
     @Override
+    public void setDirty() {
+        dirty = true;
+    }
+    @Override
     public void pause() {
         menu = PAUSE_MENU;
     }

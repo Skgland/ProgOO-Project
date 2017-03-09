@@ -46,8 +46,9 @@ public interface IJARMenuModel {
 
     void setInputList(List<IJARInput> inputList);
 
-   boolean  isDirty();
+   boolean isDirty();
    void clean();
+   void setDirty();
 
    void pause();
 

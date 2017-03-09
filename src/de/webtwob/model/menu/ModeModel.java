@@ -12,7 +12,7 @@ import java.util.ArrayList;
  */
 public class ModeModel {
 
-    private Mode mode;
+    private Mode mode = Mode.MENU;
 
     public void setMode(Mode mode){
         this.mode = mode;
@@ -45,5 +45,11 @@ public class ModeModel {
     public Mode getMode() {
 
         return mode;
+    }
+
+    public void updateViews(){
+        for(IJARView v:views){
+            v.forceUpdate();
+        }
     }
 }
