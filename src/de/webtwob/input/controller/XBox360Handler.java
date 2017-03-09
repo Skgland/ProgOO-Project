@@ -1,6 +1,9 @@
 package de.webtwob.input.controller;
 
-import de.webtwob.interfaces.IJARLinkable;
+import de.webtwob.interfaces.IJARGameModel;
+import de.webtwob.interfaces.IJARMenuModel;
+import de.webtwob.interfaces.Mode;
+import de.webtwob.model.menu.ModeModel;
 
 import java.awt.*;
 import java.nio.ByteBuffer;
@@ -13,10 +16,19 @@ import static org.lwjgl.glfw.GLFW.glfwGetJoystickButtons;
  * <p>
  * This class handels Controller input for the XBox 360 Controller
  */
-public class XBox360Handler implements IJARLinkable {
+public class XBox360Handler{
 
     private final boolean[] pressed = new boolean[4];
-    private IJARModel model;
+    private ModeModel           mode;
+    private final IJARGameModel game;
+    private final IJARMenuModel menu;
+
+
+    public XBox360Handler(final IJARGameModel game,final IJARMenuModel menu,final ModeModel mode){
+        this.game = game;
+        this.mode = mode;
+        this.menu = menu;
+    }
 
     /**
      * This function handles input from Xbox 360 controllers
@@ -28,25 +40,26 @@ public class XBox360Handler implements IJARLinkable {
     public void handleXBoxController(final int id) {
         final ByteBuffer button = glfwGetJoystickButtons(id);
         if(button.get(BUTTON_A) == 1) {
-            if(model.getMode() == IJARModel.Mode.GAME) {
-                model.jump();
+            if(mode.getMode() == Mode.GAME) {
+                game.jump();
             } else {
                 if(!pressed[0]) {
                     pressed[0] = true;
                     //if done directly quit causes deadlock when stopping the ControllerInput
-                    EventQueue.invokeLater(model::doSelect);
+                    EventQueue.invokeLater(menu::doSelect);
                 }
             }
         } else {
             pressed[0] = false;
         }
         if(button.get(BUTTON_START) == 1) {
-            model.pause();
+            mode.setMode(Mode.MENU);
+            menu.pause();
         }
         if(button.get(BUTTON_DOWN) == 1) {
             if(!pressed[1]) {
                 pressed[1] = true;
-                model.down();
+                menu.down();
             }
         } else {
             pressed[1] = false;
@@ -55,20 +68,15 @@ public class XBox360Handler implements IJARLinkable {
         if(button.get(BUTTON_UP) == 1) {
             if(!pressed[2]) {
                 pressed[2] = true;
-                model.up();
+                menu.up();
             }
         } else {
             pressed[2] = false;
         }
         final boolean sneak = button.get(BUTTON_RB) == 1;
-        if(model.isSneaking() != sneak && sneak != pressed[3]) {
-            model.setSneaking(button.get(BUTTON_RB) == 1);
+        if(game.isSneaking() != sneak && sneak != pressed[3]) {
+            game.setSneaking(button.get(BUTTON_RB) == 1);
         }
         pressed[3] = sneak;
-    }
-
-    @Override
-    public void linkModel(final IJARModel ijarm) {
-        model = ijarm;
     }
 }

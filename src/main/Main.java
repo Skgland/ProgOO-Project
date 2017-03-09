@@ -38,7 +38,7 @@ public class Main {
         IJARInput       in;
 
         try {
-            in = new ControllerInput();
+            in = new ControllerInput(mode,game,menu);
         }
         catch(final InternalError ignore) {
             //noinspection AssignmentToNull

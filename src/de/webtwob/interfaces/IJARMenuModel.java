@@ -49,6 +49,8 @@ public interface IJARMenuModel {
    boolean  isDirty();
    void clean();
 
+   void pause();
+
     /**
      * move to gameover menu
      * */

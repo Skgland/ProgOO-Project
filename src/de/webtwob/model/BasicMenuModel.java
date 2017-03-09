@@ -176,6 +176,10 @@ public class BasicMenuModel implements IJARMenuModel {
         dirty = false;
     }
     @Override
+    public void pause() {
+        menu = PAUSE_MENU;
+    }
+    @Override
     public void gameover() {
 
         menu = GAME_OVER_MENU;
