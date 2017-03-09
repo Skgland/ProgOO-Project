@@ -1,5 +1,6 @@
 package de.webtwob.input.auto;
 
+import de.webtwob.interfaces.IJARGameModel;
 import de.webtwob.interfaces.IJARInput;
 
 import java.awt.*;
@@ -10,26 +11,20 @@ import java.awt.*;
 public class AutoRun implements IJARInput {
 
     private boolean enabled = false;
-    private IJARModel model;
+    private IJARGameModel gameModel;
     private boolean   running;
     private final Runnable run = this::marathon;
     private Thread runner;
 
-    @Override
-    public void linkModel(final IJARModel ijarm) {
-        model = ijarm;
-        if(enabled && model != null) {
-            synchronized(run) {
-                run.notifyAll();
-            }
-        }
+    public AutoRun(final IJARGameModel gameModel) {
+        this.gameModel = gameModel;
     }
 
     private void marathon() {
 
         while(running) {
-            if(model != null && enabled) {
-                final Rectangle[] rectangles = model.getHurdles();
+            if(gameModel != null && enabled) {
+                final Rectangle[] rectangles = gameModel.getHurdles();
                 boolean           jump       = false;
                 boolean           sneak      = false;
                 if(rectangles[1] != null && rectangles[1].getY() != 0) {
@@ -50,11 +45,11 @@ public class AutoRun implements IJARInput {
                     }
                 }
 
-                if(sneak != model.isSneaking()) {
-                    model.setSneaking(sneak);
+                if(sneak != gameModel.isSneaking()) {
+                    gameModel.setSneaking(sneak);
                 }
                 if(jump) {
-                    model.jump();
+                    gameModel.jump();
                 }
             } else {
                 synchronized(run) {
@@ -77,7 +72,7 @@ public class AutoRun implements IJARInput {
     @Override
     public void setEnabled(final boolean enable) {
         enabled = enable;
-        if(enabled && model != null) {
+        if(enabled && gameModel != null) {
             synchronized(run) {
                 run.notifyAll();
             }
