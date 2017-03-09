@@ -33,12 +33,12 @@ public class KeyboardInput implements IJARInput {
     private final IJARMenuModel menuModel;
     private final ModeModel     modeModel;
     private boolean enabled = true;
-    private AbstractAction JUMP_ACTION = new JumpAction(modeModel, gameModel);
-    private AbstractAction SNEAK_ACTION = new SneakAction(gameModel);
-    private AbstractAction PAUSE_ACTION = new PauseAction(modeModel, menuModel);
-    private AbstractAction SELECT_ACTION = new SelectAction(modeModel, menuModel);
-    private AbstractAction UP_ACTION = new UpAction(modeModel, menuModel);
-    private AbstractAction DOWN_ACTION = new DownAction(modeModel, menuModel);
+    private AbstractAction JUMP_ACTION;
+    private AbstractAction SNEAK_ACTION;
+    private AbstractAction PAUSE_ACTION;
+    private AbstractAction SELECT_ACTION;
+    private AbstractAction UP_ACTION;
+    private AbstractAction DOWN_ACTION;
 
     /**
      * inserts the necessary key-value pairs into the InputMap and the ActionMap
