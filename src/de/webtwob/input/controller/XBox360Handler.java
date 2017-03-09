@@ -25,8 +25,6 @@ public class XBox360Handler {
 
     private final boolean[] pressed = new boolean[4];
     private final ModeModel     mode;
-    private final IJARGameModel game;
-    private final IJARMenuModel menu;
 
     private AbstractAction JUMP_ACTION;
     private AbstractAction SNEAK_ACTION;
@@ -37,9 +35,7 @@ public class XBox360Handler {
 
 
     public XBox360Handler(final IJARGameModel game, final IJARMenuModel menu, final ModeModel mode) {
-        this.game = game;
         this.mode = mode;
-        this.menu = menu;
 
         JUMP_ACTION = new JumpAction(mode, game);
         SNEAK_ACTION = new SneakAction(game);
@@ -95,8 +91,8 @@ public class XBox360Handler {
         }
 
         final boolean sneak = button.get(BUTTON_RB) == 1;
-        if(game.isSneaking() != sneak && sneak != pressed[3]) {
-            ActionEvent actionEvent = new ActionEvent(this, id, "SNEAK", sneak ? InputEvent.SHIFT_MASK : 0);
+        if(mode.getMode() == Mode.GAME && sneak != pressed[3]) {
+            final ActionEvent actionEvent = new ActionEvent(this, id, "SNEAK", sneak ? InputEvent.SHIFT_MASK : 0);
             EventQueue.invokeLater(() -> SNEAK_ACTION.actionPerformed(actionEvent));
         }
 
@@ -105,7 +101,6 @@ public class XBox360Handler {
 
     @Override
     public String toString() {
-        return "XBox360Handler{" + "pressed=" + Arrays.toString(pressed) + ", mode=" + mode + ", game=" + game + ", "
-                       + "menu=" + menu + '}';
+        return "XBox360Handler{" + "pressed=" + Arrays.toString(pressed) + ", mode=" + mode + '}';
     }
 }

@@ -22,7 +22,6 @@ public class TestView extends JPanel implements IJARView {
             try {
                 label.setText("Running Test!:");
                     label.setMinimumSize(label.getPreferredSize());
-
                 synchronized (this) {
                     try {
                         wait(10);
