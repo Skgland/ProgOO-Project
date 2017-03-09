@@ -23,8 +23,8 @@ import static org.lwjgl.glfw.GLFW.glfwGetJoystickButtons;
  */
 public class XBox360Handler {
 
-    private final boolean[] pressed = new boolean[4];
-    private final ModeModel     mode;
+    private final boolean[] pressed = new boolean[5];
+    private final ModeModel mode;
 
     private AbstractAction JUMP_ACTION;
     private AbstractAction SNEAK_ACTION;
@@ -32,7 +32,8 @@ public class XBox360Handler {
     private AbstractAction SELECT_ACTION;
     private AbstractAction UP_ACTION;
     private AbstractAction DOWN_ACTION;
-
+    private AbstractAction STEP_ACTION;
+    private long last = 0;
 
     public XBox360Handler(final IJARGameModel game, final IJARMenuModel menu, final ModeModel mode) {
         this.mode = mode;
@@ -43,6 +44,7 @@ public class XBox360Handler {
         SELECT_ACTION = new SelectAction(mode, menu);
         UP_ACTION = new UpAction(mode, menu);
         DOWN_ACTION = new DownAction(mode, menu);
+        STEP_ACTION = new StepAction(mode, game, menu);
     }
 
     /**
@@ -54,6 +56,7 @@ public class XBox360Handler {
      */
     public void handleXBoxController(final int id) {
         final ByteBuffer button = glfwGetJoystickButtons(id);
+
 
         if(button.get(BUTTON_A) == 1) {
             if(mode.getMode() == Mode.GAME) {
@@ -97,6 +100,26 @@ public class XBox360Handler {
         }
 
         pressed[3] = sneak;
+
+        if(button.get(BUTTON_LB) == 1) {
+            if(!pressed[4]) {
+                pressed[4] = true;
+                EventQueue.invokeLater(() -> STEP_ACTION.actionPerformed(new ActionEvent(this, id, "STEP")));
+            }
+        } else {
+            pressed[4] = false;
+        }
+
+        if((button.get(BUTTON_LS) == 1)) {
+            if((last + 200 < System.currentTimeMillis())) {
+                last = System.currentTimeMillis();
+                EventQueue.invokeLater(() -> STEP_ACTION.actionPerformed(new ActionEvent(this, id, "STEP")));
+            }
+        } else
+        {
+            last = 0;
+        }
+
     }
 
     @Override
