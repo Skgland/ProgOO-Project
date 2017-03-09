@@ -4,10 +4,13 @@ import de.webtwob.input.auto.AutoRun;
 import de.webtwob.input.controller.ControllerInput;
 import de.webtwob.input.gameloop.GameLoop;
 import de.webtwob.input.keyboard.KeyboardInput;
+import de.webtwob.interfaces.IJARGameModel;
 import de.webtwob.interfaces.IJARInput;
-import de.webtwob.interfaces.IJARModel;
+import de.webtwob.interfaces.IJARMenuModel;
 import de.webtwob.interfaces.IJARView;
-import de.webtwob.model.BasicJARModel;
+import de.webtwob.model.BasicGameModel;
+import de.webtwob.model.BasicMenuModel;
+import de.webtwob.model.menu.ModeModel;
 import de.webtwob.view.lighthouse.LightHouseView;
 import de.webtwob.view.swing.BasicView;
 
@@ -23,8 +26,10 @@ public class Main {
      * initializes the Model, all Views and Inputs
      */
     public static void main(final String[] tArgs) {
+        final ModeModel mode = new ModeModel();
+        final IJARGameModel game = new BasicGameModel();
+        final IJARMenuModel menu = new BasicMenuModel(game,mode);
 
-        final IJARModel model  = new BasicJARModel();
         final IJARView  view   = new BasicView();
         final IJARView  viewLH = new LightHouseView();
         final IJARInput loop = new GameLoop();
@@ -63,17 +68,22 @@ public class Main {
 
         //add all inputs and views to the model
         //the model will handel linking the views and inputs to itself
-        model.addView(view);
-        model.addView(viewLH);
-        model.addInput(input);
-        model.addInput(auto);
-        model.addInput(loop);
+        mode.addView(viewLH);
+        mode.addInput(input);
+        mode.addView(view);
+        mode.addInput(auto);
+        mode.addInput(loop);
 
         if(in2 != null) {
-            model.addInput(in2);
+            mode.addInput(in2);
+            in2.start();
         }
 
-        model.start();
+        view.start();
+        viewLH.start();
+        input.start();
+        loop.start();
+        auto.start();
 
         /*
          * The GLFWQueue has to be run by the main Thread,

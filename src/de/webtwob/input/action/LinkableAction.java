@@ -1,7 +1,6 @@
 package de.webtwob.input.action;
 
 import de.webtwob.interfaces.IJARLinkable;
-import de.webtwob.interfaces.IJARModel;
 
 import javax.swing.*;
 

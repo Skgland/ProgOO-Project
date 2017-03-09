@@ -1,7 +1,6 @@
 package de.webtwob.view.swing;
 
 import de.webtwob.interfaces.IJARLinkable;
-import de.webtwob.interfaces.IJARModel;
 
 import java.awt.*;
 import java.awt.image.BufferStrategy;

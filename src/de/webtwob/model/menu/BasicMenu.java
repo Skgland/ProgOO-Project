@@ -1,4 +1,4 @@
-package de.webtwob.model;
+package de.webtwob.model.menu;
 
 import de.webtwob.interfaces.IMenu;
 import de.webtwob.interfaces.IMenuEntry;
@@ -17,7 +17,7 @@ public class BasicMenu implements IMenu {
     private Runnable     runner;
     private boolean active = true;
 
-    BasicMenu(final String name){
+    public BasicMenu(final String name){
         this.name = name;
     }
 

@@ -1,7 +1,6 @@
 package de.webtwob.input.gameloop;
 
 import de.webtwob.interfaces.IJARInput;
-import de.webtwob.interfaces.IJARModel;
 
 import java.util.Timer;
 import java.util.TimerTask;
@@ -53,7 +52,9 @@ public class GameLoop implements IJARInput {
         @Override
         public void run() {
             if(isEnabled() && model != null){
-                model.cycle();
+                if(!model.cycle()){
+                    menumodel.gameover();
+                }
             }
         }
     }

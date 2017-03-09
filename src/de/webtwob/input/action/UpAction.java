@@ -1,7 +1,5 @@
 package de.webtwob.input.action;
 
-import de.webtwob.interfaces.IJARModel;
-
 import java.awt.event.ActionEvent;
 
 /**

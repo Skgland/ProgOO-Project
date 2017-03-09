@@ -1,7 +1,6 @@
 package de.webtwob.view.lighthouse;
 
 import de.cau.infprogoo.lighthouse.LighthouseNetwork;
-import de.webtwob.interfaces.IJARModel;
 import de.webtwob.interfaces.IJARView;
 
 import java.awt.*;

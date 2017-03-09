@@ -2,7 +2,6 @@ package de.webtwob.input.keyboard;
 
 import de.webtwob.input.action.*;
 import de.webtwob.interfaces.IJARInput;
-import de.webtwob.interfaces.IJARModel;
 
 import javax.swing.*;
 import java.util.ResourceBundle;

@@ -1,6 +1,5 @@
 package de.webtwob;
 
-import de.webtwob.interfaces.IJARModel;
 import de.webtwob.interfaces.IJARView;
 
 import javax.swing.*;

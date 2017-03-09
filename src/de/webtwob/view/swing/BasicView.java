@@ -1,6 +1,5 @@
 package de.webtwob.view.swing;
 
-import de.webtwob.interfaces.IJARModel;
 import de.webtwob.interfaces.IJARView;
 import de.webtwob.interfaces.IMenuEntry;
 

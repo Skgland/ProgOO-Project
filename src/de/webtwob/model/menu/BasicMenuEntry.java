@@ -1,4 +1,4 @@
-package de.webtwob.model;
+package de.webtwob.model.menu;
 
 import de.webtwob.interfaces.IMenuEntry;
 

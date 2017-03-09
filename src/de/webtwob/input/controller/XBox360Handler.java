@@ -1,7 +1,6 @@
 package de.webtwob.input.controller;
 
 import de.webtwob.interfaces.IJARLinkable;
-import de.webtwob.interfaces.IJARModel;
 
 import java.awt.*;
 import java.nio.ByteBuffer;

@@ -1,7 +1,6 @@
 package de.webtwob.input.auto;
 
 import de.webtwob.interfaces.IJARInput;
-import de.webtwob.interfaces.IJARModel;
 
 import java.awt.*;
 

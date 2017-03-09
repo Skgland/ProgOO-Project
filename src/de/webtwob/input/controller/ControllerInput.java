@@ -1,7 +1,6 @@
 package de.webtwob.input.controller;
 
 import de.webtwob.interfaces.IJARInput;
-import de.webtwob.interfaces.IJARModel;
 import main.GLFWQueue;
 import org.lwjgl.glfw.GLFW;
 import org.lwjgl.glfw.GLFWErrorCallback;

@@ -1,7 +1,7 @@
-package de.webtwob.model;
+package de.webtwob.model.menu;
 
 import de.webtwob.interfaces.IJARInput;
-import de.webtwob.interfaces.IJARModel;
+import de.webtwob.interfaces.IJARMenuModel;
 import de.webtwob.interfaces.IMenuEntry;
 
 import java.util.ArrayList;
@@ -13,11 +13,11 @@ import java.util.List;
  */
 public class InputMenu extends BasicMenu {
 
-    private final IJARModel model;
+    private final IJARMenuModel model;
     private       List<IJARInput>      inputs       = new ArrayList<>();
     private final List<InputMenuEntry> inputEntries = new ArrayList<>();
 
-    InputMenu(final IJARModel model) {
+    public InputMenu(final IJARMenuModel model) {
 
         super("Inputs");
         this.model = model;
