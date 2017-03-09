@@ -32,7 +32,7 @@ public class Main {
 
         final IJARView  view   = new BasicView();
         final IJARView  viewLH = new LightHouseView();
-        final IJARInput loop = new GameLoop();
+        final IJARInput loop = new GameLoop(mode,game,menu);
         final IJARInput auto   = new AutoRun(game);
         final IJARInput in2;
         IJARInput       in;
