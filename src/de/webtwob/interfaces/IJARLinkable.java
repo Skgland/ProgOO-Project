@@ -1,6 +1,6 @@
 package de.webtwob.interfaces;
 
-import de.webtwob.model.menu.ModeModel;
+import de.webtwob.model.ModeModel;
 
 /**
  * @author Bennet Blessmann

@@ -4,7 +4,7 @@ import de.webtwob.interfaces.IJARGameModel;
 import de.webtwob.interfaces.IJARInput;
 import de.webtwob.interfaces.IJARMenuModel;
 import de.webtwob.interfaces.Mode;
-import de.webtwob.model.menu.ModeModel;
+import de.webtwob.model.ModeModel;
 
 import java.util.Timer;
 import java.util.TimerTask;

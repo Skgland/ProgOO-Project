@@ -1,7 +1,7 @@
 package de.webtwob.view.swing;
 
 import de.webtwob.interfaces.*;
-import de.webtwob.model.menu.ModeModel;
+import de.webtwob.model.ModeModel;
 
 import javax.swing.*;
 import java.awt.*;
@@ -14,11 +14,12 @@ import java.util.List;
 public class BasicView extends JPanel implements IJARView {
 
     private final MenuPanel menuPanel = new MenuPanel();
-    private IJARGameModel game;
+    private final IJARGameModel game;
+
     /**
      * Stores the reused GameField
      */
-    private final GameField gameField = new GameField(game);
+    private final GameField gameField;
     private          IJARMenuModel menu;
     private          ModeModel     mode;
     /**
@@ -41,10 +42,10 @@ public class BasicView extends JPanel implements IJARView {
 
 
     public BasicView(final IJARGameModel game, final IJARMenuModel menu, final ModeModel mode) {
-
         this.game = game;
         this.menu = menu;
         this.mode = mode;
+        gameField = new GameField(game);
         setLayout(new BorderLayout());
         add(menuPanel);
         setMinimumSize(getPreferredSize());

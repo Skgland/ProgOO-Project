@@ -4,7 +4,7 @@ import de.webtwob.input.action.*;
 import de.webtwob.interfaces.IJARGameModel;
 import de.webtwob.interfaces.IJARInput;
 import de.webtwob.interfaces.IJARMenuModel;
-import de.webtwob.model.menu.ModeModel;
+import de.webtwob.model.ModeModel;
 
 import javax.swing.*;
 import java.util.ResourceBundle;

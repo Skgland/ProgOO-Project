@@ -1,4 +1,4 @@
-package de.webtwob.model.menu;
+package de.webtwob.model;
 
 import de.webtwob.interfaces.IJARInput;
 import de.webtwob.interfaces.IJARView;

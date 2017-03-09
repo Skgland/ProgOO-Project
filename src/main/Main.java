@@ -10,7 +10,7 @@ import de.webtwob.interfaces.IJARMenuModel;
 import de.webtwob.interfaces.IJARView;
 import de.webtwob.model.BasicGameModel;
 import de.webtwob.model.BasicMenuModel;
-import de.webtwob.model.menu.ModeModel;
+import de.webtwob.model.ModeModel;
 import de.webtwob.view.lighthouse.LightHouseView;
 import de.webtwob.view.swing.BasicView;
 

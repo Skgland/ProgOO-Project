@@ -4,7 +4,6 @@ import de.webtwob.interfaces.*;
 import de.webtwob.model.menu.BasicMenu;
 import de.webtwob.model.menu.BasicMenuEntry;
 import de.webtwob.model.menu.InputMenu;
-import de.webtwob.model.menu.ModeModel;
 
 import java.util.ArrayList;
 import java.util.LinkedList;
