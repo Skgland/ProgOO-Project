@@ -64,7 +64,7 @@ public class Main {
         jFrame.setAutoRequestFocus(true);
         jFrame.setVisible(true);
 
-        final IJARInput input = new KeyboardInput(jFrame.getRootPane());
+        final IJARInput input = new KeyboardInput(jFrame.getRootPane(),game,menu,mode);
 
         //add all inputs and views to the model
         //the model will handel linking the views and inputs to itself

@@ -40,11 +40,6 @@ public class KeyboardInput implements IJARInput {
     private AbstractAction UP_ACTION = new UpAction(modeModel, menuModel);
     private AbstractAction DOWN_ACTION = new DownAction(modeModel, menuModel);
 
-    public KeyboardInput(final JComponent jc) {
-
-        linkToMaps(jc.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW), jc.getActionMap());
-    }
-
     /**
      * inserts the necessary key-value pairs into the InputMap and the ActionMap
      */
@@ -70,7 +65,7 @@ public class KeyboardInput implements IJARInput {
         amap.put(DOWN, DOWN_ACTION);
     }
 
-    public KeyboardInput(final IJARGameModel gameModel, final IJARMenuModel menuModel, final ModeModel modeModel) {
+    public KeyboardInput(final JComponent jc,final IJARGameModel gameModel, final IJARMenuModel menuModel, final ModeModel modeModel) {
         this.gameModel = gameModel;
         this.menuModel = menuModel;
         this.modeModel = modeModel;
@@ -81,6 +76,7 @@ public class KeyboardInput implements IJARInput {
         this.UP_ACTION = new UpAction(modeModel, menuModel);
         this.DOWN_ACTION = new DownAction(modeModel, menuModel);
 
+        linkToMaps(jc.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW), jc.getActionMap());
     }
 
     @Override
