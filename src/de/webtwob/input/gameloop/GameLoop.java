@@ -1,6 +1,10 @@
 package de.webtwob.input.gameloop;
 
+import de.webtwob.interfaces.IJARGameModel;
 import de.webtwob.interfaces.IJARInput;
+import de.webtwob.interfaces.IJARMenuModel;
+import de.webtwob.interfaces.Mode;
+import de.webtwob.model.menu.ModeModel;
 
 import java.util.Timer;
 import java.util.TimerTask;
@@ -10,9 +14,17 @@ import java.util.TimerTask;
  */
 public class GameLoop implements IJARInput {
 
-    private IJARModel model;
-    private Timer timer;
+    private ModeModel     mode;
+    private IJARGameModel game;
+    private IJARMenuModel menu;
+    private Timer         timer;
     private boolean enabled = true;
+
+    public GameLoop(ModeModel mode,IJARGameModel game,IJARMenuModel menu){
+        this.menu = menu;
+        this.game = game;
+        this.mode = mode;
+    }
 
     @Override
     public void setEnabled(boolean enable) {
@@ -22,11 +34,6 @@ public class GameLoop implements IJARInput {
     @Override
     public boolean isEnabled() {
         return enabled;
-    }
-
-    @Override
-    public void linkModel(IJARModel ijarm) {
-        model = ijarm;
     }
 
     @Override
@@ -51,9 +58,10 @@ public class GameLoop implements IJARInput {
     private class Loop extends TimerTask {
         @Override
         public void run() {
-            if(isEnabled() && model != null){
-                if(!model.cycle()){
-                    menumodel.gameover();
+            if(isEnabled() && mode != null){
+                if(!game.cycle()){
+                    mode.setMode(Mode.MENU);
+                    menu.gameover();
                 }
             }
         }
