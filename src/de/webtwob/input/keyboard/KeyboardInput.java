@@ -13,8 +13,7 @@ import static de.webtwob.input.keyboard.KeyboardInput.InputActions.*;
 
 
 /**
- * @author Bennet Blessmann
- *         Created on 31. Jan. 2017.
+ * @author Bennet Blessmann Created on 31. Jan. 2017.
  */
 public class KeyboardInput implements IJARInput {
 
@@ -29,9 +28,6 @@ public class KeyboardInput implements IJARInput {
         DOWN
     }
 
-    private final IJARGameModel gameModel;
-    private final IJARMenuModel menuModel;
-    private final ModeModel     modeModel;
     private boolean enabled = true;
     private AbstractAction JUMP_ACTION;
     private AbstractAction SNEAK_ACTION;
@@ -51,7 +47,6 @@ public class KeyboardInput implements IJARInput {
         imap.put(KeyStroke.getKeyStroke(keys.getString("SNEAK_MOD") + " " + keys.getString("SNEAK")), SNEAK);
         imap.put(KeyStroke.getKeyStroke("released " + keys.getString("SNEAK")), UN_SNEAK);
         imap.put(KeyStroke.getKeyStroke(keys.getString("PAUSE")), PAUSE);
-
         imap.put(KeyStroke.getKeyStroke(keys.getString("ARROW_UP")), UP);
         imap.put(KeyStroke.getKeyStroke(keys.getString("ARROW_DOWN")), DOWN);
         imap.put(KeyStroke.getKeyStroke("ENTER"), SELECT);
@@ -65,16 +60,14 @@ public class KeyboardInput implements IJARInput {
         amap.put(DOWN, DOWN_ACTION);
     }
 
-    public KeyboardInput(final JComponent jc,final IJARGameModel gameModel, final IJARMenuModel menuModel, final ModeModel modeModel) {
-        this.gameModel = gameModel;
-        this.menuModel = menuModel;
-        this.modeModel = modeModel;
-        this.JUMP_ACTION = new JumpAction(modeModel, gameModel);
-        this.SNEAK_ACTION = new SneakAction(gameModel);
-        this.PAUSE_ACTION = new PauseAction(modeModel, menuModel);
-        this.SELECT_ACTION = new SelectAction(modeModel, menuModel);
-        this.UP_ACTION = new UpAction(modeModel, menuModel);
-        this.DOWN_ACTION = new DownAction(modeModel, menuModel);
+    public KeyboardInput(final JComponent jc, final IJARGameModel gameModel, final IJARMenuModel menuModel, final
+    ModeModel modeModel) {
+        JUMP_ACTION = new JumpAction(modeModel, gameModel);
+        SNEAK_ACTION = new SneakAction(gameModel);
+        PAUSE_ACTION = new PauseAction(modeModel, menuModel);
+        SELECT_ACTION = new SelectAction(modeModel, menuModel);
+        UP_ACTION = new UpAction(modeModel, menuModel);
+        DOWN_ACTION = new DownAction(modeModel, menuModel);
 
         linkToMaps(jc.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW), jc.getActionMap());
     }
@@ -82,6 +75,12 @@ public class KeyboardInput implements IJARInput {
     @Override
     public void setEnabled(final boolean enable) {
         enabled = enable;
+        JUMP_ACTION.setEnabled(enable);
+        SNEAK_ACTION.setEnabled(enable);
+        PAUSE_ACTION.setEnabled(enable);
+        SELECT_ACTION.setEnabled(enable);
+        UP_ACTION.setEnabled(enable);
+        DOWN_ACTION.setEnabled(enable);
     }
 
     @Override

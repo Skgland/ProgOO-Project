@@ -10,7 +10,7 @@
  *      The view that implements the Lighthouse API can be found in the de.webtwob.view.lighthouse package
  *  All components that are (part of) a Model can be found in the de.webtwob.model package
  *
- *  All interfaces can be found in the package de.webtwob.interfaces
+ *  All interfaces and an enum can be found in the package de.webtwob.interfaces
  *
  *
  * */

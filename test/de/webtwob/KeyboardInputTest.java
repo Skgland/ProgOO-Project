@@ -26,8 +26,6 @@ public class KeyboardInputTest {
         model = new TestModel();
         final TestView  view  = new TestView();
 
-        model.addView(view);
-
         final JFrame frame = new JFrame("Unit Test: KeyboardInput");
         frame.add(view);
         frame.pack();
@@ -51,8 +49,6 @@ public class KeyboardInputTest {
                 }
             }
         });
-
-        model.start();
 
         while(!frame.hasFocus()) {
             try {
