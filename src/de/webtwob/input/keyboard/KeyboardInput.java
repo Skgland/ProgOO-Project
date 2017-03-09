@@ -47,6 +47,7 @@ public class KeyboardInput implements IJARInput {
         imap.put(KeyStroke.getKeyStroke(keys.getString("SNEAK_MOD") + " " + keys.getString("SNEAK")), SNEAK);
         imap.put(KeyStroke.getKeyStroke("released " + keys.getString("SNEAK")), UN_SNEAK);
         imap.put(KeyStroke.getKeyStroke(keys.getString("PAUSE")), PAUSE);
+        imap.put(KeyStroke.getKeyStroke(keys.getString("SNEAK_MOD")+" "+keys.getString("PAUSE")), PAUSE);
         imap.put(KeyStroke.getKeyStroke(keys.getString("ARROW_UP")), UP);
         imap.put(KeyStroke.getKeyStroke(keys.getString("ARROW_DOWN")), DOWN);
         imap.put(KeyStroke.getKeyStroke("ENTER"), SELECT);
