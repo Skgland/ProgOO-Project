@@ -16,6 +16,7 @@ import de.webtwob.view.swing.BasicView;
 
 import javax.swing.*;
 import java.awt.*;
+import java.util.ArrayList;
 
 /**
  * @author Bennet Blessmann Created on 10.02.2017.
@@ -26,33 +27,39 @@ public class Main {
      * initializes the Model, all Views and Inputs
      */
     public static void main(final String[] tArgs) {
-        final ModeModel mode = new ModeModel();
+        /**
+         * all inputs added to the model
+         */
+        final ArrayList<IJARInput> inputs = new ArrayList<>();
+
+        final ModeModel     mode = new ModeModel();
         final IJARGameModel game = new BasicGameModel();
-        final IJARMenuModel menu = new BasicMenuModel(game,mode);
+        final IJARMenuModel menu = new BasicMenuModel(game, mode);
 
-        final IJARView  view   = new BasicView(game,menu,mode);
-        final IJARView  viewLH = new LightHouseView(game,menu,mode);
-        final IJARInput loop = new GameLoop(mode,game,menu);
+        final IJARView  view   = new BasicView(game, menu, mode);
+        final IJARView  viewLH = new LightHouseView(game, menu, mode);
+        final IJARInput loop   = new GameLoop(mode, game, menu);
         final IJARInput auto   = new AutoRun(game);
-        final IJARInput in2;
-        IJARInput       in;
+        final IJARInput controller;
 
-        try {
-            in = new ControllerInput(mode,game,menu);
-        }
-        catch(final InternalError ignore) {
-            //noinspection AssignmentToNull
-            in = null;
-            System.err.println("Failed to Initialize GLFW! If running on Mac try starting JVM with " +
-                                       "-XstartOnFirstThread!");
-        }
-        catch(final UnsatisfiedLinkError e) {
-            //noinspection AssignmentToNull
-            in = null;
-            System.err.println("Couldn't find Controller libraries!\nController support disabled!");
-        }
+        {
+            IJARInput in;
 
-        in2 = in;
+            try {
+                in = new ControllerInput(mode, game, menu);
+            } catch (final InternalError ignore) {
+                //noinspection AssignmentToNull
+                in = null;
+                System.err.println("Failed to Initialize GLFW! If running on Mac try starting JVM with " +
+                                           "-XstartOnFirstThread!");
+            } catch (final UnsatisfiedLinkError e) {
+                //noinspection AssignmentToNull
+                in = null;
+                System.err.println("Couldn't find Controller libraries!\nController support disabled!");
+            }
+
+            controller = in;
+        }
 
         //setup the JFrame
         final JFrame jFrame = new JFrame();
@@ -64,24 +71,26 @@ public class Main {
         jFrame.setAutoRequestFocus(true);
         jFrame.setVisible(true);
 
-        final IJARInput input = new KeyboardInput(jFrame.getRootPane(),game,menu,mode);
+        final IJARInput keyboard = new KeyboardInput(jFrame.getRootPane(), game, menu, mode);
 
         //add all inputs and views to the model
         //the model will handel linking the views and inputs to itself
+        inputs.add(loop);
+        inputs.add(auto);
+        inputs.add(keyboard);
         mode.addView(viewLH);
-        mode.addInput(input);
         mode.addView(view);
-        mode.addInput(auto);
-        mode.addInput(loop);
 
-        if(in2 != null) {
-            mode.addInput(in2);
-            in2.start();
+        if (controller != null) {
+            inputs.add(controller);
+            controller.start();
         }
+
+        menu.setInputList(inputs);
 
         view.start();
         viewLH.start();
-        input.start();
+        keyboard.start();
         loop.start();
         auto.start();
 

@@ -18,7 +18,6 @@ public class InputMenu extends BasicMenu {
     private final List<InputMenuEntry> inputEntries = new ArrayList<>();
 
     public InputMenu(final IJARMenuModel model) {
-
         super("Inputs");
         this.model = model;
     }
@@ -37,6 +36,7 @@ public class InputMenu extends BasicMenu {
             ime.setActive(active > 1);
             ime.setModel(model);
         }
+        model.setDirty();
     }
 
     @Override

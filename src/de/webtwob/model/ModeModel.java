@@ -1,6 +1,5 @@
 package de.webtwob.model;
 
-import de.webtwob.interfaces.IJARInput;
 import de.webtwob.interfaces.IJARView;
 import de.webtwob.interfaces.Mode;
 
@@ -19,10 +18,6 @@ public class ModeModel {
     }
 
     /**
-     * all inputs added to the model
-     */
-    private final ArrayList<IJARInput> inputs = new ArrayList<>();
-    /**
      * all views added to this model
      */
     private final ArrayList<IJARView>  views  = new ArrayList<>();
@@ -35,11 +30,6 @@ public class ModeModel {
     public synchronized void addView(final IJARView ijarv) {
 
         views.add(ijarv);
-    }
-
-    public synchronized void addInput(final IJARInput ijari) {
-
-        inputs.add(ijari);
     }
 
     public Mode getMode() {

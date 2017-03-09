@@ -18,10 +18,6 @@ import static de.webtwob.interfaces.Mode.GAME;
 public class BasicMenuModel implements IJARMenuModel {
 
     /**
-     * all inputs added to the model
-     */
-    private final ArrayList<IJARInput> inputs         = new ArrayList<>();
-    /**
      * Stores the menu traversal so we can go back
      */
     private final LinkedList<IMenu>    back           = new LinkedList<>();
@@ -160,9 +156,8 @@ public class BasicMenuModel implements IJARMenuModel {
     }
 
     @Override
-    public void setInputList(List<IJARInput> inputList) {
-
-        INPUTS_MENU.updateInputs(inputs);
+    public void setInputList(final List<IJARInput> inputList) {
+        INPUTS_MENU.updateInputs(inputList);
     }
     @Override
     public boolean isDirty() {
