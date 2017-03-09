@@ -5,6 +5,7 @@ package de.webtwob.input.controller;
  *
  * This class contains constants that are used for the Xbox 360 Controller
  */
+@SuppressWarnings("unused")
 public class XBox360Const {
 
     public static final String NAME ="Xbox 360 Controller";

@@ -29,9 +29,9 @@ public class KeyboardInput implements IJARInput {
         DOWN
     }
 
-    private IJARGameModel gameModel;
-    private IJARMenuModel menuModel;
-    private ModeModel modeModel;
+    private final IJARGameModel gameModel;
+    private final IJARMenuModel menuModel;
+    private final ModeModel     modeModel;
     private boolean enabled = true;
     private AbstractAction JUMP_ACTION = new JumpAction(modeModel, gameModel);
     private AbstractAction SNEAK_ACTION = new SneakAction(gameModel);

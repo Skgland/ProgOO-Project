@@ -16,7 +16,7 @@ public class JumpAction extends AbstractAction {
     private final ModeModel modeModel;
     private final IJARGameModel gameModel;
 
-    public JumpAction(ModeModel modeModel, IJARGameModel gameModel) {
+    public JumpAction(final ModeModel modeModel, final IJARGameModel gameModel) {
         this.modeModel = modeModel;
         this.gameModel = gameModel;
     }

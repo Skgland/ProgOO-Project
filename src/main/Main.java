@@ -27,9 +27,6 @@ public class Main {
      * initializes the Model, all Views and Inputs
      */
     public static void main(final String[] tArgs) {
-        /**
-         * all inputs added to the model
-         */
         final ArrayList<IJARInput> inputs = new ArrayList<>();
 
         final ModeModel     mode = new ModeModel();
@@ -78,8 +75,6 @@ public class Main {
         inputs.add(loop);
         inputs.add(auto);
         inputs.add(keyboard);
-        mode.addView(viewLH);
-        mode.addView(view);
 
         if (controller != null) {
             inputs.add(controller);

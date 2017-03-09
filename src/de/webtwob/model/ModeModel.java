@@ -1,9 +1,6 @@
 package de.webtwob.model;
 
-import de.webtwob.interfaces.IJARView;
 import de.webtwob.interfaces.Mode;
-
-import java.util.ArrayList;
 
 /**
  * @author Bennet Blessmann
@@ -13,23 +10,8 @@ public class ModeModel {
 
     private Mode mode = Mode.MENU;
 
-    public void setMode(Mode mode){
+    public void setMode(final Mode mode){
         this.mode = mode;
-    }
-
-    /**
-     * all views added to this model
-     */
-    private final ArrayList<IJARView>  views  = new ArrayList<>();
-
-
-    private void pause(){
-        mode = Mode.MENU;
-    }
-
-    public synchronized void addView(final IJARView ijarv) {
-
-        views.add(ijarv);
     }
 
     public Mode getMode() {

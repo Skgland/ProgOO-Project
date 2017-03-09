@@ -16,7 +16,7 @@ public class UpAction extends AbstractAction {
     private final ModeModel modeModel;
     private final IJARMenuModel menuModel;
 
-    public UpAction(ModeModel modeModel, IJARMenuModel menuMode) {
+    public UpAction(final ModeModel modeModel, final IJARMenuModel menuMode) {
         this.modeModel = modeModel;
         this.menuModel = menuMode;
     }

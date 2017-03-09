@@ -12,8 +12,6 @@ import java.util.List;
  */
 public class TestModel implements IJARMenuModel, IJARGameModel {
 
-    private final ArrayList<IJARInput> inputs = new ArrayList<>();
-    private final ArrayList<IJARView>  views  = new ArrayList<>();
     public boolean jump;
     public boolean sneak;
     private Mode mode = Mode.GAME;
@@ -90,7 +88,7 @@ public class TestModel implements IJARMenuModel, IJARGameModel {
         }
     }
     @Override
-    public void setInputList(List<IJARInput> inputList) {
+    public void setInputList(final List<IJARInput> inputList) {
 
     }
     @Override

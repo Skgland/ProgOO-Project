@@ -19,26 +19,24 @@ public class LightHouseView implements IJARView {
     private final String address;
     private final int    port;
     private final byte[] windows = new byte[1176];
-    int i = 0;
-    int n = 0;
     private LighthouseNetwork lhn;
     private Thread            updateThread;
     private boolean           run;
     private IJARMenuModel     menu;
     private IJARGameModel     game;
     private ModeModel         mode;
-    private Random rng          = new Random();
-    private Color  currentColor = new Color(rng.nextInt());
-    private Color  nextColor    = new Color(rng.nextInt());
+    private final Random rng          = new Random();
+    private       Color  currentColor = new Color(rng.nextInt());
+    private       Color  nextColor    = new Color(rng.nextInt());
     private boolean wait;
     private final Runnable updateLoop = this::update;
 
-    public LightHouseView(IJARGameModel game, IJARMenuModel menu, ModeModel mode) {
+    public LightHouseView(final IJARGameModel game, final IJARMenuModel menu, final ModeModel mode) {
 
         this(game, menu, mode, "localhost", 8000);
     }
 
-    public LightHouseView(IJARGameModel game, IJARMenuModel menu, ModeModel mode, final String address, final int port) {
+    public LightHouseView(final IJARGameModel game, final IJARMenuModel menu, final ModeModel mode, final String address, final int port) {
 
         if (0 > port || port > 65535) {
             throw new IllegalArgumentException("Port has to be in the Interval [0,65535] but was " + port + "!");

@@ -11,11 +11,11 @@ import java.util.Random;
  */
 public class GameField extends Canvas implements Runnable {
 
-    private BufferStrategy bs;
-    private IJARGameModel  game;
-    private Random rng          = new Random();
-    private Color  currentColor = new Color(rng.nextInt());
-    private Color  nextColor    = new Color(rng.nextInt());
+    private       BufferStrategy bs;
+    private final IJARGameModel  game;
+    private final Random rng          = new Random();
+    private       Color  currentColor = new Color(rng.nextInt());
+    private       Color  nextColor    = new Color(rng.nextInt());
     private boolean wait;
 
     public GameField(final IJARGameModel game) {

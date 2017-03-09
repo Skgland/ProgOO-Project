@@ -30,9 +30,7 @@ public class BasicMenuModel implements IJARMenuModel {
     private IJARGameModel game;
     private ModeModel     mode;
     private       boolean    dirty    = false;
-    private final IMenuEntry CONTINUE = new BasicMenuEntry(() -> {
-        mode.setMode(GAME);
-    }, "Continue");
+    private final IMenuEntry CONTINUE = new BasicMenuEntry(() -> mode.setMode(GAME), "Continue");
     private final IMenuEntry START    = new BasicMenuEntry(() -> {
         game.reset();
         mode.setMode(GAME);
@@ -97,7 +95,7 @@ public class BasicMenuModel implements IJARMenuModel {
         menu = MAIN_MENU;
     }
 
-    public BasicMenuModel(IJARGameModel ijargm, ModeModel mode) {
+    public BasicMenuModel(final IJARGameModel ijargm, final ModeModel mode) {
         game = ijargm;
         this.mode = mode;
     }

@@ -5,7 +5,6 @@ import de.webtwob.interfaces.IMenuEntry;
 
 import javax.swing.*;
 import javax.swing.border.Border;
-import java.awt.GridBagConstraints;
 import java.awt.*;
 import java.util.ArrayList;
 import java.util.List;
@@ -28,7 +27,7 @@ public class MenuPanel extends JPanel {
 
     {
         title.setAlignmentX(CENTER_ALIGNMENT);
-        title.setAlignmentY(JLabel.TOP_ALIGNMENT);
+        title.setAlignmentY(Component.TOP_ALIGNMENT);
         titleConst.anchor = NORTH;
         titleConst.gridx = 0;
         titleConst.gridy = 0;

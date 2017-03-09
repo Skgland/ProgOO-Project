@@ -14,29 +14,25 @@ import java.awt.*;
  */
 public class BasicView extends JPanel implements IJARView {
 
-    private final MenuPanel menuPanel;
-    private final IJARGameModel game;
+    private final MenuPanel     menuPanel;
 
     /**
      * Stores the reused GameField
      */
-    private final GameField gameField;
-    private          IJARMenuModel menu;
-    private          ModeModel     mode;
+    private final    GameField gameField;
+    private final    ModeModel mode;
     /**
      * The thread to update this view
      */
-    private          Thread        exec;
+    private          Thread    exec;
     /**
      * if exec should continue running
      */
-    private volatile boolean       running;
-    private final Runnable         runner      = this::keepAlive;
+    private volatile boolean   running;
+    private final Runnable runner = this::keepAlive;
 
 
     public BasicView(final IJARGameModel game, final IJARMenuModel menu, final ModeModel mode) {
-        this.game = game;
-        this.menu = menu;
         this.mode = mode;
         gameField = new GameField(game);
         menuPanel = new MenuPanel(menu);
@@ -46,43 +42,44 @@ public class BasicView extends JPanel implements IJARView {
         setVisible(true);
         updateUI();
     }
+
     @Override
     public String toString() {
 
         return "BasicView ";
     }
+
     private void keepAlive() {
 
         Mode currentMode = null;
-        while (running) {
+        while(running) {
             try {
-                if (mode.getMode() != null) {
-                    if (mode.getMode() == Mode.GAME) {
-                        if (currentMode != Mode.GAME) {
+                if(mode.getMode() != null) {
+                    if(mode.getMode() == Mode.GAME) {
+                        if(currentMode != Mode.GAME) {
                             removeAll();
                             add(gameField, BorderLayout.CENTER);
                             currentMode = Mode.GAME;
                             updateUI();
                         }
                         gameField.run();
-                        synchronized (runner) {
-                            runner.wait(10);
-                        }
                     } else {
-                        if (currentMode != Mode.MENU) {
+                        if(currentMode != Mode.MENU) {
                             removeAll();
                             add(menuPanel, BorderLayout.CENTER);
                             currentMode = Mode.MENU;
                         }
                         menuPanel.updateMenu();
-                        synchronized (runner) {
-                            runner.wait(10);
-                        }
+                    }
+                    synchronized(runner) {
+                        runner.wait(10);
                     }
                 }
-            } catch (final InterruptedException ignored) {
+            }
+            catch(final InterruptedException ignored) {
                 //expected from the waits
-            } catch (final Exception e) {
+            }
+            catch(final Exception e) {
                 /*
                  * probably missed a null check
                  * still the view should just keep updating
@@ -99,7 +96,7 @@ public class BasicView extends JPanel implements IJARView {
     @Override
     public synchronized void start() {
 
-        if (exec == null) {
+        if(exec == null) {
             running = true;
             exec = new Thread(runner);
             exec.setName("Basic-View-Updater");
@@ -115,14 +112,15 @@ public class BasicView extends JPanel implements IJARView {
     public synchronized void stop() {
 
         running = false;
-        synchronized (runner) {
+        synchronized(runner) {
             runner.notifyAll();
         }
-        while (exec.isAlive()) {
+        while(exec.isAlive()) {
             try {
                 //wait for the thread to yield
                 exec.join();
-            } catch (final InterruptedException ignore) {
+            }
+            catch(final InterruptedException ignore) {
             }
         }
         exec = null;

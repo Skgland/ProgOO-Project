@@ -19,7 +19,7 @@ import static org.lwjgl.glfw.GLFW.glfwGetJoystickButtons;
 public class XBox360Handler{
 
     private final boolean[] pressed = new boolean[4];
-    private ModeModel           mode;
+    private final ModeModel     mode;
     private final IJARGameModel game;
     private final IJARMenuModel menu;
 

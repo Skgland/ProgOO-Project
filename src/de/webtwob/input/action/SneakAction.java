@@ -14,7 +14,7 @@ public class SneakAction extends AbstractAction {
 
     private final IJARGameModel gameModel;
 
-    public SneakAction(IJARGameModel gameModel) {
+    public SneakAction(final IJARGameModel gameModel) {
         this.gameModel = gameModel;
     }
 

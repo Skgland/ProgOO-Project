@@ -16,7 +16,7 @@ public class DownAction extends AbstractAction {
     private final ModeModel modeModel;
     private final IJARMenuModel menuModel;
 
-    public DownAction(ModeModel modeModel, IJARMenuModel menuModel) {
+    public DownAction(final ModeModel modeModel, final IJARMenuModel menuModel) {
 
         this.modeModel = modeModel;
         this.menuModel = menuModel;

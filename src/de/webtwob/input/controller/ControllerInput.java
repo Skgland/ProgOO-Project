@@ -32,7 +32,7 @@ public class ControllerInput implements IJARInput {
      * Only the main Thread can create new objects,
      * because glfwInit needs to only be called from the main Thread
      */
-    public ControllerInput(ModeModel mode, IJARGameModel game, IJARMenuModel menu) {
+    public ControllerInput(final ModeModel mode, final IJARGameModel game, final IJARMenuModel menu) {
         this.game = game;
         this.mode = mode;
         this.menu = menu;

@@ -16,7 +16,7 @@ public class PauseAction extends AbstractAction {
     private final ModeModel     modeModel;
     private final IJARMenuModel menuModel;
 
-    public PauseAction(ModeModel modeModel, IJARMenuModel menuModel) {
+    public PauseAction(final ModeModel modeModel, final IJARMenuModel menuModel) {
 
         this.modeModel = modeModel;
         this.menuModel = menuModel;

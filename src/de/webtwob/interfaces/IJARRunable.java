@@ -12,14 +12,6 @@ public interface IJARRunable {
     void start();
 
     /**
-     * should stop itself if currently running and than start itself again
-     * */
-    default void restart(){
-        stop();
-        start();
-    }
-
-    /**
      * if this component is active and running at the moment should stop itself
      */
     void stop();

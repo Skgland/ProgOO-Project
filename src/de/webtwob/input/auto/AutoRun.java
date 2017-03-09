@@ -11,8 +11,8 @@ import java.awt.*;
 public class AutoRun implements IJARInput {
 
     private boolean enabled = false;
-    private IJARGameModel gameModel;
-    private boolean   running;
+    private final IJARGameModel gameModel;
+    private       boolean       running;
     private final Runnable run = this::marathon;
     private Thread runner;
 
