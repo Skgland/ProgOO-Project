@@ -1,19 +1,20 @@
 package de.webtwob.view.swing;
 
-import de.webtwob.interfaces.*;
+import de.webtwob.interfaces.IJARGameModel;
+import de.webtwob.interfaces.IJARMenuModel;
+import de.webtwob.interfaces.IJARView;
+import de.webtwob.interfaces.Mode;
 import de.webtwob.model.ModeModel;
 
 import javax.swing.*;
 import java.awt.*;
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  * @author Bennet Blessmann Created on 31. Jan. 2017.
  */
 public class BasicView extends JPanel implements IJARView {
 
-    private final MenuPanel menuPanel = new MenuPanel();
+    private final MenuPanel menuPanel;
     private final IJARGameModel game;
 
     /**
@@ -30,14 +31,6 @@ public class BasicView extends JPanel implements IJARView {
      * if exec should continue running
      */
     private volatile boolean       running;
-    /**
-     * Used to store the latest selected value so we only update on change
-     */
-    private       int              select      = -1;
-    /**
-     * Stores the currently in use menuEntries
-     */
-    private       List<IMenuEntry> menuEntries = new ArrayList<>();
     private final Runnable         runner      = this::keepAlive;
 
 
@@ -46,6 +39,7 @@ public class BasicView extends JPanel implements IJARView {
         this.menu = menu;
         this.mode = mode;
         gameField = new GameField(game);
+        menuPanel = new MenuPanel(menu);
         setLayout(new BorderLayout());
         add(menuPanel);
         setMinimumSize(getPreferredSize());
@@ -79,16 +73,8 @@ public class BasicView extends JPanel implements IJARView {
                             removeAll();
                             add(menuPanel, BorderLayout.CENTER);
                             currentMode = Mode.MENU;
-                            menuChanged();
-                            updateUI();
                         }
-                        if (!menuEntries.equals(menu.getMenuEntries())) {
-                            menuChanged();
-                        }
-                        if (select != menu.getSelectedIndex()) {
-                            select = menu.getSelectedIndex();
-                            menuPanel.updateSelection(select);
-                        }
+                        menuPanel.updateMenu();
                         synchronized (runner) {
                             runner.wait(10);
                         }
@@ -105,13 +91,6 @@ public class BasicView extends JPanel implements IJARView {
                 e.printStackTrace();
             }
         }
-    }
-
-    private void menuChanged() {
-
-        menuEntries = menu.getMenuEntries();
-        menuPanel.updateMenu(menu.getCurrentMenu());
-        select = menu.getSelectedIndex();
     }
 
     /**
@@ -147,17 +126,5 @@ public class BasicView extends JPanel implements IJARView {
             }
         }
         exec = null;
-    }
-
-    /**
-     * handel a forced update
-     * usually when a MenuEntry changes it's Text
-     * to get the view to update
-     */
-    @Override
-    public void forceUpdate() {
-
-        menuChanged();
-        updateUI();
     }
 }

@@ -9,21 +9,25 @@ import java.awt.event.ActionEvent;
 
 /**
  * @author Bennet Blessmann
- * Created on 01. Feb. 2017.
+ *         Created on 01. Feb. 2017.
  */
 public class PauseAction extends AbstractAction {
 
-    private final ModeModel modeModel;
+    private final ModeModel     modeModel;
     private final IJARMenuModel menuModel;
 
     public PauseAction(ModeModel modeModel, IJARMenuModel menuModel) {
+
         this.modeModel = modeModel;
         this.menuModel = menuModel;
     }
 
     @Override
     public void actionPerformed(final ActionEvent e) {
-        modeModel.setMode(Mode.MENU);
-        menuModel.pause();
+
+        if (modeModel.getMode() == Mode.GAME) {
+            modeModel.setMode(Mode.MENU);
+            menuModel.pause();
+        }
     }
 }

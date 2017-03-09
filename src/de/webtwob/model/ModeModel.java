@@ -36,10 +36,4 @@ public class ModeModel {
 
         return mode;
     }
-
-    public void updateViews(){
-        for(IJARView v:views){
-            v.forceUpdate();
-        }
-    }
 }

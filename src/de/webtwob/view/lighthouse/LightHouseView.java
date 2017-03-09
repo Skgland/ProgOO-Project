@@ -50,13 +50,6 @@ public class LightHouseView implements IJARView {
         this.port = port;
     }
 
-    @Override
-    public void forceUpdate() {
-
-        synchronized (updateLoop) {
-            updateLoop.notifyAll();
-        }
-    }
     private boolean connect() {
 
         try {

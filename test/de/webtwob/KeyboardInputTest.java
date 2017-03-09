@@ -1,7 +1,5 @@
 package de.webtwob;
 
-import de.webtwob.input.keyboard.KeyboardInput;
-import de.webtwob.interfaces.IJARInput;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
@@ -27,10 +25,6 @@ public class KeyboardInputTest {
 
         model = new TestModel();
         final TestView  view  = new TestView();
-        final IJARInput input = new KeyboardInput(view);
-
-        view.linkModel(model);
-        input.linkModel(model);
 
         model.addView(view);
 

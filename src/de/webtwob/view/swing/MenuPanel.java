@@ -1,17 +1,16 @@
 package de.webtwob.view.swing;
 
-import de.webtwob.interfaces.IMenu;
+import de.webtwob.interfaces.IJARMenuModel;
 import de.webtwob.interfaces.IMenuEntry;
 
 import javax.swing.*;
 import javax.swing.border.Border;
+import java.awt.GridBagConstraints;
 import java.awt.*;
 import java.util.ArrayList;
 import java.util.List;
 
-import static java.awt.GridBagConstraints.BOTH;
-import static java.awt.GridBagConstraints.CENTER;
-import static java.awt.GridBagConstraints.NORTH;
+import static java.awt.GridBagConstraints.*;
 
 /**
  * Created by BB20101997 on 02. Mär. 2017.
@@ -23,6 +22,7 @@ public class MenuPanel extends JPanel {
     private final GridBagConstraints titleConst   = new GridBagConstraints();
     private final JLabel             title        = new JLabel();
     private final Border             butdef       = UIManager.getBorder("Button.border");
+    private final IJARMenuModel menu;
     private final Border comp;
     private final List<JButton> buttonList = new ArrayList<>();
 
@@ -49,44 +49,49 @@ public class MenuPanel extends JPanel {
         comp = BorderFactory.createCompoundBorder(butdef, BorderFactory.createDashedBorder(null));
     }
 
-    public MenuPanel() {
+    public MenuPanel(final IJARMenuModel menu) {
+        this.menu = menu;
         setLayout(new GridBagLayout());
     }
 
-    public void updateMenu(final IMenu im) {
-        removeAll();
-        add(title,titleConst);
-        if (im != null) {
-            title.setText(im.getText());
-            buttonList.clear();
-            contentConst.gridy = 1;
-            JButton button;
-            for (final IMenuEntry iMenuEntry : im.getEntries()) {
-                contentConst.gridx = 0;
-                contentConst.gridwidth = iMenuEntry.getValue()==null?2:1;
-                button = new JButton(iMenuEntry.getText());
-                buttonList.add(button);
-                add(button, contentConst);
-                button.addActionListener((actionEvent) -> iMenuEntry.executeAction());
-                if (iMenuEntry.getValue() != null) {
-                    contentConst.gridx = 1;
-                    add(new JTextField(iMenuEntry.getValue()), contentConst);
+    public void updateMenu(){
+        if(menu.isDirty()) {
+            removeAll();
+            add(title, titleConst);
+            if (menu.getMenuEntries() != null) {
+                title.setText(menu.getCurrentMenu().getText());
+                buttonList.clear();
+                contentConst.gridy = 1;
+                JButton button;
+                for (final IMenuEntry iMenuEntry : menu.getCurrentMenu().getEntries()) {
+                    contentConst.gridx = 0;
+                    contentConst.gridwidth = iMenuEntry.getValue() == null ? 2 : 1;
+                    button = new JButton(iMenuEntry.getText());
+                    buttonList.add(button);
+                    add(button, contentConst);
+                    button.addActionListener((actionEvent) -> {
+                        iMenuEntry.executeAction();
+                        menu.setDirty();
+                    });
+                    if (iMenuEntry.getValue() != null) {
+                        contentConst.gridx = 1;
+                        add(new JTextField(iMenuEntry.getValue()), contentConst);
+                    }
+                    contentConst.gridy++;
                 }
-                contentConst.gridy++;
+            } else {
+                title.setText("Menu is NULL!");
             }
-        } else {
-            title.setText("Menu is NULL!");
+
+            if (selected >= 0 && selected < buttonList.size()) {
+                buttonList.get(selected).setBorder(butdef);
+            }
+            if (menu.getSelectedIndex() >= 0 && menu.getSelectedIndex() < buttonList.size()) {
+                buttonList.get(menu.getSelectedIndex()).setBorder(comp);
+                selected = menu.getSelectedIndex();
+            }
+            menu.clean();
         }
     }
 
-    public void updateSelection(final int i) {
-
-        if (selected >= 0 && selected < buttonList.size()) {
-            buttonList.get(selected).setBorder(butdef);
-        }
-        if (i >= 0 && i < buttonList.size()) {
-            buttonList.get(i).setBorder(comp);
-            selected = i;
-        }
-    }
 }

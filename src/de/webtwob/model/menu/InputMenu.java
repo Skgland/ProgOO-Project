@@ -34,7 +34,6 @@ public class InputMenu extends BasicMenu {
         }
         for (final InputMenuEntry ime : inputEntries) {
             ime.setActive(active > 1);
-            ime.setModel(model);
         }
         model.setDirty();
     }

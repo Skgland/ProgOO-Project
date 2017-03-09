@@ -6,9 +6,4 @@ package de.webtwob.interfaces;
  */
 public interface IJARView extends IJARRunable{
 
-    /**
-     * causes the view to update all components
-     * */
-    void forceUpdate();
-
 }

@@ -26,20 +26,16 @@ public class BasicMenuModel implements IJARMenuModel {
     private final IMenu                SETTINGS_MENU  = new BasicMenu("Settings");
     private final IMenu                GAME_OVER_MENU = new BasicMenu("Game Over");
     private final InputMenu            INPUTS_MENU    = new InputMenu(this);
-    private final IMenuEntry           QUIT           = new BasicMenuEntry(() -> {
-        System.exit(0);
-    }, "Quit");
+    private final IMenuEntry           QUIT           = new BasicMenuEntry(() -> System.exit(0), "Quit");
     private IJARGameModel game;
     private ModeModel     mode;
     private       boolean    dirty    = false;
     private final IMenuEntry CONTINUE = new BasicMenuEntry(() -> {
         mode.setMode(GAME);
-        dirty = true;
     }, "Continue");
     private final IMenuEntry START    = new BasicMenuEntry(() -> {
         game.reset();
         mode.setMode(GAME);
-        dirty = true;
     }, "Start");
     /**
      * The current menu
@@ -52,12 +48,11 @@ public class BasicMenuModel implements IJARMenuModel {
     private final    IMenuEntry BACK      = new BasicMenuEntry(() -> {
         menu = back.pop();
         selection = 0;
-        dirty = true;
     }, "Back");
+
     private final    IMenuEntry GOTO_MAIN = new BasicMenuEntry(() -> {
         menu = MAIN_MENU;
         selection = 0;
-        dirty = true;
     }, "Main Menu");
 
     {
@@ -78,14 +73,12 @@ public class BasicMenuModel implements IJARMenuModel {
             back.addFirst(menu);
             selection = 0;
             menu = INPUTS_MENU;
-            dirty = true;
         });
 
         SETTINGS_MENU.setAction(() -> {
             back.addFirst(menu);
             selection = 0;
             menu = SETTINGS_MENU;
-            dirty = true;
         });
 
         GAME_OVER_MENU.add(new BasicMenuEntry(() -> {
@@ -105,36 +98,39 @@ public class BasicMenuModel implements IJARMenuModel {
     }
 
     public BasicMenuModel(IJARGameModel ijargm, ModeModel mode) {
-
         game = ijargm;
         this.mode = mode;
     }
+
     @Override
     public void doSelect() {
-
         if (selection >= 0 && selection < menu.size()) {
             final IMenuEntry ime = menu.get(selection);
             //noinspection LawOfDemeter
             ime.executeAction();
         }
+        setDirty();
     }
 
     @Override
     public void select(final int i) {
 
         selection = i;
+        setDirty();
     }
 
     @Override
     public void up() {
 
         selection = (selection + menu.size() - 1) % menu.size();
+        setDirty();
 
     }
 
     @Override
     public void down() {
             selection = (selection + 1) % menu.size();
+            setDirty();
     }
 
     @Override

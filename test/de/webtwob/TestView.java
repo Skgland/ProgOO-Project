@@ -14,17 +14,16 @@ public class TestView extends JPanel implements IJARView {
     private Thread userThread;
     private volatile boolean   running = true;
     private final    JTextArea label   = new JTextArea("Running Test!");
-    private IJARModel model;
+
 
     private void keepRunning() {
 
         while (running) {
             try {
-                if (model != null) {
                     //noinspection HardcodedLineSeparator
-                    label.setText("Running Test!:\n" + model.toString());
+                    label.setText("Running Test!:");
                     label.setMinimumSize(label.getPreferredSize());
-                }
+
                 synchronized (this) {
                     try {
                         wait(10);
@@ -48,12 +47,6 @@ public class TestView extends JPanel implements IJARView {
     }
 
     @Override
-    public void linkModel(final IJARModel ijarm) {
-
-        model = ijarm;
-    }
-
-    @Override
     public void start() {
 
         running = true;
@@ -72,9 +65,5 @@ public class TestView extends JPanel implements IJARView {
             notifyAll();
         }
         userThread = null;
-    }
-    @Override
-    public void forceUpdate() {
-
     }
 }

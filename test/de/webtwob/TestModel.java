@@ -8,52 +8,24 @@ import java.util.List;
 
 /**
  * @author Bennet Blessmann
- * Created on 02. Feb. 2017.
+ *         Created on 02. Feb. 2017.
  */
-public class TestModel implements IJARModel {
-
-    public boolean jump;
-    public boolean sneak;
-    private Mode mode = Mode.GAME;
+public class TestModel implements IJARMenuModel, IJARGameModel {
 
     private final ArrayList<IJARInput> inputs = new ArrayList<>();
     private final ArrayList<IJARView>  views  = new ArrayList<>();
-
+    public boolean jump;
+    public boolean sneak;
+    private Mode mode = Mode.GAME;
     @Override
+    public boolean cycle() {
+
+        return true;
+    }    @Override
     public long getTime() {
 
         return -1;
     }
-    @Override
-    public long getScore() {
-
-        return -1;
-    }
-    @Override
-    public void addView(final IJARView ijarv) {
-
-        ijarv.linkModel(this);
-        views.add(ijarv);
-    }
-
-    @Override
-    public void addInput(final IJARInput ijari) {
-
-        ijari.linkModel(this);
-        inputs.add(ijari);
-    }
-
-    @Override
-    public IJARModel.Mode getMode() {
-
-        return mode;
-    }
-
-    @Override
-    public void cycle() {
-
-    }
-
     @Override
     public void jump() {
 
@@ -62,8 +34,54 @@ public class TestModel implements IJARModel {
             jump = true;
         }
     }
-
     @Override
+    public void doSelect() {
+
+        if (mode == Mode.MENU) {
+            System.out.println("Selected");
+        }
+    }    @Override
+    public long getScore() {
+
+        return -1;
+    }
+    @Override
+    public void select(final int i) {
+
+    }    @Override
+    public void reset() {
+
+    }
+    @Override
+    public void up() {
+
+        if (mode == Mode.MENU) {
+            System.out.println("UP");
+        }
+    }
+    @Override
+    public void down() {
+
+        if (mode == Mode.MENU) {
+            System.out.println("DOWN");
+        }
+
+    }
+    @Override
+    public List<IMenuEntry> getMenuEntries() {
+
+        return new ArrayList<>();
+    }
+    @Override
+    public IMenu getCurrentMenu() {
+
+        return null;
+    }
+    @Override
+    public int getSelectedIndex() {
+
+        return 0;
+    }    @Override
     public void setSneaking(final boolean sneak) {
 
         this.sneak = sneak;
@@ -71,13 +89,27 @@ public class TestModel implements IJARModel {
             System.out.println(sneak ? "Sneaking" : "Not Sneaking");
         }
     }
-
     @Override
+    public void setInputList(List<IJARInput> inputList) {
+
+    }
+    @Override
+    public boolean isDirty() {
+
+        return false;
+    }    @Override
     public boolean isSneaking() {
 
         return sneak && mode == Mode.GAME;
     }
+    @Override
+    public void clean() {
 
+    }
+    @Override
+    public void setDirty() {
+
+    }
     @Override
     public void pause() {
 
@@ -88,99 +120,15 @@ public class TestModel implements IJARModel {
             mode = Mode.GAME;
             System.out.println("Unpause");
         }
-    }
-    @Override
+    }    @Override
     public double getPlayerY() {
 
         return 0;
     }
     @Override
-    public double getPlayerHeight() {
-
-        return 0;
-    }
-    @Override
-    public Rectangle[] getHurdles() {
-
-        return new Rectangle[0];
-    }
-
-    @Override
-    public void doSelect() {
-
-        if (mode == Mode.MENU) {
-            System.out.println("Selected");
-        }
-    }
-
-    @Override
-    public void select(final int i) {
+    public void gameover() {
 
     }
-
-    @Override
-    public void up() {
-
-        if (mode == Mode.MENU) {
-            System.out.println("UP");
-        }
-    }
-
-    @Override
-    public void down() {
-
-        if (mode == Mode.MENU) {
-            System.out.println("DOWN");
-        }
-
-    }
-
-    @Override
-    public List<IMenuEntry> getMenuEntries() {
-
-        return new ArrayList<>();
-    }
-
-    @Override
-    public IMenu getCurrentMenu() {
-        return null;
-    }
-
-    @Override
-    public int getSelectedIndex() {
-
-        return 0;
-    }
-    @Override
-    public void updateViews() {
-
-        for (final IJARView view : views) {
-            view.forceUpdate();
-        }
-    }
-
-    @Override
-    public void start() {
-
-        for (final IJARView ijarView : views) {
-            ijarView.start();
-        }
-        for (final IJARInput ijarInput : inputs) {
-            ijarInput.start();
-        }
-    }
-
-    @Override
-    public void stop() {
-
-        for (final IJARInput ijarInput : inputs) {
-            ijarInput.stop();
-        }
-        for (final IJARView ijarView : views) {
-            ijarView.stop();
-        }
-    }
-
     @SuppressWarnings("HardcodedLineSeparator")
     @Override
     public String toString() {
@@ -188,4 +136,22 @@ public class TestModel implements IJARModel {
         return "[TestModel]:\n" +
                 "\t[Sneaking]: " + sneak + "\n";
     }
+
+
+
+    @Override
+    public double getPlayerHeight() {
+
+        return 0;
+    }
+
+
+    @Override
+    public Rectangle[] getHurdles() {
+
+        return new Rectangle[0];
+    }
+
+
+
 }

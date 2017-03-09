@@ -47,10 +47,6 @@ public class GameLoop implements IJARInput {
                         mode.setMode(Mode.MENU);
                         menu.gameover();
                     }
-                }else{
-                    if(menu.isDirty()){
-                        mode.updateViews();
-                    }
                 }
             }
         }

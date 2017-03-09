@@ -1,7 +1,6 @@
 package de.webtwob.model.menu;
 
 import de.webtwob.interfaces.IJARInput;
-import de.webtwob.interfaces.IJARMenuModel;
 import de.webtwob.interfaces.IMenuEntry;
 
 /**
@@ -12,10 +11,8 @@ public class InputMenuEntry implements IMenuEntry {
 
     private final IJARInput in;
     private       boolean   active;
-    private       IJARMenuModel model;
 
     public InputMenuEntry(final IJARInput input) {
-
         in = input;
     }
 
@@ -40,7 +37,6 @@ public class InputMenuEntry implements IMenuEntry {
 
         if (!in.isEnabled() || active) {
             in.setEnabled(!in.isEnabled());
-            model.setDirty();
         }
     }
 
@@ -49,8 +45,5 @@ public class InputMenuEntry implements IMenuEntry {
 
         return getText();
     }
-    public void setModel(final IJARMenuModel model) {
 
-        this.model = model;
-    }
 }
