@@ -21,3 +21,4 @@ build/
 .gradle/
 *.iml
 /lhServer-win.exe
+*.exe

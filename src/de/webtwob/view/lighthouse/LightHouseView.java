@@ -20,16 +20,17 @@ public class LightHouseView implements IJARView {
     private final String address;
     private final int    port;
     private final byte[] windows = new byte[1176];
+    private final Random rng          = new Random();
     private LighthouseNetwork lhn;
     private Thread            updateThread;
     private boolean           run;
     private IJARMenuModel     menu;
     private IJARGameModel     game;
     private ModeModel         mode;
-    private final Random rng          = new Random();
     private       Color  currentColor = new Color(rng.nextInt());
     private       Color  nextColor    = new Color(rng.nextInt());
     private boolean wait;
+    private       boolean  allowText  = false;
     private final Runnable updateLoop = this::update;
 
     public LightHouseView(final IJARGameModel game, final IJARMenuModel menu, final ModeModel mode) {
@@ -52,7 +53,8 @@ public class LightHouseView implements IJARView {
     private boolean connect() {
 
         try {
-            lhn = new LighthouseNetwork(address, port);
+//            lhn = new LighthouseNetwork(address, port);
+            lhn = new LighthouseNetwork(address, port, "2", "8QVZ-M6RV-XD8C-OSR9");
             lhn.connect();
             return true;
         } catch (final IOException e) {
@@ -214,6 +216,9 @@ public class LightHouseView implements IJARView {
      */
     private void setWindowPattern(final byte x, final byte y, final boolean[][] pattern, final Color c) {
 
+        if (!allowText) {
+            return;
+        }
         for (byte iy = 0; iy < pattern.length; iy++) {
             for (byte ix = 0; ix < pattern[iy].length; ix++) {
                 if (pattern[iy][ix]) {
@@ -296,6 +301,8 @@ public class LightHouseView implements IJARView {
 
     @Override
     public String toString() {
-        return "LightHouseView{" + "address='" + address + '\'' + ", port=" + port + ", windows=" + Arrays.toString(windows) + ", lhn=" + lhn + ", updateThread=" + updateThread + ", run=" + run + ", menu=" + menu + ", game=" + game + ", mode=" + mode + ", rng=" + rng + ", currentColor=" + currentColor + ", nextColor=" + nextColor + ", wait=" + wait + ", updateLoop=" + updateLoop + '}';
+
+        return "LightHouseView{" + "address='" + address + '\'' + ", port=" + port + ", windows=" + Arrays.toString(
+                windows) + ", lhn=" + lhn + ", updateThread=" + updateThread + ", run=" + run + ", menu=" + menu + ", game=" + game + ", mode=" + mode + ", rng=" + rng + ", currentColor=" + currentColor + ", nextColor=" + nextColor + ", wait=" + wait + ", updateLoop=" + updateLoop + '}';
     }
 }

@@ -10,12 +10,13 @@ import java.net.UnknownHostException;
  * interface. The network connection is configured upon object creation but
  * needs to manually connect. Afterwards data can be sent to the lighthouse.
  */
-@SuppressWarnings({"HardcodedLineSeparator", "unused"})
 public class LighthouseNetwork {
 
-    private final String hostname;
-    private final int    port;
-    private       Socket sock;
+    private String hostname;
+    private int port;
+    private Socket sock;
+    private String user;
+    private String password;
 
     /**
      * Creates a new lighthouse with default parameters. This is using localhost
@@ -27,6 +28,20 @@ public class LighthouseNetwork {
     }
 
     /**
+     * Creates a new lighthouse using the given username and password. The
+     * connection is established to localhost at port 8000.
+     *
+     * @param user
+     *            The hostname of the server to connect to.
+     * @param port
+     *            The port to be used.
+     */
+    public LighthouseNetwork(String user, String password) {
+        this.user = user;
+        this.password = password;
+    }
+
+    /**
      * Creates a new lighthouse connection with the given hostname and port.
      *
      * @param host
@@ -34,9 +49,24 @@ public class LighthouseNetwork {
      * @param port
      *            The port to be used.
      */
-    public LighthouseNetwork(final String host, final int port) {
+    public LighthouseNetwork(String host, int port) {
         this.hostname = host;
         this.port = port;
+    }
+
+    /**
+     * Creates a new lighthouse connection with the given hostname and port.
+     *
+     * @param host
+     *            The hostname of the server to connect to.
+     * @param port
+     *            The port to be used.
+     */
+    public LighthouseNetwork(String host, int port, String user, String password) {
+        this.hostname = host;
+        this.port = port;
+        this.user = user;
+        this.password = password;
     }
 
     /**
@@ -48,12 +78,16 @@ public class LighthouseNetwork {
      * @throws UnknownHostException
      *             if the IP address of the host could not be determined.
      */
-    @SuppressWarnings({"DuplicateThrows", "HardcodedFileSeparator"})
     public void connect() throws UnknownHostException, IOException {
         sock = new Socket(hostname, port);
-        final OutputStream stream = sock.getOutputStream();
+        OutputStream stream = sock.getOutputStream();
         stream.write(("POST /LH\r\n").getBytes());
-        stream.write(("a: b\r\n\r\n").getBytes());
+        if (user != null) {
+            stream.write(("user: " + user + "\r\n").getBytes());
+        }
+        if (password != null) {
+            stream.write(("passwd: " + password + "\r\n").getBytes());
+        }		stream.write("\r\n".getBytes());
         stream.flush();
     }
 
@@ -69,16 +103,11 @@ public class LighthouseNetwork {
      * @throws IOException
      *             if some error occurs during sending of the data.
      */
-    public void send(final byte[] data) throws IOException {
-        final OutputStream stream = sock.getOutputStream();
+    public void send(byte[] data) throws IOException {
+        OutputStream stream = sock.getOutputStream();
         stream.write((data.length + "\r\n").getBytes());
         stream.write(data);
         stream.write("\r\n".getBytes());
         stream.flush();
-    }
-
-    @Override
-    public String toString() {
-        return "LighthouseNetwork{" + "hostname='" + hostname + '\'' + ", port=" + port + ", sock=" + sock + '}';
     }
 }
