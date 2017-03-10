@@ -21,8 +21,14 @@ public class LightHouseView implements IJARView {
 
     private final String address;
     private final int    port;
-    private final byte[] windows = new byte[1176];
-    private final Random rng     = new Random();
+    private final byte[]         windows    = new byte[1176];
+    private final Random         rng        = new Random();
+    @SuppressWarnings("FieldCanBeLocal")
+    private static final boolean ALLOW_TEXT = true;
+    @SuppressWarnings("FieldCanBeLocal")
+    private static  final String USERNAME   = "2";
+    @SuppressWarnings("FieldCanBeLocal")
+    private static final String  PASSWORD   = "8QVZ-M6RV-XD8C-OSR9" ;
     private LighthouseNetwork lhn;
     private Thread            updateThread;
     private boolean           run;
@@ -32,8 +38,6 @@ public class LightHouseView implements IJARView {
     private Color currentColor = new Color(rng.nextInt());
     private Color nextColor    = new Color(rng.nextInt());
     private boolean wait;
-    @SuppressWarnings("FieldCanBeLocal")
-    private       boolean  allowText  = false;
     private final Runnable updateLoop = this::update;
 
     public LightHouseView(final IJARGameModel game, final IJARMenuModel menu, final ModeModel mode) {
@@ -58,8 +62,8 @@ public class LightHouseView implements IJARView {
     private boolean connect() {
 
         try {
-            //            lhn = new LighthouseNetwork(address, port);
-            lhn = new LighthouseNetwork(address, port, "2", "8QVZ-M6RV-XD8C-OSR9");
+//            lhn = new LighthouseNetwork(address, port);
+            lhn = new LighthouseNetwork(address, port, USERNAME, PASSWORD);
             lhn.connect();
             return true;
         }
@@ -127,10 +131,6 @@ public class LightHouseView implements IJARView {
                                 setPatterns(4, 1, 1, Letter.MENU, Color.RED);
                             }
                         }
-                        send(windows);
-                        synchronized(updateLoop) {
-                            updateLoop.wait(10);
-                        }
                     } else {
                         //set background
                         final long time = (game.getTime() % 60) - 5;
@@ -182,11 +182,10 @@ public class LightHouseView implements IJARView {
                         for(byte y = player_y; y < player_y_top; y++) {
                             setWindowColor((byte) 1, (byte) (11 - y), Color.YELLOW);
                         }
-
-                        send(windows);
-                        synchronized(updateLoop) {
-                            updateLoop.wait(10);
-                        }
+                    }
+                    send(windows);
+                    synchronized (updateLoop) {
+                        updateLoop.wait(40);
                     }
                 }
                 catch(final NullPointerException | InterruptedException ignore) {
@@ -224,7 +223,7 @@ public class LightHouseView implements IJARView {
      */
     private void setWindowPattern(final byte x, final byte y, final boolean[][] pattern, final Color c) {
 
-        if(!allowText) {
+        if (!ALLOW_TEXT) {
             return;
         }
         for(byte iy = 0; iy < pattern.length; iy++) {
