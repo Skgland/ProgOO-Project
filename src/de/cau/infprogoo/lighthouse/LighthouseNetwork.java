@@ -13,7 +13,7 @@ import java.net.UnknownHostException;
 public class LighthouseNetwork {
 
     private String hostname;
-    private int port;
+    private int    port;
     private Socket sock;
     private String user;
     private String password;
@@ -31,10 +31,8 @@ public class LighthouseNetwork {
      * Creates a new lighthouse using the given username and password. The
      * connection is established to localhost at port 8000.
      *
-     * @param user
-     *            The hostname of the server to connect to.
-     * @param port
-     *            The port to be used.
+     * @param user The hostname of the server to connect to.
+     * @param port The port to be used.
      */
     public LighthouseNetwork(String user, String password) {
         this.user = user;
@@ -44,10 +42,8 @@ public class LighthouseNetwork {
     /**
      * Creates a new lighthouse connection with the given hostname and port.
      *
-     * @param host
-     *            The hostname of the server to connect to.
-     * @param port
-     *            The port to be used.
+     * @param host The hostname of the server to connect to.
+     * @param port The port to be used.
      */
     public LighthouseNetwork(String host, int port) {
         this.hostname = host;
@@ -57,10 +53,8 @@ public class LighthouseNetwork {
     /**
      * Creates a new lighthouse connection with the given hostname and port.
      *
-     * @param host
-     *            The hostname of the server to connect to.
-     * @param port
-     *            The port to be used.
+     * @param host The hostname of the server to connect to.
+     * @param port The port to be used.
      */
     public LighthouseNetwork(String host, int port, String user, String password) {
         this.hostname = host;
@@ -72,22 +66,20 @@ public class LighthouseNetwork {
     /**
      * Establishes the connection to the lighthouse server.
      *
-     * @throws IOException
-     *             if an I/O error occurs when creating or writing to the
-     *             socket.
-     * @throws UnknownHostException
-     *             if the IP address of the host could not be determined.
+     * @throws IOException          if an I/O error occurs when creating or writing to the socket.
+     * @throws UnknownHostException if the IP address of the host could not be determined.
      */
-    public void connect() throws UnknownHostException, IOException {
+    public void connect() throws IOException {
         sock = new Socket(hostname, port);
         OutputStream stream = sock.getOutputStream();
         stream.write(("POST /LH\r\n").getBytes());
-        if (user != null) {
+        if(user != null) {
             stream.write(("user: " + user + "\r\n").getBytes());
         }
-        if (password != null) {
+        if(password != null) {
             stream.write(("passwd: " + password + "\r\n").getBytes());
-        }		stream.write("\r\n".getBytes());
+        }
+        stream.write("\r\n".getBytes());
         stream.flush();
     }
 
@@ -98,10 +90,9 @@ public class LighthouseNetwork {
      * at the top-left corner. If less bytes are sent, only the first windows
      * are updated. The next transmission starts at the first window again.
      *
-     * @param data
-     *            The data to send
-     * @throws IOException
-     *             if some error occurs during sending of the data.
+     * @param data The data to send
+     *
+     * @throws IOException if some error occurs during sending of the data.
      */
     public void send(byte[] data) throws IOException {
         OutputStream stream = sock.getOutputStream();

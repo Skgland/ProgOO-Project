@@ -7,8 +7,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.InputEvent;
 
 /**
- * @author Bennet Blessmann
- * Created on 31. Jan. 2017.
+ * @author Bennet Blessmann Created on 31. Jan. 2017.
  */
 public class SneakAction extends AbstractAction {
 

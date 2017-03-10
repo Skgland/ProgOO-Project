@@ -8,8 +8,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * @author Bennet Blessmann
- *         Created on 03.02.2017.
+ * @author Bennet Blessmann Created on 03.02.2017.
+ *         <p>
+ *         This class implements the menu where IJARInputs can be disabled
  */
 public class InputMenu extends BasicMenu {
 
@@ -26,13 +27,13 @@ public class InputMenu extends BasicMenu {
         inputs = new ArrayList<>(inp);
         inputEntries.clear();
         int active = 0;
-        for (final IJARInput in : inputs) {
+        for(final IJARInput in : inputs) {
             inputEntries.add(new InputMenuEntry(in));
-            if (in.isEnabled()) {
+            if(in.isEnabled()) {
                 active++;
             }
         }
-        for (final InputMenuEntry ime : inputEntries) {
+        for(final InputMenuEntry ime : inputEntries) {
             ime.setActive(active > 1);
         }
         model.setDirty();
@@ -47,22 +48,10 @@ public class InputMenu extends BasicMenu {
     public IMenuEntry get(final int i) {
 
         updateActive();
-        if (i < inputEntries.size()) {
+        if(i < inputEntries.size()) {
             return inputEntries.get(i);
         } else {
             return super.get(i - inputEntries.size());
-        }
-    }
-    private void updateActive() {
-
-        int act = 0;
-        for (final IJARInput ijarInput : inputs) {
-            if (ijarInput.isEnabled()) {
-                act++;
-            }
-        }
-        for (final InputMenuEntry ijarInput : inputEntries) {
-            ijarInput.setActive(act > 1);
         }
     }
 
@@ -75,13 +64,26 @@ public class InputMenu extends BasicMenu {
         return entries;
     }
 
-    private List<IMenuEntry> getInputEntries() {
-        updateActive();
-        return new ArrayList<>(inputEntries);
-    }
-
     @Override
     public String toString() {
         return "InputMenu{" + "model=" + model + ", inputs=" + inputs + ", inputEntries=" + inputEntries + '}';
+    }
+
+    private void updateActive() {
+
+        int act = 0;
+        for(final IJARInput ijarInput : inputs) {
+            if(ijarInput.isEnabled()) {
+                act++;
+            }
+        }
+        for(final InputMenuEntry ijarInput : inputEntries) {
+            ijarInput.setActive(act > 1);
+        }
+    }
+
+    private List<IMenuEntry> getInputEntries() {
+        updateActive();
+        return new ArrayList<>(inputEntries);
     }
 }

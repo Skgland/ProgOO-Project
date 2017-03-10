@@ -14,14 +14,18 @@ import static org.lwjgl.glfw.GLFW.*;
 
 /**
  * @author Bennet Blessmann Created on 01. Feb. 2017.
+ *         <p>
+ *         This class implements a Controller which takes input from an XBox360 Controller It is enabled by default if a
+ *         Controller is present at startup it is completle disabled if the library dll's and jar's can't be found at
+ *         startup
  */
 public class ControllerInput implements IJARInput {
 
     private final Poller poller = new Poller();
-    private          Thread        exec;
+    private       Thread        exec;
     private final IJARGameModel game;
     private final IJARMenuModel menu;
-    private final ModeModel mode;
+    private final ModeModel     mode;
     private          boolean enabled     = true;
     private volatile int     joystick_id = -1;
 
@@ -36,7 +40,7 @@ public class ControllerInput implements IJARInput {
         this.game = game;
         this.mode = mode;
         this.menu = menu;
-        xBox360Handler = new XBox360Handler(game,menu,mode);
+        xBox360Handler = new XBox360Handler(game, menu, mode);
         if(!glfwInit()) {
             throw new InternalError("Failed to Initialize glfw!");
         }
@@ -51,7 +55,7 @@ public class ControllerInput implements IJARInput {
 
     /**
      * Should only be called by the main Thread!
-     * */
+     */
     private void findJoystick() {
         for(int i = GLFW_JOYSTICK_1; i <= GLFW_JOYSTICK_LAST; i++) {
             if(glfwJoystickPresent(i)) {
@@ -100,27 +104,6 @@ public class ControllerInput implements IJARInput {
                 GLFWQueue.getInstance().pushEventAndWait(this::findJoystick);
             }
             System.out.println("Joystick connected!");
-        }
-    }
-
-    @Override
-    public void setEnabled(final boolean enable) {
-        if(!enable || enabled || (joystick_id != -1 && glfwJoystickPresent(joystick_id))) {
-            enabled = enable;
-        } else {
-            GLFWQueue.getInstance().pushEventAndWait(() -> {
-                glfwTerminate();
-                glfwInit();
-                findJoystick();
-                if(joystick_id != -1) {
-                    enabled = true;
-                    if(enabled && game != null) {
-                        synchronized(poller) {
-                            poller.notifyAll();
-                        }
-                    }
-                }
-            });
         }
     }
 
@@ -179,6 +162,26 @@ public class ControllerInput implements IJARInput {
         return enabled;
     }
 
+    @Override
+    public void setEnabled(final boolean enable) {
+        if(!enable || enabled || (joystick_id != -1 && glfwJoystickPresent(joystick_id))) {
+            enabled = enable;
+        } else {
+            GLFWQueue.getInstance().pushEventAndWait(() -> {
+                glfwTerminate();
+                glfwInit();
+                findJoystick();
+                if(joystick_id != -1) {
+                    enabled = true;
+                    if(enabled && game != null) {
+                        synchronized(poller) {
+                            poller.notifyAll();
+                        }
+                    }
+                }
+            });
+        }
+    }
 
     @Override
     public synchronized void start() {

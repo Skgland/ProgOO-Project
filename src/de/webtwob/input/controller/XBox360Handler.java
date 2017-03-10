@@ -115,8 +115,7 @@ public class XBox360Handler {
                 last = System.currentTimeMillis();
                 EventQueue.invokeLater(() -> STEP_ACTION.actionPerformed(new ActionEvent(this, id, "STEP")));
             }
-        } else
-        {
+        } else {
             last = 0;
         }
 

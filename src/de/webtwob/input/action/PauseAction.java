@@ -8,8 +8,7 @@ import javax.swing.*;
 import java.awt.event.ActionEvent;
 
 /**
- * @author Bennet Blessmann
- *         Created on 01. Feb. 2017.
+ * @author Bennet Blessmann Created on 01. Feb. 2017.
  */
 public class PauseAction extends AbstractAction {
 
@@ -25,7 +24,7 @@ public class PauseAction extends AbstractAction {
     @Override
     public void actionPerformed(final ActionEvent e) {
 
-        if (modeModel.getMode() == Mode.GAME) {
+        if(modeModel.getMode() == Mode.GAME) {
             modeModel.setMode(Mode.MENU);
             menuModel.pause();
         }

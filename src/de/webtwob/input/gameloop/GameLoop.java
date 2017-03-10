@@ -11,6 +11,9 @@ import java.util.TimerTask;
 
 /**
  * Created by BB20101997 on 08. Mär. 2017.
+ * <p>
+ * This class runs the main game loop when enabled at a regular interval
+ * by default it is enabled
  */
 public class GameLoop implements IJARInput {
 
@@ -42,7 +45,7 @@ public class GameLoop implements IJARInput {
                 if(mode.getMode() == Mode.GAME) {
                     if(!game.cycle()) {
                         mode.setMode(Mode.MENU);
-                        menu.gameover();
+                        menu.gameOver();
                     }
                 }
             }
@@ -50,16 +53,15 @@ public class GameLoop implements IJARInput {
     }
 
     @Override
-    public void setEnabled(final boolean enable) {
-
-        enabled = enable;
-    }
-
-
-    @Override
     public boolean isEnabled() {
 
         return enabled;
+    }
+
+    @Override
+    public void setEnabled(final boolean enable) {
+
+        enabled = enable;
     }
 
     @Override

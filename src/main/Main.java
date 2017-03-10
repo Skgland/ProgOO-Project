@@ -44,12 +44,14 @@ public class Main {
 
             try {
                 in = new ControllerInput(mode, game, menu);
-            } catch (final InternalError ignore) {
+            }
+            catch(final InternalError ignore) {
                 //noinspection AssignmentToNull
                 in = null;
                 System.err.println("Failed to Initialize GLFW! If running on Mac try starting JVM with " +
                                            "-XstartOnFirstThread!");
-            } catch (final UnsatisfiedLinkError|NoClassDefFoundError e) {
+            }
+            catch(final UnsatisfiedLinkError | NoClassDefFoundError e) {
                 //noinspection AssignmentToNull
                 in = null;
                 System.err.println("Couldn't find Controller libraries!\nController support disabled!");
@@ -76,7 +78,7 @@ public class Main {
         inputs.add(auto);
         inputs.add(keyboard);
 
-        if (controller != null) {
+        if(controller != null) {
             inputs.add(controller);
             controller.start();
         }

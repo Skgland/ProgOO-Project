@@ -14,6 +14,8 @@ import static de.webtwob.input.keyboard.KeyboardInput.InputActions.*;
 
 /**
  * @author Bennet Blessmann Created on 31. Jan. 2017.
+ *         <p>
+ *         This class implements a controller which handles Keyboard input by the user it is by default enabled
  */
 public class KeyboardInput implements IJARInput {
 
@@ -83,6 +85,12 @@ public class KeyboardInput implements IJARInput {
     }
 
     @Override
+    public boolean isEnabled() {
+
+        return enabled;
+    }
+
+    @Override
     public void setEnabled(final boolean enable) {
         enabled = enable;
         JUMP_ACTION.setEnabled(enable);
@@ -93,13 +101,6 @@ public class KeyboardInput implements IJARInput {
         DOWN_ACTION.setEnabled(enable);
         STEP_ACTION.setEnabled(enable);
     }
-
-    @Override
-    public boolean isEnabled() {
-
-        return enabled;
-    }
-
 
     /**
      * This is not an active polling input therefore the next two method's are just dummy implementations

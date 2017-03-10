@@ -7,23 +7,23 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * @author Bennet Blessmann
- *         Created on 03.02.2017.
+ * @author Bennet Blessmann Created on 03.02.2017. This is a basic implementation of the IMenu interface most menues are
+ *         of this type
  */
 public class BasicMenu implements IMenu {
 
     private final List<IMenuEntry> entries = new ArrayList<>();
-    private final String name;
-    private Runnable     runner;
+    private final String   name;
+    private       Runnable runner;
     private boolean active = true;
 
-    public BasicMenu(final String name){
+    public BasicMenu(final String name) {
         this.name = name;
     }
 
     @Override
     public void add(final IMenuEntry entry, final int index) {
-            entries.add(index,entry);
+        entries.add(index, entry);
     }
 
     @Override
@@ -50,14 +50,17 @@ public class BasicMenu implements IMenu {
     public String getText() {
         return name;
     }
+
     @Override
     public boolean isActive() {
         return active;
     }
+
     @Override
     public void setActive(final boolean active) {
         this.active = true;
     }
+
     @Override
     public void executeAction() {
         runner.run();
@@ -66,6 +69,6 @@ public class BasicMenu implements IMenu {
     @Override
     public String toString() {
 
-        return "[Menu]: "+name;
+        return "[Menu]: " + name;
     }
 }

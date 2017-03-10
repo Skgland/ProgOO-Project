@@ -10,11 +10,12 @@ import javax.swing.*;
 import java.awt.*;
 
 /**
- * @author Bennet Blessmann Created on 31. Jan. 2017.
+ * @author Bennet Blessmann Created on 31. Jan. 2017. This class switches between displaying a GameField and a MenuPanel
+ *         to show the game in every mode
  */
 public class BasicView extends JPanel implements IJARView {
 
-    private final MenuPanel     menuPanel;
+    private final MenuPanel menuPanel;
 
     /**
      * Stores the reused GameField

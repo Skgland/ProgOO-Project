@@ -12,43 +12,62 @@ import java.util.List;
 import static de.webtwob.interfaces.Mode.GAME;
 
 /**
- * @author Bennet Blessmann
- *         Created on 09.03.2017.
+ * @author Bennet Blessmann Created on 09.03.2017.
+ *         <p>
+ *         The Model that manages the games menu
  */
 public class BasicMenuModel implements IJARMenuModel {
 
     /**
      * Stores the menu traversal so we can go back
      */
-    private final LinkedList<IMenu>    back           = new LinkedList<>();
-    private final IMenu                MAIN_MENU      = new BasicMenu("Main Menu");
-    private final IMenu                PAUSE_MENU     = new BasicMenu("Pause Menu");
-    private final IMenu                SETTINGS_MENU  = new BasicMenu("Settings");
-    private final IMenu                GAME_OVER_MENU = new BasicMenu("Game Over");
-    private final InputMenu            INPUTS_MENU    = new InputMenu(this);
-    private final IMenuEntry           QUIT           = new BasicMenuEntry(() -> System.exit(0), "Quit");
+    private final LinkedList<IMenu> back = new LinkedList<>();
+
+    /**
+     * The menus exist
+     */
+    private final IMenu     MAIN_MENU      = new BasicMenu("Main Menu");
+    private final IMenu     PAUSE_MENU     = new BasicMenu("Pause Menu");
+    private final IMenu     SETTINGS_MENU  = new BasicMenu("Settings");
+    private final IMenu     GAME_OVER_MENU = new BasicMenu("Game Over");
+    private final InputMenu INPUTS_MENU    = new InputMenu(this);
+
+    /**
+     * The models necessary to provide all functionality
+     */
     private IJARGameModel game;
     private ModeModel     mode;
-    private       boolean    dirty    = false;
+
+    /**
+     * The current menu
+     */
+    private volatile IMenu menu;
+
+    /**
+     * The currently selected menu item
+     */
+    private volatile int selection = 0;
+
+    /**
+     * does the gui need an update
+     */
+    private boolean dirty = false;
+
+    /**
+     * All the not changing MenuEntries
+     */
+    private final IMenuEntry QUIT     = new BasicMenuEntry(() -> System.exit(0), "Quit");
     private final IMenuEntry CONTINUE = new BasicMenuEntry(() -> mode.setMode(GAME), "Continue");
     private final IMenuEntry START    = new BasicMenuEntry(() -> {
         game.reset();
         mode.setMode(GAME);
     }, "Start");
-    /**
-     * The current menu
-     */
-    private volatile IMenu menu;
-    /**
-     * The currently selected menu item
-     */
-    private volatile int        selection = 0;
-    private final    IMenuEntry BACK      = new BasicMenuEntry(() -> {
+    private final IMenuEntry BACK     = new BasicMenuEntry(() -> {
         menu = back.pop();
         selection = 0;
     }, "Back");
 
-    private final    IMenuEntry GOTO_MAIN = new BasicMenuEntry(() -> {
+    private final IMenuEntry GOTO_MAIN = new BasicMenuEntry(() -> {
         menu = MAIN_MENU;
         selection = 0;
     }, "Main Menu");
@@ -92,6 +111,9 @@ public class BasicMenuModel implements IJARMenuModel {
         GAME_OVER_MENU.add(SETTINGS_MENU);
         GAME_OVER_MENU.add(GOTO_MAIN);
 
+        /*
+        * we start in the main menu
+        * */
         menu = MAIN_MENU;
     }
 
@@ -102,7 +124,7 @@ public class BasicMenuModel implements IJARMenuModel {
 
     @Override
     public void doSelect() {
-        if (selection >= 0 && selection < menu.size()) {
+        if(selection >= 0 && selection < menu.size()) {
             final IMenuEntry ime = menu.get(selection);
             //noinspection LawOfDemeter
             ime.executeAction();
@@ -127,8 +149,8 @@ public class BasicMenuModel implements IJARMenuModel {
 
     @Override
     public void down() {
-            selection = (selection + 1) % menu.size();
-            setDirty();
+        selection = (selection + 1) % menu.size();
+        setDirty();
     }
 
     @Override
@@ -153,36 +175,41 @@ public class BasicMenuModel implements IJARMenuModel {
     public void setInputList(final List<IJARInput> inputList) {
         INPUTS_MENU.updateInputs(inputList);
     }
+
     @Override
     public boolean isDirty() {
 
         return dirty;
     }
+
     @Override
     public void clean() {
 
         dirty = false;
     }
+
     @Override
     public void setDirty() {
         dirty = true;
     }
+
     @Override
     public void pause() {
         menu = PAUSE_MENU;
     }
+
     @Override
-    public void gameover() {
+    public void gameOver() {
 
         menu = GAME_OVER_MENU;
     }
 
     @Override
     public String toString() {
-        return "BasicMenuModel{" + "back=" + back + ", MAIN_MENU=" + MAIN_MENU + ", PAUSE_MENU=" + PAUSE_MENU + ", " +
-                       "SETTINGS_MENU=" + SETTINGS_MENU + ", GAME_OVER_MENU=" + GAME_OVER_MENU + ", INPUTS_MENU=" +
+        return "BasicMenuModel{" + "back=" + back + ", MAIN_MENU=" + MAIN_MENU + ", PAUSE_MENU=" + PAUSE_MENU + ", "
+                       + "SETTINGS_MENU=" + SETTINGS_MENU + ", GAME_OVER_MENU=" + GAME_OVER_MENU + ", INPUTS_MENU=" +
                        INPUTS_MENU + ", QUIT=" + QUIT + ", game=" + game + ", mode=" + mode + ", dirty=" + dirty + "," +
-                       " CONTINUE=" + CONTINUE + ", START=" + START + ", menu=" + menu + ", selection=" + selection +
-                       ", BACK=" + BACK + ", GOTO_MAIN=" + GOTO_MAIN + '}';
+                       "" + "" + "" + "" + " CONTINUE=" + CONTINUE + ", START=" + START + ", menu=" + menu + ", " +
+                       "selection=" + selection + ", BACK=" + BACK + ", GOTO_MAIN=" + GOTO_MAIN + '}';
     }
 }

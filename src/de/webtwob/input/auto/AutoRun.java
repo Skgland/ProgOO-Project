@@ -7,6 +7,8 @@ import java.awt.*;
 
 /**
  * Created by BB20101997 on 17. Feb. 2017.
+ * <p>
+ * This class implements a Controller which "play" the game
  */
 public class AutoRun implements IJARInput {
 
@@ -70,6 +72,12 @@ public class AutoRun implements IJARInput {
     }
 
     @Override
+    public boolean isEnabled() {
+
+        return enabled;
+    }
+
+    @Override
     public void setEnabled(final boolean enable) {
         enabled = enable;
         if(enabled && gameModel != null) {
@@ -77,12 +85,6 @@ public class AutoRun implements IJARInput {
                 run.notifyAll();
             }
         }
-    }
-
-    @Override
-    public boolean isEnabled() {
-
-        return enabled;
     }
 
     @Override

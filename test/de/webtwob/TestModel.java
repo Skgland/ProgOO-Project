@@ -124,7 +124,7 @@ public class TestModel implements IJARMenuModel, IJARGameModel {
         return 0;
     }
     @Override
-    public void gameover() {
+    public void gameOver() {
 
     }
     @SuppressWarnings("HardcodedLineSeparator")

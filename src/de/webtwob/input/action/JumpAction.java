@@ -8,12 +8,11 @@ import javax.swing.*;
 import java.awt.event.ActionEvent;
 
 /**
- * @author Bennet Blessmann
- *         Created on 31. Jan. 2017.
+ * @author Bennet Blessmann Created on 31. Jan. 2017.
  */
 public class JumpAction extends AbstractAction {
 
-    private final ModeModel modeModel;
+    private final ModeModel     modeModel;
     private final IJARGameModel gameModel;
 
     public JumpAction(final ModeModel modeModel, final IJARGameModel gameModel) {
@@ -24,7 +23,7 @@ public class JumpAction extends AbstractAction {
     @Override
     public void actionPerformed(final ActionEvent e) {
         //if in game jump
-        if (modeModel.getMode() == Mode.GAME) {
+        if(modeModel.getMode() == Mode.GAME) {
             gameModel.jump();
         }
     }

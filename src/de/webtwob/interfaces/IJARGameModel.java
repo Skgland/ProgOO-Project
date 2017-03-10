@@ -3,49 +3,48 @@ package de.webtwob.interfaces;
 import java.awt.*;
 
 /**
- * @author Bennet Blessmann
- *         Created on 09.03.2017.
+ * @author Bennet Blessmann Created on 09.03.2017.
  */
 public interface IJARGameModel {
 
     /**
      * executes one game cycle
+     *
      * @return true if player lives, if died false
-     * */
+     */
     boolean cycle();
 
     /**
-     *Perform a jump if possible
-     * */
+     * Perform a jump if possible
+     */
     void jump();
 
     /**
-     * Set if the Character is sneaking
-     * @param sneak true for sneaking, false for not sneaking
-     * */
-    void setSneaking(boolean sneak);
-
-    /**
-     *@return if the player is sneaking, always false if not in game
-     * */
+     * @return if the player is sneaking
+     */
     boolean isSneaking();
 
     /**
+     * Set if the Character is sneaking
+     *
+     * @param sneak true for sneaking, false for not sneaking
+     */
+    void setSneaking(boolean sneak);
+
+    /**
      * @return the players y coordinate
-     * */
+     */
     double getPlayerY();
 
     /**
      * @return the players height
-     * */
+     */
     double getPlayerHeight();
 
     /**
-     * @return the array of hurdles currently in the game
-     * the place in the array corresponds to it's position
-     * 0 being 1 unit behind the player,
-     * 1 being at the players position etc.
-     * */
+     * @return the array of hurdles currently in the game the place in the array corresponds to it's position 0 being 1
+     * unit behind the player, 1 being at the players position etc.
+     */
     Rectangle[] getHurdles();
 
     /**
@@ -54,14 +53,13 @@ public interface IJARGameModel {
     long getTime();
 
     /**
-     * @return the current score
-     * if score is likely to be lost again this may be excluded
-     * and only be included if certain that it will be kept
+     * @return the current score if score is likely to be lost again this may be excluded and only be included if
+     * certain that it will be kept
      */
     long getScore();
 
     /**
      * Resets the game
-     * */
+     */
     void reset();
 }

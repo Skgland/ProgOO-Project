@@ -14,22 +14,25 @@ import java.util.Random;
 
 /**
  * @author Bennet Blessmann Created on 10.02.2017.
+ *         <p>
+ *         This classes pourpose is to display the game onto the high-rise building
  */
 public class LightHouseView implements IJARView {
 
     private final String address;
     private final int    port;
     private final byte[] windows = new byte[1176];
-    private final Random rng          = new Random();
+    private final Random rng     = new Random();
     private LighthouseNetwork lhn;
     private Thread            updateThread;
     private boolean           run;
     private IJARMenuModel     menu;
     private IJARGameModel     game;
     private ModeModel         mode;
-    private       Color  currentColor = new Color(rng.nextInt());
-    private       Color  nextColor    = new Color(rng.nextInt());
+    private Color currentColor = new Color(rng.nextInt());
+    private Color nextColor    = new Color(rng.nextInt());
     private boolean wait;
+    @SuppressWarnings("FieldCanBeLocal")
     private       boolean  allowText  = false;
     private final Runnable updateLoop = this::update;
 
@@ -38,9 +41,11 @@ public class LightHouseView implements IJARView {
         this(game, menu, mode, "localhost", 8000);
     }
 
-    public LightHouseView(final IJARGameModel game, final IJARMenuModel menu, final ModeModel mode, final String address, final int port) {
+    public LightHouseView(final IJARGameModel game, final IJARMenuModel menu, final ModeModel mode, final String
+                                                                                                            address,
+                          final int port) {
 
-        if (0 > port || port > 65535) {
+        if(0 > port || port > 65535) {
             throw new IllegalArgumentException("Port has to be in the Interval [0,65535] but was " + port + "!");
         }
         this.menu = menu;
@@ -53,53 +58,55 @@ public class LightHouseView implements IJARView {
     private boolean connect() {
 
         try {
-//            lhn = new LighthouseNetwork(address, port);
+            //            lhn = new LighthouseNetwork(address, port);
             lhn = new LighthouseNetwork(address, port, "2", "8QVZ-M6RV-XD8C-OSR9");
             lhn.connect();
             return true;
-        } catch (final IOException e) {
+        }
+        catch(final IOException e) {
             System.err.println("Couldn't connect to LightHouse!");
             return false;
         }
     }
+
     private void send(final byte[] windows) {
 
         assert windows.length == 1176 : "Unexpected window count: " + windows.length;
         try {
             lhn.send(windows);
-        } catch (final IOException e) {
+        }
+        catch(final IOException e) {
             System.err.println("Failed to send data to LightHouse! Dropping frame!");
         }
     }
+
     private void update() {
 
-        if (connect()) {
-            while (run) {
+        if(connect()) {
+            while(run) {
                 try {
-                    if (mode.getMode() == Mode.MENU) {
+                    if(mode.getMode() == Mode.MENU) {
                         //space for two lines of max. 7 letters
-                        for (byte x = 0; x < 28; x++) {
-                            for (byte y = 0; y < 14; y++) {
+                        for(byte x = 0; x < 28; x++) {
+                            for(byte y = 0; y < 14; y++) {
                                 setWindowColor(x, y, Color.BLUE);
                             }
                         }
 
-                        switch (menu.getCurrentMenu().getText()) {
+                        switch(menu.getCurrentMenu().getText()) {
                             case "Game Over": {
                                 long score = game.getScore();
 
-                                if (score < 100_000) {
+                                if(score < 100_000) {
 
                                     setPatterns(4, 1, 1, Letter.SCORE, Color.RED);
 
                                     int index = 0;
                                     int n;
 
-                                    while (score > 0) {
+                                    while(score > 0) {
                                         n = (int) (score % 10);
-                                        setWindowPattern((byte) (20 - 4 * index), (byte) 7, Letter.NUMBERS[n],
-                                                         Color.RED
-                                        );
+                                        setWindowPattern((byte) (20 - 4 * index), (byte) 7, Letter.NUMBERS[n], Color.RED);
                                         index++;
                                         score /= 10;
                                     }
@@ -121,31 +128,29 @@ public class LightHouseView implements IJARView {
                             }
                         }
                         send(windows);
-                        synchronized (updateLoop) {
+                        synchronized(updateLoop) {
                             updateLoop.wait(10);
                         }
                     } else {
                         //set background
                         final long time = (game.getTime() % 60) - 5;
 
-                        if (time == 30) {
-                            if (!wait) {
+                        if(time == 30) {
+                            if(!wait) {
                                 wait = true;
                                 currentColor = nextColor;
                                 do {
                                     nextColor = new Color(rng.nextInt());
-                                } while (colorDiff(Color.CYAN, nextColor) < 50 || colorDiff(
-                                        Color.YELLOW,
-                                        nextColor
-                                ) < 50);
+                                }
+                                while(colorDiff(Color.CYAN, nextColor) < 50 || colorDiff(Color.YELLOW, nextColor) < 50);
                             }
                         } else {
                             wait = false;
                         }
 
-                        for (byte x = 0; x < 28; x++) {
-                            for (byte y = 0; y < 14; y++) {
-                                if (time >= 30 || x < (28 - time)) {
+                        for(byte x = 0; x < 28; x++) {
+                            for(byte y = 0; y < 14; y++) {
+                                if(time >= 30 || x < (28 - time)) {
                                     setWindowColor(x, y, currentColor);
                                 } else {
                                     setWindowColor(x, y, nextColor);
@@ -157,37 +162,34 @@ public class LightHouseView implements IJARView {
                         final byte player_y_top = (byte) (game.getPlayerY() + game.getPlayerHeight());
 
                         //set floor
-                        for (byte x = 0; x < 28; x++) {
+                        for(byte x = 0; x < 28; x++) {
                             setWindowColor(x, (byte) 12, Color.GRAY);
                         }
 
                         final Rectangle[] rects = game.getHurdles();
                         final byte        size  = (byte) rects.length;
-                        for (byte b = 0; b < size && b < 28; b++) {
-                            if (rects[b] != null) {
-                                for (byte x = 0; x < rects[b].getWidth(); x++) {
-                                    for (byte y = 0; y < rects[b].getHeight(); y++) {
-                                        setWindowColor(
-                                                (byte) (b + x),
-                                                (byte) (11 - rects[b].getY() - y),
-                                                Color.CYAN
-                                        );
+                        for(byte b = 0; b < size && b < 28; b++) {
+                            if(rects[b] != null) {
+                                for(byte x = 0; x < rects[b].getWidth(); x++) {
+                                    for(byte y = 0; y < rects[b].getHeight(); y++) {
+                                        setWindowColor((byte) (b + x), (byte) (11 - rects[b].getY() - y), Color.CYAN);
                                     }
                                 }
                             }
                         }
 
                         //paint player
-                        for (byte y = player_y; y < player_y_top; y++) {
+                        for(byte y = player_y; y < player_y_top; y++) {
                             setWindowColor((byte) 1, (byte) (11 - y), Color.YELLOW);
                         }
 
                         send(windows);
-                        synchronized (updateLoop) {
+                        synchronized(updateLoop) {
                             updateLoop.wait(10);
                         }
                     }
-                } catch (final NullPointerException | InterruptedException ignore) {
+                }
+                catch(final NullPointerException | InterruptedException ignore) {
                     //Nullpointer can occur when model is set to null by another thread after null check
                 }
             }
@@ -196,11 +198,14 @@ public class LightHouseView implements IJARView {
         }
     }
 
+    /**
+     * Sets the window at the specified x and y Coordinate to the specified color
+     */
     private void setWindowColor(final byte x, final byte y, final Color color) {
 
         final int index = coordToWinNumber(x, y);
 
-        if (index + 2 >= windows.length) {
+        if(index + 2 >= windows.length) {
             return;
         }
 
@@ -210,24 +215,31 @@ public class LightHouseView implements IJARView {
     }
 
     /**
+     * Sets the windows to the specified color where the pattern is true
+     * the pattern can be position via an x and y offset
+     *
      * @param x       x-offset
      * @param y       y-offset
      * @param pattern not as may be intuitive [x][y] instead [y][x]
      */
     private void setWindowPattern(final byte x, final byte y, final boolean[][] pattern, final Color c) {
 
-        if (!allowText) {
+        if(!allowText) {
             return;
         }
-        for (byte iy = 0; iy < pattern.length; iy++) {
-            for (byte ix = 0; ix < pattern[iy].length; ix++) {
-                if (pattern[iy][ix]) {
+        for(byte iy = 0; iy < pattern.length; iy++) {
+            for(byte ix = 0; ix < pattern[iy].length; ix++) {
+                if(pattern[iy][ix]) {
                     setWindowColor((byte) (x + ix), (byte) (y + iy), c);
                 }
             }
         }
     }
 
+    /**
+     * Calculates the sum of the color component differences
+     * used to determine if a background color is suitable
+     */
     private int colorDiff(final Color a, final Color b) {
 
         final int green = Math.abs(a.getGreen() - b.getGreen());
@@ -245,6 +257,9 @@ public class LightHouseView implements IJARView {
     }
 
     /**
+     * Applies an array of patterns to the windows
+     * if the patterns exceed the display size will wrap around into the next line
+     *
      * @param x        the x-Coordinat to start at
      * @param y        the y-Coordinate to start at
      * @param offset   the distance between each pattern
@@ -252,15 +267,18 @@ public class LightHouseView implements IJARView {
      * @param c        The Color to set the Patterns to
      */
     private void setPatterns(final byte x, final byte y, final byte offset, final boolean[][][] patterns, final Color
-            c) {
+                                                                                                                  c) {
 
         byte xOffset = x;
-        for (final boolean[][] pattern : patterns) {
+        for(final boolean[][] pattern : patterns) {
             setWindowPattern(xOffset, y, pattern, c);
             xOffset += pattern[0].length + offset;
         }
     }
 
+    /**
+     * @return the index of the windows red color component given it's x and y coordinate
+     */
     private short coordToWinNumber(final byte x, final byte y) {
 
         assert x >= 0 && x < 28 : "Window X-Coordinate ot of bounds was:" + x;
@@ -272,7 +290,7 @@ public class LightHouseView implements IJARView {
     @Override
     public synchronized void start() {
 
-        if (!run) {
+        if(!run) {
             run = true;
             updateThread = new Thread(updateLoop);
             updateThread.setName("LightHouseView");
@@ -284,15 +302,16 @@ public class LightHouseView implements IJARView {
     @Override
     public synchronized void stop() {
 
-        if (run) {
+        if(run) {
             run = false;
-            synchronized (updateLoop) {
+            synchronized(updateLoop) {
                 updateLoop.notifyAll();
             }
-            while (updateThread.isAlive()) {
+            while(updateThread.isAlive()) {
                 try {
                     updateThread.join();
-                } catch (final InterruptedException ignore) {
+                }
+                catch(final InterruptedException ignore) {
                 }
             }
             updateThread = null;
@@ -302,7 +321,6 @@ public class LightHouseView implements IJARView {
     @Override
     public String toString() {
 
-        return "LightHouseView{" + "address='" + address + '\'' + ", port=" + port + ", windows=" + Arrays.toString(
-                windows) + ", lhn=" + lhn + ", updateThread=" + updateThread + ", run=" + run + ", menu=" + menu + ", game=" + game + ", mode=" + mode + ", rng=" + rng + ", currentColor=" + currentColor + ", nextColor=" + nextColor + ", wait=" + wait + ", updateLoop=" + updateLoop + '}';
+        return "LightHouseView{" + "address='" + address + '\'' + ", port=" + port + ", windows=" + Arrays.toString(windows) + ", lhn=" + lhn + ", updateThread=" + updateThread + ", run=" + run + ", menu=" + menu + ", game=" + game + ", mode=" + mode + ", rng=" + rng + ", currentColor=" + currentColor + ", nextColor=" + nextColor + ", wait=" + wait + ", updateLoop=" + updateLoop + '}';
     }
 }

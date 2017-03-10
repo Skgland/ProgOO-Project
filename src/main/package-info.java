@@ -1,20 +1,20 @@
 /**
  * This package contains the Main class which contains the main method
  * that starts this program.
- *
+ * <p>
  * This program uses the lwgjl and lwgjl-glfw library which are compile-time dependencies.
  * At runtime they and the corresponding dll's only need to be present when wanting to use the
  * ControllerInput controller.
  * Tested with Version 3.1.1
- *
- *  The program has several components.
- *  All components that are (part of) a Controller can be found in the de.webtwob.input package
- *  All components that are (part of) a View can be found in the de.webtwob.view package
- *      The view that implements the Lighthouse API can be found in the de.webtwob.view.lighthouse package
- *  All components that are (part of) a Model can be found in the de.webtwob.model package
- *  All interfaces and an enum can be found in the package de.webtwob.interfaces
- *  Everything relate to starting the Programm and the Main Thread can be found in the main package
- *
+ * <p>
+ * The program has several components.
+ * All components that are (part of) a Controller can be found in the de.webtwob.input package
+ * All components that are (part of) a View can be found in the de.webtwob.view package
+ * The view that implements the Lighthouse API can be found in the de.webtwob.view.lighthouse package
+ * All components that are (part of) a Model can be found in the de.webtwob.model package
+ * All interfaces and an enum can be found in the package de.webtwob.interfaces
+ * Everything relate to starting the Programm and the Main Thread can be found in the main package
+ * <p>
  * Decomposition is achieved by splitting the task of displaying multiple view,
  * handling multiple model and multiple Controller
  * The Controller split the task of taking and generating inputs,
@@ -30,10 +30,10 @@
  * The Lighthouse view to display the game on the 28*14 Window front of the high-rise building
  * and The BasicView which displays the game on your normal Computer Monitor it delegates the task to
  * the GameField which displays the game if active or the MenuPanel if the menu os active
- *
+ * <p>
  * We only used private instance variables, all the state information is only changed by method invocation
  * public class fields was used for constants
  * Most Methods are public because they need to be accessible from a public context
  * all other functions are private because they are for internal decomposition of tasks and not for external use.
- * */
+ */
 package main;

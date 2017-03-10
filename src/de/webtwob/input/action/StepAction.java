@@ -28,7 +28,7 @@ public class StepAction extends AbstractAction {
         if(mode.getMode() == Mode.GAME) {
             if(!game.cycle()) {
                 mode.setMode(Mode.MENU);
-                menu.gameover();
+                menu.gameOver();
             }
         }
     }
