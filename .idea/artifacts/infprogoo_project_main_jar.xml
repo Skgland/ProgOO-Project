@@ -1,0 +1,15 @@
+<component name="ArtifactManager">
+  <artifact build-on-make="true" name="infprogoo-project_main:jar">
+    <output-path>$PROJECT_DIR$/out/artifacts/infprogoo_project_main_jar</output-path>
+    <root id="root">
+      <element id="archive" name="infprogoo-project_main.jar">
+        <element id="module-output" name="infprogoo-project_main" />
+        <element id="dir-copy" path="$PROJECT_DIR$/resource" />
+      </element>
+      <element id="library" level="project" name="Gradle: org.lwjgl:lwjgl-glfw:natives-windows:3.1.1" />
+      <element id="library" level="project" name="Gradle: org.lwjgl:lwjgl:natives-windows:3.1.1" />
+      <element id="library" level="project" name="Gradle: org.lwjgl:lwjgl:3.1.1" />
+      <element id="library" level="project" name="Gradle: org.lwjgl:lwjgl-glfw:3.1.1" />
+    </root>
+  </artifact>
+</component>

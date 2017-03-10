@@ -49,7 +49,7 @@ public class Main {
                 in = null;
                 System.err.println("Failed to Initialize GLFW! If running on Mac try starting JVM with " +
                                            "-XstartOnFirstThread!");
-            } catch (final UnsatisfiedLinkError e) {
+            } catch (final UnsatisfiedLinkError|NoClassDefFoundError e) {
                 //noinspection AssignmentToNull
                 in = null;
                 System.err.println("Couldn't find Controller libraries!\nController support disabled!");

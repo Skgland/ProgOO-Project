@@ -3,6 +3,7 @@
     <output-path>$PROJECT_DIR$/out/artifacts/infprogoo_project_src_jar</output-path>
     <root id="archive" name="infprogoo-project-src.jar">
       <element id="dir-copy" path="$PROJECT_DIR$/src" />
+      <element id="dir-copy" path="$PROJECT_DIR$/resource" />
     </root>
   </artifact>
 </component>
