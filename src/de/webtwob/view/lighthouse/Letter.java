@@ -2,6 +2,8 @@ package de.webtwob.view.lighthouse;
 
 /**
  * Created by BB20101997 on 06. Mär. 2017.
+ * <p>
+ * This class stores the constants that are used as patterns by the LighthouseView to display menu text and score
  */
 public class Letter {
 

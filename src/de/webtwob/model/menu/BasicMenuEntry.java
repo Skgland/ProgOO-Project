@@ -1,12 +1,13 @@
-package de.webtwob.model;
+package de.webtwob.model.menu;
 
 import de.webtwob.interfaces.IMenuEntry;
 
 /**
- * @author Bennet Blessmann
- * Created on 02. Feb. 2017.
+ * @author Bennet Blessmann Created on 02. Feb. 2017.
+ *         <p>
+ *         This class is a base implementation of the IMenuEntry interface and is used in most menus
  */
-public class BasicMenuEntry implements IMenuEntry{
+public class BasicMenuEntry implements IMenuEntry {
 
     private final Runnable run;
     private final String   name;
@@ -27,6 +28,7 @@ public class BasicMenuEntry implements IMenuEntry{
     public boolean isActive() {
         return active;
     }
+
     @Override
     public void setActive(final boolean active) {
         this.active = active;
@@ -40,6 +42,6 @@ public class BasicMenuEntry implements IMenuEntry{
     @Override
     public String toString() {
         //noinspection StringConcatenationMissingWhitespace
-        return "[Entry]: "+getText()+(getValue()!=null?" : "+getValue():"");
+        return "[Entry]: " + getText() + (getValue() != null ? " : " + getValue() : "");
     }
 }

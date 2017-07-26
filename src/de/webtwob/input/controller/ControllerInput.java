@@ -1,7 +1,10 @@
 package de.webtwob.input.controller;
 
+import de.webtwob.interfaces.IJARGameModel;
 import de.webtwob.interfaces.IJARInput;
-import de.webtwob.interfaces.IJARModel;
+import de.webtwob.interfaces.IJARMenuModel;
+import de.webtwob.interfaces.Mode;
+import de.webtwob.model.ModeModel;
 import main.GLFWQueue;
 import org.lwjgl.glfw.GLFW;
 import org.lwjgl.glfw.GLFWErrorCallback;
@@ -11,23 +14,33 @@ import static org.lwjgl.glfw.GLFW.*;
 
 /**
  * @author Bennet Blessmann Created on 01. Feb. 2017.
+ *         <p>
+ *         This class implements a Controller which takes input from an XBox360 Controller It is enabled by default if a
+ *         Controller is present at startup it is completle disabled if the library dll's and jar's can't be found at
+ *         startup
  */
 public class ControllerInput implements IJARInput {
 
     private final Poller poller = new Poller();
-    private          Thread    exec;
-    private volatile IJARModel model;
+    private       Thread        exec;
+    private final IJARGameModel game;
+    private final IJARMenuModel menu;
+    private final ModeModel     mode;
     private          boolean enabled     = true;
     private volatile int     joystick_id = -1;
 
-    private final XBox360Handler xBox360Handler = new XBox360Handler();
+    private final XBox360Handler xBox360Handler;
 
 
     /**
      * Only the main Thread can create new objects,
      * because glfwInit needs to only be called from the main Thread
      */
-    public ControllerInput() {
+    public ControllerInput(final ModeModel mode, final IJARGameModel game, final IJARMenuModel menu) {
+        this.game = game;
+        this.mode = mode;
+        this.menu = menu;
+        xBox360Handler = new XBox360Handler(game, menu, mode);
         if(!glfwInit()) {
             throw new InternalError("Failed to Initialize glfw!");
         }
@@ -42,7 +55,7 @@ public class ControllerInput implements IJARInput {
 
     /**
      * Should only be called by the main Thread!
-     * */
+     */
     private void findJoystick() {
         for(int i = GLFW_JOYSTICK_1; i <= GLFW_JOYSTICK_LAST; i++) {
             if(glfwJoystickPresent(i)) {
@@ -75,8 +88,9 @@ public class ControllerInput implements IJARInput {
     private void joystick_callback(final int id, final int event) {
         if(event == GLFW_DISCONNECTED) {
             if(id == joystick_id) {
-                if(model.getMode() == IJARModel.Mode.GAME) {
-                    model.pause();
+                if(mode.getMode() == Mode.GAME) {
+                    mode.setMode(Mode.MENU);
+                    menu.pause();
                 }
                 joystick_id = -1;
             }
@@ -90,39 +104,6 @@ public class ControllerInput implements IJARInput {
                 GLFWQueue.getInstance().pushEventAndWait(this::findJoystick);
             }
             System.out.println("Joystick connected!");
-        }
-    }
-
-    @Override
-    public void linkModel(final IJARModel ijarm) {
-
-        model = ijarm;
-        xBox360Handler.linkModel(ijarm);
-        if(enabled && model != null) {
-            synchronized(poller) {
-                poller.notifyAll();
-            }
-        }
-    }
-
-    @Override
-    public void setEnabled(final boolean enable) {
-        if(!enable || enabled || (joystick_id != -1 && glfwJoystickPresent(joystick_id))) {
-            enabled = enable;
-        } else {
-            GLFWQueue.getInstance().pushEventAndWait(() -> {
-                glfwTerminate();
-                glfwInit();
-                findJoystick();
-                if(joystick_id != -1) {
-                    enabled = true;
-                    if(enabled && model != null) {
-                        synchronized(poller) {
-                            poller.notifyAll();
-                        }
-                    }
-                }
-            });
         }
     }
 
@@ -141,7 +122,7 @@ public class ControllerInput implements IJARInput {
 
             while(run) {
                 try {
-                    if(enabled && model != null) {
+                    if(enabled && game != null) {
                         GLFWQueue.getInstance().pushEventAndWait(() -> {
                             glfwPollEvents();
                             if(joystick_id != -1 && glfwJoystickPresent(joystick_id)) {
@@ -156,14 +137,14 @@ public class ControllerInput implements IJARInput {
                         });
                     } else {
                         synchronized(poller) {
-                            if(!enabled || model == null) {
+                            if(!enabled || game == null) {
                                 poller.wait();
                             }
                         }
                     }
                 }
                 catch(final NullPointerException | InterruptedException ignore) {
-                    //NullPointer can occur if model is set to null after the null check by another Thread
+                    //NullPointer can occur if game is set to null after the null check by another Thread
                 }
             }
         }
@@ -181,6 +162,26 @@ public class ControllerInput implements IJARInput {
         return enabled;
     }
 
+    @Override
+    public void setEnabled(final boolean enable) {
+        if(!enable || enabled || (joystick_id != -1 && glfwJoystickPresent(joystick_id))) {
+            enabled = enable;
+        } else {
+            GLFWQueue.getInstance().pushEventAndWait(() -> {
+                glfwTerminate();
+                glfwInit();
+                findJoystick();
+                if(joystick_id != -1) {
+                    enabled = true;
+                    if(enabled && game != null) {
+                        synchronized(poller) {
+                            poller.notifyAll();
+                        }
+                    }
+                }
+            });
+        }
+    }
 
     @Override
     public synchronized void start() {

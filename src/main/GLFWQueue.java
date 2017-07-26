@@ -38,19 +38,20 @@ public class GLFWQueue implements Runnable {
         }
         final Object    waiter      = new Object();
         final boolean[] interrupted = {false};
-        pushEvent(() -> {
-            try {
-                run.run();
-            }
-            finally {
-                synchronized(waiter) {
-                    interrupted[0] = true;
-                    waiter.notifyAll();
-                }
-            }
-        });
+
         synchronized(waiter) {
-            if(!interrupted[0]) {
+            pushEvent(() -> {
+                try {
+                    run.run();
+                }
+                finally {
+                    synchronized(waiter) {
+                        interrupted[0] = true;
+                        waiter.notifyAll();
+                    }
+                }
+            });
+            while(!interrupted[0]) {
                 try {
                     waiter.wait();
                 }
@@ -94,4 +95,8 @@ public class GLFWQueue implements Runnable {
         }
     }
 
+    @Override
+    public String toString() {
+        return "GLFWQueue{" + "queue=" + queue + '}';
+    }
 }

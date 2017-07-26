@@ -1,34 +1,32 @@
-package de.webtwob.model;
+package de.webtwob.model.menu;
 
 import de.webtwob.interfaces.IJARInput;
-import de.webtwob.interfaces.IJARModel;
 import de.webtwob.interfaces.IMenuEntry;
 
 /**
- * @author Bennet Blessmann
- *         Created on 04.02.2017.
+ * @author Bennet Blessmann Created on 04.02.2017. This class is there for the main MenuEntries in the InputMenu
  */
 public class InputMenuEntry implements IMenuEntry {
 
     private final IJARInput in;
     private       boolean   active;
-    private       IJARModel model;
 
     public InputMenuEntry(final IJARInput input) {
-
         in = input;
     }
 
     @Override
     public String getText() {
 
-        return (in.isEnabled() ? "Disable" : "Enable") +' '+ in;
+        return (in.isEnabled() ? "Disable" : "Enable") + ' ' + in;
     }
+
     @Override
     public boolean isActive() {
 
         return active;
     }
+
     @Override
     public void setActive(final boolean active) {
 
@@ -38,9 +36,8 @@ public class InputMenuEntry implements IMenuEntry {
     @Override
     public void executeAction() {
 
-        if (!in.isEnabled() || active) {
+        if(!in.isEnabled() || active) {
             in.setEnabled(!in.isEnabled());
-            model.updateViews();
         }
     }
 
@@ -49,8 +46,5 @@ public class InputMenuEntry implements IMenuEntry {
 
         return getText();
     }
-    public void setModel(final IJARModel model) {
 
-        this.model = model;
-    }
 }
